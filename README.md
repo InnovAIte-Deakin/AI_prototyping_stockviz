@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StockViz
+
+> A stock screening and visualization application for the modern web.
+
+---
+
+## Overview
+
+StockViz is a web-based stock screening tool built for exploring, filtering, and visualizing market data. Now transitioning to a modern full-stack architecture.
+
+---
+
+## Current Architecture
+
+This repository now runs on **Next.js** (bootstrapped with `create-next-app`) with **Supabase** as the backend — bringing server-side rendering, a managed Postgres database, authentication, and real-time capabilities out of the box.
+
+### Legacy Code
+
+The `frontend/` and `backend/` directories at the root contain the **original prototype** — a standalone React frontend paired with an Express API server. These folders are kept for reference and inspection only. They are no longer the active codebase.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+**Install dependencies:**
+
+```bash
+npm install
+```
+
+**Start the development server:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+stockviz/
+├── app/          # Next.js App Router (active codebase)
+├── frontend/     # Legacy React prototype (inspection only)
+└── backend/      # Legacy Express API (inspection only)
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Roadmap
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [x] Prototype with standalone React + Express
+- [x] Bootstrap Next.js with App Router
+- [ ] Integrate Supabase (Postgres + Auth + Edge Functions)
+- [ ] Migrate features from legacy prototype
+- [ ] Real-time data subscriptions
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*StockViz — Capstone AI Prototyping Project*
