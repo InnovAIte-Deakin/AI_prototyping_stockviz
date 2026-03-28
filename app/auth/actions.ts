@@ -70,3 +70,9 @@ export async function signup(formData: FormData) {
 
   return redirect("/dashboard");
 }
+
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return redirect("/login");
+}
