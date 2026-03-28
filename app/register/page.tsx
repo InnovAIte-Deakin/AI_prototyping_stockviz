@@ -88,63 +88,72 @@ export default function Register() {
               <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="name">
                 Full Name
               </Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="E.g., Alexander Hamilton"
-                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.name ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
-                onChange={() => setFieldErrors(prev => ({ ...prev, name: undefined }))}
-              />
-              {fieldErrors.name && (
-                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.name}</p>
-              )}
+              <motion.div
+                animate={fieldErrors.name ? { x: [-4, 4, -4, 4, 0] } : {}}
+                transition={{ duration: 0.4 }}
+              >
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="E.g., Alexander Hamilton"
+                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.name ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                  onChange={() => setFieldErrors(prev => ({ ...prev, name: undefined }))}
+                />
+              </motion.div>
             </div>
 
             <div className="space-y-1.5">
               <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="email">
                 Email Address
               </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="name@company.com"
-                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
-                onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
-              />
-              {fieldErrors.email && (
-                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.email}</p>
-              )}
+              <motion.div
+                animate={fieldErrors.email ? { x: [-4, 4, -4, 4, 0] } : {}}
+                transition={{ duration: 0.4 }}
+              >
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                  onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
+                />
+              </motion.div>
             </div>
 
             <div className="space-y-1.5">
               <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="password">
                 Password
               </Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Min. 8 characters"
-                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10`}
-                  onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5a6060] hover:text-[#5f5e5e]"
+                <motion.div
+                  animate={fieldErrors.password ? { x: [-4, 4, -4, 4, 0] } : {}}
+                  transition={{ duration: 0.4 }}
+                  className="relative"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              {fieldErrors.password && (
-                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.password}</p>
-              )}
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Min. 8 characters"
+                    className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10`}
+                    onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5a6060] hover:text-[#5f5e5e]"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </motion.div>
             </div>
 
-            <div className="space-y-2 py-2">
+            <motion.div
+              animate={fieldErrors.terms ? { x: [-4, 4, -4, 4, 0] } : {}}
+              transition={{ duration: 0.4 }}
+              className="space-y-2 py-2"
+            >
               <div className="flex items-start gap-3">
                 <Checkbox
                   id="terms"
@@ -156,10 +165,7 @@ export default function Register() {
                   I agree to the <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Terms of Service</a> and <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Privacy Policy</a>.
                 </Label>
               </div>
-              {fieldErrors.terms && (
-                <p className="text-[10px] text-[#752121] font-medium">{fieldErrors.terms}</p>
-              )}
-            </div>
+            </motion.div>
 
             <Button
               disabled={isPending}

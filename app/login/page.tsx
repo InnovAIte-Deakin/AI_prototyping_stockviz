@@ -71,17 +71,19 @@ export default function Login() {
               <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060] mb-2" htmlFor="email">
                 Email Address
               </Label>
-              <Input
-                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
-                id="email"
-                name="email"
-                placeholder="name@example.com"
-                type="email"
-                onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
-              />
-              {fieldErrors.email && (
-                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.email}</p>
-              )}
+              <motion.div
+                animate={fieldErrors.email ? { x: [-4, 4, -4, 4, 0] } : {}}
+                transition={{ duration: 0.4 }}
+              >
+                <Input
+                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  id="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  type="email"
+                  onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
+                />
+              </motion.div>
             </div>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center mb-2">
@@ -92,17 +94,19 @@ export default function Login() {
                   Forgot password?
                 </a>
               </div>
-              <Input
-                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
-                id="password"
-                name="password"
-                placeholder="••••••••"
-                type="password"
-                onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
-              />
-              {fieldErrors.password && (
-                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.password}</p>
-              )}
+              <motion.div
+                animate={fieldErrors.password ? { x: [-4, 4, -4, 4, 0] } : {}}
+                transition={{ duration: 0.4 }}
+              >
+                <Input
+                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  type="password"
+                  onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
+                />
+              </motion.div>
             </div>
             <Button
               disabled={isPending}
