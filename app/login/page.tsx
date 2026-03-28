@@ -3,12 +3,14 @@
 import React, { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { login } from '@/app/auth/actions';
 
 export default function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [isPending, startTransition] = useTransition();
@@ -48,16 +50,16 @@ export default function Login() {
           </Link>
         </header>
 
-        <div className="w-full max-w-[440px] flex flex-col gap-8 py-4">
+        <div className="w-full max-w-[480px] flex flex-col gap-10 py-6">
         {/* Auth Card Container */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-8 md:p-12 border border-[#adb3b2]/10 rounded-2xl shadow-[0_4px_24px_-12px_rgba(45,52,51,0.08)]"
+          className="w-full flex flex-col gap-10"
         >
-          <div className="mb-10 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-[#2d3433] mb-2">Welcome back</h2>
-            <p className="text-[#5a6060] text-sm">Enter your credentials to access your terminal.</p>
+          <div className="text-center">
+            <h2 className="text-4xl font-bold tracking-tight text-[#2d3433] mb-4">Welcome back</h2>
+            <p className="text-[#5a6060] text-base leading-relaxed">Enter your credentials to access your terminal.</p>
           </div>
 
           {/* Login Form */}
@@ -68,15 +70,17 @@ export default function Login() {
               </motion.div>
             )}
             <div className="space-y-1.5">
-              <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060] mb-2" htmlFor="email">
+              <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5" htmlFor="email">
                 Email Address
               </Label>
               <motion.div
                 animate={fieldErrors.email ? { x: [-4, 4, -4, 4, 0] } : {}}
                 transition={{ duration: 0.4 }}
+                className="relative"
               >
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                 <Input
-                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  className={`w-full pl-12 pr-4 h-[52px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                   id="email"
                   name="email"
                   placeholder="name@example.com"
@@ -86,31 +90,40 @@ export default function Login() {
               </motion.div>
             </div>
             <div className="space-y-1.5">
-              <div className="flex justify-between items-center mb-2">
-                <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="password">
+              <div className="flex justify-between items-center mb-2.5">
+                <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="password">
                   Password
                 </Label>
-                <a className="text-[10px] font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="#">
+                <a className="text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="#">
                   Forgot password?
                 </a>
               </div>
               <motion.div
                 animate={fieldErrors.password ? { x: [-4, 4, -4, 4, 0] } : {}}
                 transition={{ duration: 0.4 }}
+                className="relative"
               >
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                 <Input
-                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  className={`w-full pl-12 pr-12 h-[52px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                   id="password"
                   name="password"
                   placeholder="••••••••"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#adb3b2] hover:text-[#5f5e5e] transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </motion.div>
             </div>
             <Button
               disabled={isPending}
-              className="w-full bg-[#5f5e5e] text-white h-[48px] px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-2 shadow-none disabled:opacity-50"
+              className="w-full bg-[#0c0f0e] text-white h-[56px] px-4 rounded-xl font-bold text-base transition-all duration-200 hover:opacity-90 active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
               type="submit"
             >
               {isPending ? 'Processing...' : 'Sign In'}
