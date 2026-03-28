@@ -1,13 +1,28 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { login } from '@/app/auth/actions';
 
 export default function Login() {
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    setError(null);
+    startTransition(async () => {
+      const result = await login(formData);
+      if (result?.error) {
+        setError(result.error);
+      }
+    });
+  };
   return (
     <div className="min-h-[calc(100vh-80px)] bg-[#f9f9f8] text-[#2d3433] flex flex-col items-center justify-center p-6 selection:bg-[#e4e2e1] selection:text-[#525251]">
       {/* Brand Header */}
@@ -30,7 +45,12 @@ export default function Login() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 text-sm font-medium text-[#752121] bg-[#fe8983]/20 rounded-xl border border-[#fe8983]/30">
+                {error}
+              </motion.div>
+            )}
             <div className="space-y-1.5">
               <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060] mb-2" htmlFor="email">
                 Email Address
@@ -63,10 +83,11 @@ export default function Login() {
               />
             </div>
             <Button
-              className="w-full bg-[#5f5e5e] text-white h-[48px] px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-2 shadow-none"
+              disabled={isPending}
+              className="w-full bg-[#5f5e5e] text-white h-[48px] px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-2 shadow-none disabled:opacity-50"
               type="submit"
             >
-              Sign In
+              {isPending ? 'Processing...' : 'Sign In'}
             </Button>
           </form>
         </motion.div>

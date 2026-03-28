@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff, LayoutDashboard } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -8,9 +8,24 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { signup } from '@/app/auth/actions';
 
 export default function Register() {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    setError(null);
+    startTransition(async () => {
+      const result = await signup(formData);
+      if (result?.error) {
+        setError(result.error);
+      }
+    });
+  };
 
   return (
     <div className="min-h-[calc(100vh-80px)] bg-[#f9f9f8] flex flex-col">
@@ -42,18 +57,24 @@ export default function Register() {
             <div className="inline-flex items-center justify-center w-12 h-12 bg-[#f2f4f3] mb-6 rounded-xl text-[#5f5e5e]">
               <LayoutDashboard size={24} />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-[#2d3433] mb-2">
-              Create an account
-            </h1>
+            <p className="text-sm text-[#5a6060] leading-relaxed">
+              Join the world's most disciplined stock editorial platform.
+            </p>
           </div>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 text-sm font-medium text-[#752121] bg-[#fe8983]/20 rounded-xl border border-[#fe8983]/30">
+                {error}
+              </motion.div>
+            )}
             <div className="space-y-1.5">
               <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="name">
                 Full Name
               </Label>
               <Input
                 id="name"
+                name="name"
                 type="text"
                 placeholder="E.g., Alexander Hamilton"
                 className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/30 focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none"
@@ -66,6 +87,7 @@ export default function Register() {
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="name@company.com"
                 className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/30 focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none"
@@ -79,6 +101,7 @@ export default function Register() {
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
                   className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/30 focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10"
@@ -104,10 +127,11 @@ export default function Register() {
             </div>
 
             <Button
+              disabled={isPending}
               type="submit"
-              className="w-full h-[48px] bg-[#5f5e5e] text-white font-medium tracking-tight text-sm hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] transition-all duration-200 rounded-xl shadow-none"
+              className="w-full h-[48px] bg-[#5f5e5e] text-white font-medium tracking-tight text-sm hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] transition-all duration-200 rounded-xl shadow-none disabled:opacity-50"
             >
-              Create Account
+              {isPending ? 'Processing...' : 'Create Account'}
             </Button>
           </form>
 
