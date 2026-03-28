@@ -50,7 +50,7 @@ export default function Register() {
     <div className="min-h-screen bg-[#f9f9f8] flex flex-col">
       {/* Header */}
       <header className="w-full h-16 px-8 flex items-center justify-between max-w-7xl mx-auto">
-        <Link href="/" className="text-xl font-bold tracking-tighter text-[#2d3433]">
+        <Link href="/" className="text-xl font-bold tracking-tighter text-[#5f5e5e]">
           StockViz
         </Link>
         <div className="hidden md:flex gap-8 items-center">
@@ -59,7 +59,7 @@ export default function Register() {
               {item}
             </a>
           ))}
-          <Link href="/login" className="text-xs font-bold uppercase tracking-widest text-[#2d3433] ml-4">
+          <Link href="/login" className="text-xs font-bold uppercase tracking-widest text-[#5f5e5e] ml-4">
             Log In
           </Link>
         </div>
@@ -73,7 +73,7 @@ export default function Register() {
           className="w-full max-w-[480px] flex flex-col gap-12 my-6"
         >
           <div className="text-center">
-            <h2 className="text-4xl font-bold tracking-tight text-[#2d3433]">Create an account</h2>
+            <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e]">Create an account</h2>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit} noValidate>
@@ -173,7 +173,7 @@ export default function Register() {
             <Button
               disabled={isPending}
               type="submit"
-              className="w-full h-[56px] bg-[#0c0f0e] text-white font-bold tracking-tight text-base hover:opacity-90 active:scale-[0.99] transition-all duration-200 rounded-xl shadow-none disabled:opacity-50 mt-6"
+              className="w-full h-[56px] bg-[#5f5e5e] text-white font-bold tracking-tight text-base hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] transition-all duration-200 rounded-xl shadow-none disabled:opacity-50 mt-6"
             >
               {isPending ? 'Processing...' : 'Create Account'}
             </Button>
@@ -182,7 +182,7 @@ export default function Register() {
           <div className="mt-10 text-center">
             <p className="text-sm text-[#5a6060]">
               Already have an account?{' '}
-              <Link href="/login" className="text-[#2d3433] font-bold hover:underline underline-offset-4 ml-1">
+              <Link href="/login" className="text-[#5f5e5e] font-bold hover:underline underline-offset-4 ml-1">
                 Log in
               </Link>
             </p>

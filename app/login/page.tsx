@@ -45,7 +45,7 @@ export default function Login() {
       <div className="flex-grow flex flex-col items-center justify-center p-6 md:p-12">
         {/* Brand Header */}
         <header className="mb-8 text-center shrink-0">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-[#2d3433]">
+          <Link href="/" className="text-xl font-bold tracking-tighter text-[#5f5e5e]">
             StockViz
           </Link>
         </header>
@@ -58,7 +58,7 @@ export default function Login() {
           className="w-full flex flex-col gap-10"
         >
           <div className="text-center">
-            <h2 className="text-4xl font-bold tracking-tight text-[#2d3433] mb-4">Welcome back</h2>
+            <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">Welcome back</h2>
             <p className="text-[#5a6060] text-base leading-relaxed">Enter your credentials to access your terminal.</p>
           </div>
 
@@ -123,7 +123,7 @@ export default function Login() {
             </div>
             <Button
               disabled={isPending}
-              className="w-full bg-[#0c0f0e] text-white h-[56px] px-4 rounded-xl font-bold text-base transition-all duration-200 hover:opacity-90 active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
+              className="w-full bg-[#5f5e5e] text-white h-[56px] px-4 rounded-xl font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
               type="submit"
             >
               {isPending ? 'Processing...' : 'Sign In'}
@@ -134,7 +134,7 @@ export default function Login() {
         {/* Footer Links */}
         <p className="text-center text-sm text-[#5a6060]">
           Don't have an account?{' '}
-          <Link className="font-semibold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="/register">
+          <Link className="font-bold text-[#5f5e5e] hover:text-[#525251] transition-colors underline underline-offset-4" href="/register">
             Sign up for free
           </Link>
         </p>
