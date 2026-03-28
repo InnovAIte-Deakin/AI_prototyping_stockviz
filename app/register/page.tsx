@@ -47,7 +47,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-[#f9f9f8] flex flex-col">
+    <div className="min-h-screen bg-[#f9f9f8] flex flex-col">
       {/* Header */}
       <header className="w-full h-16 px-8 flex items-center justify-between max-w-7xl mx-auto">
         <Link href="/" className="text-xl font-bold tracking-tighter text-[#2d3433]">
@@ -66,13 +66,13 @@ export default function Register() {
       </header>
 
       {/* Main */}
-      <main className="flex-grow flex items-center justify-center px-6 py-12">
+      <main className="flex-grow flex items-center justify-center px-6 py-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-[440px] bg-white border border-[#adb3b2]/20 p-8 md:p-12 rounded-2xl shadow-[0_4px_24px_-12px_rgba(45,52,51,0.08)]"
+          className="w-full max-w-[440px] bg-white border border-[#adb3b2]/20 p-8 md:p-10 rounded-2xl shadow-[0_4px_24px_-12px_rgba(45,52,51,0.08)] my-4"
         >
-          <div className="mb-10 text-center">
+          <div className="mb-8 text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-[#f2f4f3] mb-6 rounded-xl text-[#5f5e5e]">
               <LayoutDashboard size={24} />
             </div>

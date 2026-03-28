@@ -39,15 +39,16 @@ export default function Login() {
     });
   };
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-[#f9f9f8] text-[#2d3433] flex flex-col items-center justify-center p-6 selection:bg-[#e4e2e1] selection:text-[#525251]">
-      {/* Brand Header */}
-      <header className="mb-12 text-center">
-        <Link href="/" className="text-xl font-bold tracking-tighter text-[#2d3433]">
-          StockViz
-        </Link>
-      </header>
+    <div className="min-h-screen bg-[#f9f9f8] text-[#2d3433] flex flex-col selection:bg-[#e4e2e1] selection:text-[#525251]">
+      <div className="flex-grow flex flex-col items-center justify-center p-6 md:p-12">
+        {/* Brand Header */}
+        <header className="mb-8 text-center shrink-0">
+          <Link href="/" className="text-xl font-bold tracking-tighter text-[#2d3433]">
+            StockViz
+          </Link>
+        </header>
 
-      <main className="w-full max-w-[440px] flex flex-col gap-10">
+        <div className="w-full max-w-[440px] flex flex-col gap-8 py-4">
         {/* Auth Card Container */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -120,21 +121,22 @@ export default function Login() {
             Sign up for free
           </Link>
         </p>
-      </main>
-
-      {/* Global Footer */}
-      <footer className="mt-auto w-full border-t border-[#adb3b2]/20 bg-[#f9f9f8]">
-        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-8 gap-4 text-[10px] tracking-widest uppercase text-[#5a6060]">
-          <div className="flex flex-col md:flex-row gap-6 items-center">
-            <span>© 2024 StockViz Editorial. All rights reserved.</span>
-          </div>
-          <nav className="flex gap-8">
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Legal Disclosures</a>
-          </nav>
-        </div>
-      </footer>
+      </div>
     </div>
-  );
+
+    {/* Global Footer */}
+    <footer className="mt-auto w-full border-t border-[#adb3b2]/20 bg-[#f9f9f8]">
+      <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-8 gap-4 text-[10px] tracking-widest uppercase text-[#5a6060]">
+        <div className="flex flex-col md:flex-row gap-6 items-center">
+          <span>© 2024 StockViz Editorial. All rights reserved.</span>
+        </div>
+        <nav className="flex gap-8">
+          <a className="hover:text-[#5f5e5e] transition-colors" href="#">Privacy Policy</a>
+          <a className="hover:text-[#5f5e5e] transition-colors" href="#">Terms of Service</a>
+          <a className="hover:text-[#5f5e5e] transition-colors" href="#">Legal Disclosures</a>
+        </nav>
+      </div>
+    </footer>
+  </div>
+);
 }
