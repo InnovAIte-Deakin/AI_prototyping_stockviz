@@ -13,11 +13,30 @@ import { signup } from '@/app/auth/actions';
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string; terms?: string }>({});
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const terms = formData.get("terms") === "on";
+
+    const newFieldErrors: { name?: string; email?: string; password?: string; terms?: string } = {};
+    if (!name) newFieldErrors.name = "Full name is required";
+    if (!email) newFieldErrors.email = "Email is required";
+    if (!password) newFieldErrors.password = "Password is required";
+    if (!terms) newFieldErrors.terms = "You must agree to the terms";
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
+      setError("Please fill out all required fields");
+      return;
+    }
+
+    setFieldErrors({});
     setError(null);
     startTransition(async () => {
       const result = await signup(formData);
@@ -57,12 +76,9 @@ export default function Register() {
             <div className="inline-flex items-center justify-center w-12 h-12 bg-[#f2f4f3] mb-6 rounded-xl text-[#5f5e5e]">
               <LayoutDashboard size={24} />
             </div>
-            <p className="text-sm text-[#5a6060] leading-relaxed">
-              Join the world's most disciplined stock editorial platform.
-            </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             {error && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 text-sm font-medium text-[#752121] bg-[#fe8983]/20 rounded-xl border border-[#fe8983]/30">
                 {error}
@@ -77,8 +93,12 @@ export default function Register() {
                 name="name"
                 type="text"
                 placeholder="E.g., Alexander Hamilton"
-                className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/30 focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none"
+                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.name ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                onChange={() => setFieldErrors(prev => ({ ...prev, name: undefined }))}
               />
+              {fieldErrors.name && (
+                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.name}</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -90,8 +110,12 @@ export default function Register() {
                 name="email"
                 type="email"
                 placeholder="name@company.com"
-                className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/30 focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none"
+                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
               />
+              {fieldErrors.email && (
+                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.email}</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -104,7 +128,8 @@ export default function Register() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
-                  className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/30 focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10"
+                  className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-sm placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10`}
+                  onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
                 />
                 <button
                   type="button"
@@ -114,16 +139,26 @@ export default function Register() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              {fieldErrors.password && (
+                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.password}</p>
+              )}
             </div>
 
-            <div className="flex items-start gap-3 py-2">
-              <Checkbox
-                id="terms"
-                className="mt-1 h-4 w-4 rounded border-[#adb3b2]/30 text-[#5f5e5e] focus-visible:ring-0 cursor-pointer"
-              />
-              <Label htmlFor="terms" className="text-xs leading-relaxed text-[#5a6060] font-normal normal-case tracking-normal">
-                I agree to the <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Terms of Service</a> and <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Privacy Policy</a>.
-              </Label>
+            <div className="space-y-2 py-2">
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="terms"
+                  name="terms"
+                  className={`mt-1 h-4 w-4 rounded border ${fieldErrors.terms ? 'border-[#752121]' : 'border-[#adb3b2]/30'} text-[#5f5e5e] focus-visible:ring-0 cursor-pointer`}
+                  onCheckedChange={() => setFieldErrors(prev => ({ ...prev, terms: undefined }))}
+                />
+                <Label htmlFor="terms" className="text-xs leading-relaxed text-[#5a6060] font-normal normal-case tracking-normal">
+                  I agree to the <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Terms of Service</a> and <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Privacy Policy</a>.
+                </Label>
+              </div>
+              {fieldErrors.terms && (
+                <p className="text-[10px] text-[#752121] font-medium">{fieldErrors.terms}</p>
+              )}
             </div>
 
             <Button

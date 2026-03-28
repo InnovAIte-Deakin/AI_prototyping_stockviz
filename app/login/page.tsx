@@ -10,11 +10,26 @@ import { login } from '@/app/auth/actions';
 
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const newFieldErrors: { email?: string; password?: string } = {};
+    if (!email) newFieldErrors.email = "Email is required";
+    if (!password) newFieldErrors.password = "Password is required";
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
+      setError("Please fill out all required fields");
+      return;
+    }
+
+    setFieldErrors({});
     setError(null);
     startTransition(async () => {
       const result = await login(formData);
@@ -45,7 +60,7 @@ export default function Login() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
             {error && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 text-sm font-medium text-[#752121] bg-[#fe8983]/20 rounded-xl border border-[#fe8983]/30">
                 {error}
@@ -56,13 +71,16 @@ export default function Login() {
                 Email Address
               </Label>
               <Input
-                className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/20 focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none"
+                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                 id="email"
                 name="email"
                 placeholder="name@example.com"
-                required
                 type="email"
+                onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
               />
+              {fieldErrors.email && (
+                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.email}</p>
+              )}
             </div>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center mb-2">
@@ -74,13 +92,16 @@ export default function Login() {
                 </a>
               </div>
               <Input
-                className="w-full px-4 h-[44px] bg-white border border-[#adb3b2]/20 focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none"
+                className={`w-full px-4 h-[44px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-sm transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                 id="password"
                 name="password"
                 placeholder="••••••••"
-                required
                 type="password"
+                onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
               />
+              {fieldErrors.password && (
+                <p className="text-[10px] text-[#752121] mt-1 font-medium">{fieldErrors.password}</p>
+              )}
             </div>
             <Button
               disabled={isPending}
