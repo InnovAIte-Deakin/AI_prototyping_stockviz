@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
-    "lint:staged": "lint-staged",
-    "typecheck": "tsc --noEmit",
+    "lint:staged": "lint-staged --config lint-staged.config.mjs",
+    "typecheck": "tsc --noEmit --project tsconfig.check.json",
     "format:check": "prettier --check .",
     "commitlint": "commitlint --edit"
   },
@@ -50,13 +50,5 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix --max-warnings=0"
-    ],
-    "*.{json,md,yml,yaml,css}": [
-      "prettier --write"
-    ]
   }
 }
