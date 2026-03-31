@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -7,9 +8,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-inter);
+  --font-body: var(--font-inter);
+  --font-label: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,7 +50,55 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Finance-specific semantic colors */
+  --color-inverse-surface: #0c0f0e;
+  --color-on-background: #2d3433;
+  --color-on-tertiary: #faf9f8;
+  --color-on-error-container: #752121;
+  --color-on-primary-container: #525251;
+  --color-error-container: #fe8983;
+  --color-surface-variant: #dde4e3;
+  --color-tertiary-container: #f4f3f3;
+  --color-on-primary: #faf7f6;
+  --color-surface-container-highest: #dde4e3;
+  --color-primary-fixed: #e4e2e1;
+  --color-tertiary-fixed-dim: #e6e5e5;
+  --color-on-secondary-fixed-variant: #5b5b5b;
+  --color-error-dim: #4e0309;
+  --color-on-primary-fixed-variant: #5c5b5b;
+  --color-on-secondary-fixed: #3f3f3f;
+  --color-secondary-fixed: #e4e2e2;
+  --color-on-error: #fff7f6;
+  --color-outline: #757c7b;
+  --color-surface-tint: #5f5e5e;
+  --color-surface-container: #ebeeed;
+  --color-on-tertiary-fixed: #494a4a;
+  --color-surface-container-lowest: #ffffff;
+  --color-inverse-on-surface: #9c9d9c;
+  --color-primary-fixed-dim: #d6d4d3;
+  --color-surface: #f9f9f8;
+  --color-on-secondary: #faf8f8;
+  --color-on-surface-variant: #5a6060;
+  --color-inverse-primary: #ffffff;
+  --color-error: #9f403d;
+  --color-on-secondary-container: #515252;
+  --color-surface-container-high: #e4e9e8;
+  --color-primary-dim: #535252;
+  --color-on-tertiary-container: #5b5c5c;
+  --color-tertiary-fixed: #f4f3f3;
+  --color-surface-bright: #f9f9f8;
+  --color-secondary-fixed-dim: #d5d4d4;
+  --color-on-primary-fixed: #3f3f3f;
+  --color-surface-dim: #d4dcda;
+  --color-secondary-dim: #535353;
+  --color-tertiary: #5e5f5f;
+  --color-primary-container: #e4e2e1;
+  --color-outline-variant: #adb3b2;
+  --color-on-surface: #2d3433;
+  --color-tertiary-dim: #525353;
+  --color-surface-container-low: #f2f4f3;
+  --color-on-tertiary-fixed-variant: #656666;
+  --color-secondary-container: #e4e2e2;
+
   --color-finance-primary: var(--finance-primary);
   --color-finance-accent: var(--finance-accent);
   --color-finance-success: var(--finance-success);
@@ -88,8 +139,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-
-  /* Finance colors — light */
   --finance-primary: oklch(0.546 0.245 262.881);
   --finance-accent: oklch(0.541 0.281 293.009);
   --finance-success: oklch(0.527 0.154 150.069);
@@ -129,8 +178,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-
-  /* Finance colors — dark */
   --finance-primary: oklch(0.623 0.214 259.815);
   --finance-accent: oklch(0.627 0.265 303.9);
   --finance-success: oklch(0.627 0.194 149.214);
@@ -142,16 +189,35 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
 }
 
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+  vertical-align: middle;
+}
+
+.input-ghost-border {
+  border: 1px solid rgba(173, 179, 178, 0.2);
+}
+
+.input-ghost-border:focus {
+  border-color: #5f5e5e;
+  outline: none;
+}
+
+.editorial-shadow {
+  box-shadow: 0 4px 24px -12px rgba(45, 52, 51, 0.08);
+}
+
 @layer components {
-  /* Custom slider styles */
   .slider::-webkit-slider-thumb {
     appearance: none;
     height: 20px;
@@ -185,7 +251,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   }
 
-  /* Animation classes */
   .animate-fade-in {
     animation: fade-in 0.6s ease-out;
   }
@@ -210,6 +275,7 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -220,6 +286,7 @@
       opacity: 0;
       transform: translateY(20px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
