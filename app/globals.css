@@ -46,6 +46,13 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Finance-specific semantic colors */
+  --color-finance-primary: var(--finance-primary);
+  --color-finance-accent: var(--finance-accent);
+  --color-finance-success: var(--finance-success);
+  --color-finance-warning: var(--finance-warning);
+  --color-finance-danger: var(--finance-danger);
 }
 
 :root {
@@ -81,6 +88,13 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Finance colors — light */
+  --finance-primary: oklch(0.546 0.245 262.881);
+  --finance-accent: oklch(0.541 0.281 293.009);
+  --finance-success: oklch(0.527 0.154 150.069);
+  --finance-warning: oklch(0.769 0.188 70.08);
+  --finance-danger: oklch(0.577 0.245 27.325);
 }
 
 .dark {
@@ -115,6 +129,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Finance colors — dark */
+  --finance-primary: oklch(0.623 0.214 259.815);
+  --finance-accent: oklch(0.627 0.265 303.9);
+  --finance-success: oklch(0.627 0.194 149.214);
+  --finance-warning: oklch(0.82 0.17 80.331);
+  --finance-danger: oklch(0.704 0.191 22.216);
 }
 
 @layer base {
@@ -126,5 +147,82 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer components {
+  /* Custom slider styles */
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .slider::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Animation classes */
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.8s ease-out;
+  }
+
+  .animate-slide-in-delay-1 {
+    animation: slide-in 0.8s ease-out 0.1s both;
+  }
+
+  .animate-slide-in-delay-2 {
+    animation: slide-in 0.8s ease-out 0.2s both;
+  }
+
+  .animate-slide-in-delay-3 {
+    animation: slide-in 0.8s ease-out 0.3s both;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
