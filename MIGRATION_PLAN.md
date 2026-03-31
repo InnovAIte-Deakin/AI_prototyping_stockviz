@@ -123,7 +123,7 @@ Exit criteria:
 | E6 | Core Analysis Experience | `P1` | `Fullstack` | `not_started` | Sprint 3 | Main analysis page is usable |
 | E7 | Indicators And Weighting | `P1` | `Frontend` | `not_started` | Sprint 4 | Configurable analysis controls work |
 | E8 | Market Pages | `P2` | `Frontend` | `not_started` | Sprint 4 | Trending and market overview exist |
-| E9 | Auth And User Features | `P2` | `Fullstack` | `not_started` | Sprint 5 | Auth and persistence are live |
+| E9 | Auth And User Features | `P2` | `Fullstack` | `in_progress` | Sprint 5 | Auth and persistence are live |
 | E10 | Learn/Admin/Secondary Screens | `P3` | `Unassigned` | `not_started` | Sprint 5 | Secondary screens migrated or dropped |
 | E11 | Testing And Cutover | `P0` | `Fullstack` | `not_started` | Sprint 6 | Parity verified and legacy removable |
 
@@ -202,7 +202,7 @@ Exit criteria:
 
 | Story ID | Story | Priority | Owner | Status | Sprint | Checkpoint |
 | --- | --- | --- | --- | --- | --- | --- |
-| E9-S1 | Replace auth context with Supabase auth | `P2` | `Fullstack` | `not_started` | Sprint 5 | Session and sign-in flow work |
+| E9-S1 | Replace auth context with Supabase auth | `P2` | `Fullstack` | `in_progress` | Sprint 5 | Session guard and auth route scaffolding exist; sign-in flow still pending |
 | E9-S2 | Migrate portfolio persistence | `P2` | `Fullstack` | `not_started` | Sprint 5 | User portfolios can be saved and loaded |
 | E9-S3 | Migrate watchlists, preferences, and presets | `P2` | `Fullstack` | `not_started` | Sprint 5 | User customization is persistent |
 
@@ -407,7 +407,9 @@ These files need redesign rather than direct migration:
 - Uses `@supabase/ssr` with `createBrowserClient` and `createServerClient` factories
 - Uses `getClaims()` for auth token validation (current Supabase best practice)
 - Added graceful pass-through when Supabase env vars are not configured
-- No auth redirect logic yet — deferred to Sprint 5 (E9)
+- Auth route guarding now exists via `proxy.ts` and `utils/supabase/proxy-auth.ts`
+- Placeholder auth routes now exist for `/login`, `/register`, and `/dashboard`
+- Sign-in UI and server-side auth actions are still pending — Sprint 5 remains incomplete
 - Environment template created at `supabase/.env.local.example` with local Docker defaults (port 64321)
 
 #### Supabase Schema (E2-S2/S3/S4)
@@ -429,6 +431,7 @@ These files need redesign rather than direct migration:
 - Replaced starter `app/page.tsx` with StockViz branded homepage (hero, features, CTA)
 - Replaced starter metadata in `app/layout.tsx` with StockViz SEO metadata and title template
 - Established route structure: `/analysis/[symbol]`, `/market`, `/portfolio`, `/indicators`, `/weights`, `/learn`, `/admin`
+- Auth placeholder routes also exist: `/login`, `/register`, `/dashboard`
 - All routes use Next.js 16 conventions (`params` as `Promise`, `generateMetadata`)
 - Created `.env.example` at root documenting Supabase, Gemini, and market data keys
 - Added `!.env.example` exception to `.gitignore`
@@ -444,6 +447,14 @@ These files need redesign rather than direct migration:
 - Theme uses `storageKey: "stockviz-ui-theme"` matching legacy convention
 - Auth-dependent navbar sections replaced with static Sign In / Sign Up buttons (Sprint 5)
 - Onboarding popup decision: deferred (P3, depends on user state)
+
+#### Auth Groundwork Merged From Main (E9-S1 in progress)
+
+- Added auth-aware `proxy.ts` flow using `utils/supabase/proxy-auth.ts`
+- Anonymous users are redirected to `/login`
+- Authenticated users are redirected away from `/login` and `/register` to `/dashboard`
+- Placeholder pages now exist for `/login`, `/register`, and `/dashboard`
+- Current limitation: these auth pages still return `null`, so the sign-in experience is scaffolded but not complete
 
 #### Verification
 
