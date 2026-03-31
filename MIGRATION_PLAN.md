@@ -202,7 +202,7 @@ Exit criteria:
 
 | Story ID | Story | Priority | Owner | Status | Sprint | Checkpoint |
 | --- | --- | --- | --- | --- | --- | --- |
-| E9-S1 | Replace auth context with Supabase auth | `P2` | `Fullstack` | `in_progress` | Sprint 5 | Session guard and auth route scaffolding exist; sign-in flow still pending |
+| E9-S1 | Replace auth context with Supabase auth | `P2` | `Fullstack` | `done` | Sprint 5 | Session and sign-in flow work |
 | E9-S2 | Migrate portfolio persistence | `P2` | `Fullstack` | `not_started` | Sprint 5 | User portfolios can be saved and loaded |
 | E9-S3 | Migrate watchlists, preferences, and presets | `P2` | `Fullstack` | `not_started` | Sprint 5 | User customization is persistent |
 
@@ -408,8 +408,9 @@ These files need redesign rather than direct migration:
 - Uses `getClaims()` for auth token validation (current Supabase best practice)
 - Added graceful pass-through when Supabase env vars are not configured
 - Auth route guarding now exists via `proxy.ts` and `utils/supabase/proxy-auth.ts`
-- Placeholder auth routes now exist for `/login`, `/register`, and `/dashboard`
-- Sign-in UI and server-side auth actions are still pending — Sprint 5 remains incomplete
+- Auth routes now exist for `/login`, `/register`, and `/dashboard`
+- Server actions now handle sign-in, sign-up, and sign-out via Supabase auth
+- Sprint 5 remains incomplete because persistence features are still pending
 - Environment template created at `supabase/.env.local.example` with local Docker defaults (port 64321)
 
 #### Supabase Schema (E2-S2/S3/S4)
@@ -448,13 +449,14 @@ These files need redesign rather than direct migration:
 - Auth-dependent navbar sections replaced with static Sign In / Sign Up buttons (Sprint 5)
 - Onboarding popup decision: deferred (P3, depends on user state)
 
-#### Auth Groundwork Merged From Main (E9-S1 in progress)
+#### Auth Flow Merged From Auth Branch (E9-S1 done)
 
 - Added auth-aware `proxy.ts` flow using `utils/supabase/proxy-auth.ts`
 - Anonymous users are redirected to `/login`
 - Authenticated users are redirected away from `/login` and `/register` to `/dashboard`
-- Placeholder pages now exist for `/login`, `/register`, and `/dashboard`
-- Current limitation: these auth pages still return `null`, so the sign-in experience is scaffolded but not complete
+- Login and register pages now submit to Supabase server actions
+- Dashboard page now supports sign out via server action
+- Current limitation: navbar auth buttons are still static placeholders and persistence stories remain pending
 
 #### Verification
 
@@ -463,6 +465,7 @@ These files need redesign rather than direct migration:
 - Dev server starts cleanly and all pages render correctly
 - Navbar, footer, and theme toggle working across all routes
 - TypeScript compilation verified — zero errors in active codebase
+- Post-merge `npm run typecheck` passes with the auth flow integrated
 
 ### Remaining Backend Gaps
 
