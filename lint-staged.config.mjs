@@ -3,7 +3,7 @@ const isLegacyPath = (filePath) =>
 
 const toQuotedPaths = (filePaths) => filePaths.map((filePath) => `"${filePath}"`).join(" ");
 
-export default {
+const config = {
   "*.{ts,tsx,js,jsx}": (filePaths) => {
     const filteredPaths = filePaths.filter((filePath) => !isLegacyPath(filePath));
 
@@ -23,3 +23,5 @@ export default {
     return `prettier --write ${toQuotedPaths(filteredPaths)}`;
   },
 };
+
+export default config;
