@@ -27,17 +27,21 @@ A modern React-based frontend for stock analysis and visualization.
 ## Quick Start
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Set up environment**:
+
    ```bash
    cp .env.example .env
    ```
+
    Edit `.env` and set `VITE_API_BASE_URL` to your backend URL.
 
 3. **Start development server**:
+
    ```bash
    npm run dev
    ```
@@ -62,14 +66,15 @@ A modern React-based frontend for stock analysis and visualization.
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_BASE_URL` | Backend API URL | `http://localhost:3001` |
-| `VITE_DEV_MODE` | Enable dev features | `true` |
+| Variable            | Description         | Default                 |
+| ------------------- | ------------------- | ----------------------- |
+| `VITE_API_BASE_URL` | Backend API URL     | `http://localhost:3001` |
+| `VITE_DEV_MODE`     | Enable dev features | `true`                  |
 
 ## Key Components
 
 ### Core Components
+
 - `AppShell` - Main layout with navigation
 - `SearchBox` - Stock symbol search with autocomplete
 - `TrendingTabs` - Display trending stocks by category
@@ -77,6 +82,7 @@ A modern React-based frontend for stock analysis and visualization.
 - `ErrorBoundary` - Error handling wrapper
 
 ### Analysis Components
+
 - `WeightsPanel` - Adjust fundamental/technical/sentiment weights
 - `IndicatorsPanel` - Configure technical indicators
 - `ScoreBadge` - Display color-coded scores
@@ -84,6 +90,7 @@ A modern React-based frontend for stock analysis and visualization.
 - `AISummary` - AI-generated insights
 
 ### Utility Components
+
 - `LoadingSpinner` - Consistent loading states
 - `EmptyState` - Empty state handling
 
@@ -142,11 +149,13 @@ The frontend communicates with the backend through a REST API:
 ## Building for Production
 
 1. **Build the application**:
+
    ```bash
    npm run build
    ```
 
 2. **Preview the build**:
+
    ```bash
    npm run preview
    ```
