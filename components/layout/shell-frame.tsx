@@ -2,8 +2,6 @@
 
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
-import Footer from '@/components/layout/footer'
-import Navbar from '@/components/layout/navbar'
 
 const SHELLLESS_ROUTES = new Set(['/login', '/register'])
 
@@ -17,9 +15,10 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <Navbar />
+      <header className="border-b border-border/50 px-4 py-3">
+        <p className="text-sm text-muted-foreground">Top bar stub</p>
+      </header>
       <main className="flex-1">{children}</main>
-      <Footer />
     </>
   )
 }

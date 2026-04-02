@@ -3,6 +3,7 @@ import { createProxySupabaseClient } from "@/utils/supabase/server";
 
 const DASHBOARD_PATH = "/dashboard";
 const LOGIN_PATH = "/login";
+const ROOT_PATH = "/";
 const AUTH_PAGES = new Set([LOGIN_PATH, "/register"]);
 
 export const handleAuthProxy = async (request: NextRequest) => {
@@ -11,6 +12,11 @@ export const handleAuthProxy = async (request: NextRequest) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (pathname === ROOT_PATH) {
+    const targetPath = user ? DASHBOARD_PATH : LOGIN_PATH;
+    return NextResponse.redirect(new URL(targetPath, request.url));
+  }
 
   if (user && AUTH_PAGES.has(pathname)) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, request.url));
