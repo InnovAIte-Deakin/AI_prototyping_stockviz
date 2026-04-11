@@ -80,7 +80,7 @@ export default function Login() {
               >
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                 <Input
-                  className={`w-full pl-12 pr-4 h-[52px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                   id="email"
                   name="email"
                   placeholder="name@example.com"
@@ -94,9 +94,9 @@ export default function Login() {
                 <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="password">
                   Password
                 </Label>
-                <a className="text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="#">
+                <Link className="text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="/forgot-password">
                   Forgot password?
-                </a>
+                </Link>
               </div>
               <motion.div
                 animate={fieldErrors.password ? { x: [-4, 4, -4, 4, 0] } : {}}
@@ -105,7 +105,7 @@ export default function Login() {
               >
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                 <Input
-                  className={`w-full pl-12 pr-12 h-[52px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  className={`w-full pl-12 pr-12 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                   id="password"
                   name="password"
                   placeholder="••••••••"
