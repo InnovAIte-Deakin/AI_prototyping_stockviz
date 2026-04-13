@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Ignore archived legacy app and backend.
     "legacy/**",
+    // Finnhub doc snapshot + saved asset tree (not application source).
+    "docs/Finnhub_Documentation.html",
+    "docs/Finnhub_Documentation_files/**",
   ]),
 ]);
 
