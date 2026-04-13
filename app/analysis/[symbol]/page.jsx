@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, BarChart3, Gauge, MessageSquareText, Newspaper }
 import runtime from "@/lib/analysis/runtime";
 import { SymbolSearch } from "@/components/search/symbol-search";
 import { PriceHistoryChart } from "@/components/analysis/price-history-chart";
+import { SentimentHeadlines } from "@/components/analysis/sentiment-headlines";
 import { Button } from "@/components/ui/button";
 
 const TIMEFRAMES = ["1D", "1W", "1M", "3M", "6M", "1Y", "2Y"];
@@ -175,38 +176,42 @@ export default async function AnalysisPage({ params, searchParams }) {
             <PriceHistoryChart data={chartData} />
           </div>
 
-          <div className="rounded-[24px] border border-[#e6e0db] bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-[#f1ece8] p-3 text-[#5f5e5e]">
-                <MessageSquareText className="h-5 w-5" />
+          <div className="space-y-6">
+            <div className="rounded-[24px] border border-[#e6e0db] bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
+              <div className="flex items-center gap-3">
+                <div className="rounded-2xl bg-[#f1ece8] p-3 text-[#5f5e5e]">
+                  <MessageSquareText className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-[#4f4e4e]">Summary</h2>
+                  <p className="text-sm text-[#6a706f]">Blended output from extracted root analysis services.</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold text-[#4f4e4e]">Summary</h2>
-                <p className="text-sm text-[#6a706f]">Blended output from extracted root analysis services.</p>
-              </div>
-            </div>
-            <p className="mt-5 text-sm leading-7 text-[#4b514f]">{summary}</p>
+              <p className="mt-5 text-sm leading-7 text-[#4b514f]">{summary}</p>
 
-            <dl className="mt-6 grid grid-cols-2 gap-4 rounded-[20px] bg-[#fbf8f6] p-4 text-sm">
-              <div>
-                <dt className="text-[#7b7f7f]">Timeframe</dt>
-                <dd className="mt-1 font-medium text-[#4f4e4e]">{timeframe}</dd>
-              </div>
-              <div>
-                <dt className="text-[#7b7f7f]">Weights</dt>
-                <dd className="mt-1 font-medium text-[#4f4e4e]">
-                  F {weights.fundamental}% / T {weights.technical}% / S {weights.sentiment}%
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[#7b7f7f]">Recommendation</dt>
-                <dd className="mt-1 font-medium text-[#4f4e4e]">{overall.recommendation || "HOLD"}</dd>
-              </div>
-              <div>
-                <dt className="text-[#7b7f7f]">Data source</dt>
-                <dd className="mt-1 font-medium text-[#4f4e4e]">{stockData?.source || "Unknown"}</dd>
-              </div>
-            </dl>
+              <dl className="mt-6 grid grid-cols-2 gap-4 rounded-[20px] bg-[#fbf8f6] p-4 text-sm">
+                <div>
+                  <dt className="text-[#7b7f7f]">Timeframe</dt>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">{timeframe}</dd>
+                </div>
+                <div>
+                  <dt className="text-[#7b7f7f]">Weights</dt>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                    F {weights.fundamental}% / T {weights.technical}% / S {weights.sentiment}%
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[#7b7f7f]">Recommendation</dt>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">{overall.recommendation || "HOLD"}</dd>
+                </div>
+                <div>
+                  <dt className="text-[#7b7f7f]">Data source</dt>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">{stockData?.source || "Unknown"}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <SentimentHeadlines sentiment={sentiment} symbol={normalizedSymbol} />
           </div>
         </div>
       </div>

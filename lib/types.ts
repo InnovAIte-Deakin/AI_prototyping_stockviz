@@ -17,6 +17,23 @@ export interface ScoreBlock {
   [key: string]: unknown
 }
 
+export interface SentimentHeadline {
+  title?: string
+  publisher?: string
+  score?: number
+  sentiment?: number
+  url?: string
+  timePublished?: string
+  [key: string]: unknown
+}
+
+export interface SentimentAnalysis extends ScoreBlock {
+  source?: string
+  summary?: string
+  headlines?: SentimentHeadline[]
+  newsItems?: SentimentHeadline[]
+}
+
 // ---------------------------------------------------------------------------
 // Technical Analysis
 // ---------------------------------------------------------------------------
@@ -46,7 +63,7 @@ export interface AnalysisResult {
   timestamp?: string
   fundamental?: ScoreBlock
   technical?: TechnicalAnalysis
-  sentiment?: ScoreBlock
+  sentiment?: SentimentAnalysis
   overall?: ScoreBlock
   aiInsights?: { summary?: string }
   meta?: Record<string, unknown>

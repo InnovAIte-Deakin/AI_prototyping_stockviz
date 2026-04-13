@@ -4,6 +4,7 @@
  */
 
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import { requireSupabasePublicEnv } from '@/lib/supabase/env'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 export interface CacheEntry {
@@ -33,15 +34,7 @@ export class DatabaseCacheService {
 
   private async getSupabaseClient() {
     if (!this.supabaseClient) {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-
-      if (!url) {
-        throw new Error('[cache] Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
-      }
-      if (!key) {
-        throw new Error('[cache] Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY environment variable')
-      }
+      requireSupabasePublicEnv()
 
       this.supabaseClient = await createServerClient()
     }
