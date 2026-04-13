@@ -97,7 +97,7 @@ export default function Register() {
                   name="name"
                   type="text"
                   placeholder="E.g., Alexander Hamilton"
-                  className={`w-full pl-12 pr-4 h-[52px] bg-white border ${fieldErrors.name ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                  className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.name ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
                   onChange={() => setFieldErrors(prev => ({ ...prev, name: undefined }))}
                 />
               </motion.div>
@@ -118,7 +118,7 @@ export default function Register() {
                   name="email"
                   type="email"
                   placeholder="name@company.com"
-                  className={`w-full pl-12 pr-4 h-[52px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                  className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
                   onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
                 />
               </motion.div>
@@ -139,7 +139,7 @@ export default function Register() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Min. 8 characters"
-                    className={`w-full pl-12 pr-12 h-[52px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10`}
+                    className={`w-full pl-12 pr-12 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10`}
                     onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
                   />
                   <button

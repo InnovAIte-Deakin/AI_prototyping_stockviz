@@ -2,8 +2,8 @@
 -- StockViz Initial Schema
 -- Migration: 20260329_initial_schema
 -- =============================================================================
--- Creates core tables for user profiles, portfolio, watchlist,
--- analysis caching, and API call tracking.
+-- Creates core tables for user profiles, stock catalog, wishlist,
+-- portfolio, analysis caching, and API call tracking.
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
@@ -59,25 +59,47 @@ create trigger profiles_updated_at
   for each row execute function public.update_updated_at();
 
 -- ---------------------------------------------------------------------------
--- 2. watchlist_items — user's saved stock symbols
+-- 2. stocks — canonical instruments (lazy-filled when users wishlist)
 -- ---------------------------------------------------------------------------
-create table public.watchlist_items (
+create table public.stocks (
+  id           uuid primary key default gen_random_uuid(),
+  symbol       text not null,
+  exchange_mic text,
+  name         text,
+  created_at   timestamptz default now() not null,
+  updated_at   timestamptz default now() not null,
+
+  constraint stocks_symbol_nonempty check (length(trim(symbol)) > 0)
+);
+
+comment on table public.stocks is 'Canonical stock/instrument rows; exchange_mic disambiguates same ticker on different venues';
+
+create unique index stocks_instrument_unique
+  on public.stocks (upper(trim(symbol)), coalesce(exchange_mic, ''));
+
+create trigger stocks_updated_at
+  before update on public.stocks
+  for each row execute function public.update_updated_at();
+
+-- ---------------------------------------------------------------------------
+-- 3. wishlist — user's saved stocks (FK to stocks)
+-- ---------------------------------------------------------------------------
+create table public.wishlist (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references public.profiles(id) on delete cascade,
-  symbol     text not null,
-  name       text,
+  stock_id   uuid not null references public.stocks(id) on delete cascade,
   notes      text,
   created_at timestamptz default now() not null,
 
-  unique (user_id, symbol)
+  unique (user_id, stock_id)
 );
 
-comment on table public.watchlist_items is 'User watchlist — one entry per symbol per user';
+comment on table public.wishlist is 'User wishlist — one row per user per stock';
 
-create index idx_watchlist_user on public.watchlist_items(user_id);
+create index idx_wishlist_user on public.wishlist(user_id);
 
 -- ---------------------------------------------------------------------------
--- 3. portfolio_holdings — user's stock positions
+-- 4. portfolio_holdings — user's stock positions
 -- ---------------------------------------------------------------------------
 create table public.portfolio_holdings (
   id          uuid primary key default gen_random_uuid(),
@@ -102,7 +124,7 @@ create trigger holdings_updated_at
   for each row execute function public.update_updated_at();
 
 -- ---------------------------------------------------------------------------
--- 4. analysis_cache — server-side cache (replaces in-memory CacheService)
+-- 5. analysis_cache — server-side cache (replaces in-memory CacheService)
 -- ---------------------------------------------------------------------------
 create table public.analysis_cache (
   cache_key   text primary key,
@@ -116,7 +138,7 @@ comment on table public.analysis_cache is 'Server-side analysis result cache rep
 create index idx_cache_expires on public.analysis_cache(expires_at);
 
 -- ---------------------------------------------------------------------------
--- 5. api_call_log — API usage tracking (replaces in-memory APITrackingService)
+-- 6. api_call_log — API usage tracking (replaces in-memory APITrackingService)
 -- ---------------------------------------------------------------------------
 create table public.api_call_log (
   id             bigint generated always as identity primary key,
@@ -152,24 +174,40 @@ create policy "Users can update own profile"
 
 -- Note: INSERT is handled by the trigger, not directly by users
 
--- watchlist_items: users can CRUD their own
-alter table public.watchlist_items enable row level security;
+-- stocks: catalog readable/writable by authenticated users (lazy upsert from app)
+alter table public.stocks enable row level security;
 
-create policy "Users can view own watchlist"
-  on public.watchlist_items for select
+create policy "Authenticated users can read stocks"
+  on public.stocks for select
+  using (auth.uid() is not null);
+
+create policy "Authenticated users can insert stocks"
+  on public.stocks for insert
+  with check (auth.uid() is not null);
+
+create policy "Authenticated users can update stocks"
+  on public.stocks for update
+  using (auth.uid() is not null)
+  with check (auth.uid() is not null);
+
+-- wishlist: users can CRUD their own rows
+alter table public.wishlist enable row level security;
+
+create policy "Users can view own wishlist"
+  on public.wishlist for select
   using (auth.uid() = user_id);
 
-create policy "Users can add to own watchlist"
-  on public.watchlist_items for insert
+create policy "Users can add to own wishlist"
+  on public.wishlist for insert
   with check (auth.uid() = user_id);
 
-create policy "Users can update own watchlist items"
-  on public.watchlist_items for update
+create policy "Users can update own wishlist items"
+  on public.wishlist for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
-create policy "Users can delete from own watchlist"
-  on public.watchlist_items for delete
+create policy "Users can delete from own wishlist"
+  on public.wishlist for delete
   using (auth.uid() = user_id);
 
 -- portfolio_holdings: users can CRUD their own

@@ -10,6 +10,7 @@
     "prepare": "husky",
     "lint:staged": "lint-staged --config lint-staged.config.mjs",
     "typecheck": "tsc --noEmit --project tsconfig.check.json",
+    "supabase:gen-types": "supabase gen types typescript --local --schema public > lib/database.types.ts",
     "format:check": "prettier --check .",
     "commitlint": "commitlint --edit",
     "cache:cleanup": "node --import tsx scripts/cleanup-cache.ts"

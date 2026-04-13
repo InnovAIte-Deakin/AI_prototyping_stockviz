@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="author" content="Finnhub.io">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="Finnhub - Free stock API for realtime market data, global company fundamentals, economic data, and alternative data.">
+<meta name="keywords" content="stock api,realtime,stock,equity,forex,crypto,fundamental data,economic data,alternative data">
+<meta property="og:title" content="Finnhub - Free realtime APIs for stock, forex and cryptocurrency.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://finnhub.io/">
+<meta property="og:image" content="https://res.cloudinary.com/whirlpooldata/image/upload/v1587681286/finnhub/logo/logo-transparent-thumbnail.png">
+<meta property="og:description" content="Finnhub - Free APIs for realtime stock, forex, and cryptocurrency. Company fundamentals, Economic data, and Alternative data.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Finnhub - Free realtime APIs for stock, forex and cryptocurrency.">
+<meta name="twitter:image" content="https://res.cloudinary.com/whirlpooldata/image/upload/v1587681286/finnhub/logo/logo-transparent-thumbnail.png">
+<meta name="twitter:description" content="Finnhub - Free APIs for realtime stock, forex, and cryptocurrency. Company fundamentals, Economic data, and Alternative data.">
+<meta charset="UTF-8">
+
+<link rel="shortcut icon" href="https://res.cloudinary.com/whirlpooldata/image/upload/v1587681286/finnhub/logo/logo-gradient2.png">
+<link rel="stylesheet" href="bootstrap.min.css">
+
+
+<script async="" src="chart_data_003/google-analytics_analytics.js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-ED30WBPL5P');
+</script>
+
+<script src="jquery.min.js"></script>
+<script src="jquery.easing.min.js"></script>
+
+<script src="popper.min.js"></script>
+<script src="bootstrap.min.js"></script>
+
+<script src="react.production.min.js"></script>
+<script src="react-dom.production.min.js"></script>
+
+<link href="iziToast.min.css" rel="stylesheet">
+<script src="iziToast.min.js"></script>
+
+<script src="jquery.waypoints.min.js"></script>
+<script src="redux.min.js"></script>
+<script src="react-redux.min.js"></script>
+
+<link rel="stylesheet" href="chart_data_003/all.css">
+
+<script type="text/javascript">
+
+  if (typeof (Storage) !== "undefined") {
+    window.sessionCachedEnabled = true
+  } else {
+    
+    window.sessionCachedEnabled = false
+  }
+
+  window.pushNoti = function toastrNoti(message, duration, type) {
+    if (type === "error") {
+      iziToast.error({
+        title: 'Error',
+        message: message,
+        theme: 'dark',
+        backgroundColor: "#3e3e3e",
+        messageColor: "white",
+        titleColor: "#f44242",
+        position: 'bottomLeft',
+        timeout: duration,
+        class: 'toaster',
+      });
+
+    } else {
+      iziToast.success({
+        title: 'OK',
+        message: message,
+        theme: 'dark',
+        backgroundColor: "#3e3e3e",
+        messageColor: "white",
+        titleColor: "#1db954",
+        position: 'bottomLeft',
+        timeout: duration,
+        class: 'toaster',
+      });
+    }
+  }
+
+  window.toTitle = function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  }
+
+  window.saveCached = function saveCache(key, value) {
+    if (!window.sessionCachedEnabled) {
+      return
+    }
+    
+    window.localStorage[key] = value
+    window.localStorage[key + "-savetime"] = new Date().getTime()
+  }
+
+  window.getCached = function getCache(key, maxWaitTime) {
+    if (!window.sessionCachedEnabled) {
+      return null
+    }
+
+    if (window.localStorage[key + "-savetime"]) {
+      if (Number(window.localStorage[key + "-savetime"]) - new Date().getTime() < maxWaitTime * 1000) {
+        return window.localStorage[key]
+      }
+    }
+    return null
+  }
+
+  window.timeConverter = function tConverter(UNIX_timestamp) {
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec;
+    return time;
+  }
+
+  window.timeConverter2 = function tConverter(UNIX_timestamp) {
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var time = month + ' ' + date
+    return time;
+  }
+
+  window.formatDateYYYYMMDD = function (date) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  window.getCookie = function getcookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
+  window.setCookie = function setcookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+<script>
+
+</script>
+
+
+    <meta charset="UTF-8">
+    <title>ETF Holdings </title>
+    <script type="text/javascript">
+      window.addCommaNumber = function (n, unitMultiplier) {
+        if (n === undefined) {
+          return '--'
+        }
+
+        if (!unitMultiplier) {
+          unitMultiplier = 1
+        }
+
+        if (n >= 0) {
+          return (n * unitMultiplier).toLocaleString()
+        } else {
+          n = Math.abs(n * unitMultiplier).toLocaleString()
+          return '(' + n + ')'
+        }
+      }
+
+      window.myData = {"expenseRatio":0.03,"inceptionDate":"2000-05-15","issuer":"iShares","name":"iShares Core S\u0026P 500 ETF"}
+        window.theme = "dark"
+          window.etfSymbol = "IVV"
+    </script>
+    <style>
+        :root {
+            --color-primary: #1db954;
+            --color-background: #212529;
+            --color-text: white;
+            --color-backgroundContrast: white;
+        }
+
+        body {
+            font-family: Trebuchet MS, roboto, ubuntu, sans-serif;
+            font-size: 13px;
+            color: var(--color-text);
+            background: var(--color-background);
+        }
+
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        *:focus, input, select {
+            outline: none;
+        }
+
+        .holdings-table {
+            font-size: 12px;
+        }
+
+        .holdings-table thead {
+            font-size: 1.03rem;
+        }
+
+        .etf-meta-div {
+            padding: 15px;
+        }
+
+        .etf-meta-div h1 {
+            font-size: 30px;
+        }
+
+        .etf-meta-div select {
+            border-radius: 500px;
+            padding: 5px;
+        }
+
+        .etf-meta-header {
+            font-weight: bold;
+            font-size: 1.02rem;
+        }
+
+        .credit-footer {
+            padding: 15px;
+        }
+
+        .logo-block {
+            position: fixed;
+            right: 0;
+            bottom: 30px;
+            border-radius: 12px 0 0 12px;
+            transition: 0.5s;
+            box-shadow: -1px 0 3px 0 rgb(0 0 0 / 16%);
+            padding-right: 5px;
+            display: flex;
+            align-items: center;
+            background: hsla(0, 0%, 20%, 1);
+        }
+
+        .logo-block:hover {
+            background: var(--color-backgroundContrast);
+        }
+
+        .logo-block:hover span {
+            display: block;
+            text-decoration: none;
+        }
+
+        .logo-block span {
+            display: none;
+            color: var(--color-background);
+        }
+
+        .logo-block img {
+            width: 30px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body style="height: 100vh">
+
+<div id="root" style="height: 100%"><div class="etf-meta-div"><h1><span style="color: rgb(29, 185, 84);">IVV</span> Holdings</h1><div class="d-flex flex-wrap"><div class="ml-5 mb-4"><p class="etf-meta-header">Portfolio Date</p><select><option value="0" selected="selected">2026-04-10</option><option value="1">2026-04-09</option><option value="2">2026-04-08</option><option value="3">2026-04-07</option><option value="4">2026-04-06</option><option value="5">2026-04-02</option><option value="6">2026-03-31</option><option value="7">2026-03-27</option><option value="8">2026-03-26</option><option value="9">2026-03-25</option></select></div><div class="ml-5 mb-4"><p class="etf-meta-header">Etf Name</p><p>iShares Core S&amp;P 500 ETF</p></div><div class="ml-5 mb-4"><p class="etf-meta-header">Expense Ratio</p><p>0.03</p></div><div class="ml-5 mb-4"><p class="etf-meta-header">Number of Holdings</p><p>509</p></div><div class="ml-5 mb-4"><p class="etf-meta-header">Inception Date</p><p>2000-05-15</p></div></div></div><div class="table-responsive"><table class="table table-hover holdings-table table-dark"><thead><tr><th>Symbol</th><th>Holdings</th><th>Weight(%)</th><th>Market Value($)</th><th>Quantity</th></tr></thead><tbody><tr><td class="text-blue">NVDA</td><td class="text-blue">NVIDIA CORP</td><td class="text-blue">7.83279</td><td class="text-blue">$58,508,241,211.42</td><td class="text-blue">310,174,634</td></tr><tr><td class="text-blue">AAPL</td><td class="text-blue">APPLE INC</td><td class="text-blue">6.5348</td><td class="text-blue">$48,812,743,633.28</td><td class="text-blue">187,395,361</td></tr><tr><td class="text-blue">MSFT</td><td class="text-blue">MICROSOFT CORP</td><td class="text-blue">4.70604</td><td class="text-blue">$35,152,486,078.63</td><td class="text-blue">94,783,849</td></tr><tr><td class="text-blue">AMZN</td><td class="text-blue">AMAZON COM INC</td><td class="text-blue">3.97932</td><td class="text-blue">$29,724,181,463.4</td><td class="text-blue">124,692,430</td></tr><tr><td class="text-blue">GOOGL</td><td class="text-blue">ALPHABET INC CLASS A</td><td class="text-blue">3.15618</td><td class="text-blue">$23,575,552,600.6</td><td class="text-blue">74,314,565</td></tr><tr><td class="text-blue">AVGO</td><td class="text-blue">BROADCOM INC</td><td class="text-blue">3.01034</td><td class="text-blue">$22,486,180,363.05</td><td class="text-blue">60,519,931</td></tr><tr><td class="text-blue">GOOG</td><td class="text-blue">ALPHABET INC CLASS C</td><td class="text-blue">2.52313</td><td class="text-blue">$18,846,924,027.48</td><td class="text-blue">59,695,059</td></tr><tr><td class="text-blue">META</td><td class="text-blue">META PLATFORMS INC CLASS A</td><td class="text-blue">2.35409</td><td class="text-blue">$17,584,207,879.7</td><td class="text-blue">27,917,645</td></tr><tr><td class="text-blue">TSLA</td><td class="text-blue">TESLA INC</td><td class="text-blue">1.67705</td><td class="text-blue">$12,527,016,418.35</td><td class="text-blue">35,899,173</td></tr><tr><td class="text-blue">BRK.B</td><td class="text-blue">BERKSHIRE HATHAWAY INC CLASS B</td><td class="text-blue">1.50377</td><td class="text-blue">$11,232,661,294.6</td><td class="text-blue">23,406,254</td></tr></tbody></table></div><div class="credit-footer"><p><small class="text-muted">ETF holdings is provided by <a href="https://finnhub.io/docs/api/etfs-holdings" target="_blank">Finnhub Stock API</a>.
+ This page is not an investment advice and does not constitute any offer
+ or solicitation to offer or recommendation of any investment product.</small></p></div><a class="logo-block d-flex" href="https://finnhub.io/docs/api/etfs-holdings" target="_blank"><img src="logo-gradient2.png"><span>By Finnhub</span></a></div>
+<script type="text/javascript" src="etf-holdings_data/etf-holdings.bundle.76b805b8865985cc5b83.js"></script><script defer="defer" src="v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;9cc7141d96db443ea49714537441cd0d&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+
+</body></html>

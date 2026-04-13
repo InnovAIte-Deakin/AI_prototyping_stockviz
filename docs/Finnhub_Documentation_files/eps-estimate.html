@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="author" content="Finnhub.io">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="Finnhub - Free stock API for realtime market data, global company fundamentals, economic data, and alternative data.">
+<meta name="keywords" content="stock api,realtime,stock,equity,forex,crypto,fundamental data,economic data,alternative data">
+<meta property="og:title" content="Finnhub - Free realtime APIs for stock, forex and cryptocurrency.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://finnhub.io/">
+<meta property="og:image" content="https://res.cloudinary.com/whirlpooldata/image/upload/v1587681286/finnhub/logo/logo-transparent-thumbnail.png">
+<meta property="og:description" content="Finnhub - Free APIs for realtime stock, forex, and cryptocurrency. Company fundamentals, Economic data, and Alternative data.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Finnhub - Free realtime APIs for stock, forex and cryptocurrency.">
+<meta name="twitter:image" content="https://res.cloudinary.com/whirlpooldata/image/upload/v1587681286/finnhub/logo/logo-transparent-thumbnail.png">
+<meta name="twitter:description" content="Finnhub - Free APIs for realtime stock, forex, and cryptocurrency. Company fundamentals, Economic data, and Alternative data.">
+<meta charset="UTF-8">
+
+<link rel="shortcut icon" href="https://res.cloudinary.com/whirlpooldata/image/upload/v1587681286/finnhub/logo/logo-gradient2.png">
+<link rel="stylesheet" href="bootstrap.min.css">
+
+
+<script async="" src="chart_data_003/google-analytics_analytics.js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-ED30WBPL5P');
+</script>
+
+<script src="jquery.min.js"></script>
+<script src="jquery.easing.min.js"></script>
+
+<script src="popper.min.js"></script>
+<script src="bootstrap.min.js"></script>
+
+<script src="react.production.min.js"></script>
+<script src="react-dom.production.min.js"></script>
+
+<link href="iziToast.min.css" rel="stylesheet">
+<script src="iziToast.min.js"></script>
+
+<script src="jquery.waypoints.min.js"></script>
+<script src="redux.min.js"></script>
+<script src="react-redux.min.js"></script>
+
+<link rel="stylesheet" href="chart_data_003/all.css">
+
+<script type="text/javascript">
+
+  if (typeof (Storage) !== "undefined") {
+    window.sessionCachedEnabled = true
+  } else {
+    
+    window.sessionCachedEnabled = false
+  }
+
+  window.pushNoti = function toastrNoti(message, duration, type) {
+    if (type === "error") {
+      iziToast.error({
+        title: 'Error',
+        message: message,
+        theme: 'dark',
+        backgroundColor: "#3e3e3e",
+        messageColor: "white",
+        titleColor: "#f44242",
+        position: 'bottomLeft',
+        timeout: duration,
+        class: 'toaster',
+      });
+
+    } else {
+      iziToast.success({
+        title: 'OK',
+        message: message,
+        theme: 'dark',
+        backgroundColor: "#3e3e3e",
+        messageColor: "white",
+        titleColor: "#1db954",
+        position: 'bottomLeft',
+        timeout: duration,
+        class: 'toaster',
+      });
+    }
+  }
+
+  window.toTitle = function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  }
+
+  window.saveCached = function saveCache(key, value) {
+    if (!window.sessionCachedEnabled) {
+      return
+    }
+    
+    window.localStorage[key] = value
+    window.localStorage[key + "-savetime"] = new Date().getTime()
+  }
+
+  window.getCached = function getCache(key, maxWaitTime) {
+    if (!window.sessionCachedEnabled) {
+      return null
+    }
+
+    if (window.localStorage[key + "-savetime"]) {
+      if (Number(window.localStorage[key + "-savetime"]) - new Date().getTime() < maxWaitTime * 1000) {
+        return window.localStorage[key]
+      }
+    }
+    return null
+  }
+
+  window.timeConverter = function tConverter(UNIX_timestamp) {
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec;
+    return time;
+  }
+
+  window.timeConverter2 = function tConverter(UNIX_timestamp) {
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var time = month + ' ' + date
+    return time;
+  }
+
+  window.formatDateYYYYMMDD = function (date) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  window.getCookie = function getcookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
+  window.setCookie = function setcookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+<script>
+
+</script>
+
+
+    <meta charset="UTF-8">
+    <script src="historical-eps_data/highstock.src.js"></script>
+    <script src="historical-eps_data/data.src.js"></script>
+    <script src="historical-eps_data/highcharts-more.js"></script>
+    <script src="historical-eps_data/exporting.js"></script>
+    <script src="historical-eps_data/export-data.js"></script>
+    <script src="historical-eps_data/chart_theme.js"></script>
+
+    <title>Historical Earnings Per Share AAPL</title>
+    <script type="text/javascript">
+        window.dataEPS = JSON.parse("[{\u0022epsAvg\u0022:1.9836246000000002,\u0022epsHigh\u0022:2.121,\u0022epsLow\u0022:1.81006,\u0022numberAnalysts\u0022:31,\u0022period\u0022:\u00222026-03-31\u0022,\u0022quarter\u0022:2,\u0022year\u0022:2026},{\u0022epsAvg\u0022:1.7651304,\u0022epsHigh\u0022:1.9845000000000002,\u0022epsLow\u0022:1.5582,\u0022numberAnalysts\u0022:30,\u0022period\u0022:\u00222026-06-30\u0022,\u0022quarter\u0022:3,\u0022year\u0022:2026},{\u0022epsAvg\u0022:2.0090736000000002,\u0022epsHigh\u0022:2.205,\u0022epsLow\u0022:1.7816400000000001,\u0022numberAnalysts\u0022:30,\u0022period\u0022:\u00222026-09-30\u0022,\u0022quarter\u0022:4,\u0022year\u0022:2026},{\u0022epsAvg\u0022:3.02328,\u0022epsHigh\u0022:3.3915,\u0022epsLow\u0022:2.5774,\u0022numberAnalysts\u0022:22,\u0022period\u0022:\u00222026-12-31\u0022,\u0022quarter\u0022:1,\u0022year\u0022:2027},{\u0022epsAvg\u0022:2.1804438,\u0022epsHigh\u0022:2.4465000000000003,\u0022epsLow\u0022:1.94726,\u0022numberAnalysts\u0022:18,\u0022period\u0022:\u00222027-03-31\u0022,\u0022quarter\u0022:2,\u0022year\u0022:2027},{\u0022epsAvg\u0022:2.009553,\u0022epsHigh\u0022:2.4885,\u0022epsLow\u0022:1.6856000000000002,\u0022numberAnalysts\u0022:18,\u0022period\u0022:\u00222027-06-30\u0022,\u0022quarter\u0022:3,\u0022year\u0022:2027},{\u0022epsAvg\u0022:2.2673783999999997,\u0022epsHigh\u0022:2.583,\u0022epsLow\u0022:1.9345199999999998,\u0022numberAnalysts\u0022:18,\u0022period\u0022:\u00222027-09-30\u0022,\u0022quarter\u0022:4,\u0022year\u0022:2027},{\u0022epsAvg\u0022:3.1994034,\u0022epsHigh\u0022:3.3915,\u0022epsLow\u0022:2.9596,\u0022numberAnalysts\u0022:9,\u0022period\u0022:\u00222027-12-31\u0022,\u0022quarter\u0022:1,\u0022year\u0022:2028},{\u0022epsAvg\u0022:2.3970000000000002,\u0022epsHigh\u0022:2.6565000000000003,\u0022epsLow\u0022:2.1266,\u0022numberAnalysts\u0022:7,\u0022period\u0022:\u00222028-03-31\u0022,\u0022quarter\u0022:2,\u0022year\u0022:2028},{\u0022epsAvg\u0022:2.22615,\u0022epsHigh\u0022:2.562,\u0022epsLow\u0022:1.8424,\u0022numberAnalysts\u0022:7,\u0022period\u0022:\u00222028-06-30\u0022,\u0022quarter\u0022:3,\u0022year\u0022:2028},{\u0022epsAvg\u0022:2.55255,\u0022epsHigh\u0022:2.856,\u0022epsLow\u0022:2.1755999999999998,\u0022numberAnalysts\u0022:7,\u0022period\u0022:\u00222028-09-30\u0022,\u0022quarter\u0022:4,\u0022year\u0022:2028}]")
+        window.dataEPS = window.dataEPS.slice(0, 6)
+        window.symbol = "AAPL"
+    </script>
+</head>
+<body style="height: 100vh">
+
+<div id="root" style="height: 100%"><div id="company-eps-chart2d" style="width: 100%; height: 100%; overflow: hidden;" data-highcharts-chart="0"><div id="highcharts-u9db3w4-0" style="position: relative; overflow: hidden; width: 498px; height: 400px; text-align: left; line-height: normal; z-index: 0; user-select: none; touch-action: manipulation; outline: none; padding: 0px; font-family: &quot;Helvetica Neue&quot;, sans-serif; left: 0px; top: 0px;" dir="ltr" class="highcharts-container "><svg version="1.1" class="highcharts-root" style="font-family: &quot;Helvetica Neue&quot;, sans-serif; font-size: 1rem;" xmlns="http://www.w3.org/2000/svg" width="498" height="400" viewBox="0 0 498 400" role="img" aria-label="AAPL - EPS Estimates"><desc>Created with Highcharts 12.5.0</desc><defs><filter id="highcharts-drop-shadow-0"><feDropShadow dx="1" dy="1" flood-color="#000000" flood-opacity="0.75" stdDeviation="2.5"></feDropShadow></filter><linearGradient x1="0" y1="0" x2="1" y2="1" id="highcharts-u9db3w4-10"><stop offset="0" stop-color="#222222" stop-opacity="1"></stop><stop offset="1" stop-color="#222222" stop-opacity="1"></stop></linearGradient><clipPath id="highcharts-u9db3w4-17-"><rect x="0" y="0" width="408" height="161" fill="none"></rect></clipPath></defs><rect fill="url(#highcharts-u9db3w4-10)" class="highcharts-background" filter="none" x="0" y="0" width="498" height="400" rx="0" ry="0"></rect><rect fill="none" class="highcharts-plot-background" x="70" y="124" width="408" height="161" filter="none"></rect><g class="highcharts-pane-group" data-z-index="0"></g><g class="highcharts-grid highcharts-xaxis-grid" data-z-index="1"><path fill="none" stroke="#707073" stroke-width="0" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 146.5 124 L 146.5 285" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="0" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 210.5 124 L 210.5 285" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="0" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 274.5 124 L 274.5 285" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="0" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 337.5 124 L 337.5 285" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="0" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 401.5 124 L 401.5 285" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="0" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 465.5 124 L 465.5 285" opacity="1"></path></g><g class="highcharts-grid highcharts-yaxis-grid" data-z-index="1"><path fill="none" stroke="#707073" stroke-width="1" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 70 285.5 L 478 285.5" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="1" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 70 231.5 L 478 231.5" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="1" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 70 177.5 L 478 177.5" opacity="1"></path><path fill="none" stroke="#707073" stroke-width="1" stroke-dasharray="none" data-z-index="1" class="highcharts-grid-line" d="M 70 124.5 L 478 124.5" opacity="1"></path></g><rect fill="none" class="highcharts-plot-border" data-z-index="1" stroke="#606063" stroke-width="0" x="70" y="124" width="408" height="161"></rect><g class="highcharts-axis highcharts-xaxis" data-z-index="2"><path fill="none" class="highcharts-axis-line" stroke="#707073" stroke-width="1" data-z-index="7" d="M 70 285.5 L 478 285.5"></path></g><g class="highcharts-axis highcharts-yaxis" data-z-index="2"><path fill="none" class="highcharts-tick" stroke="#707073" stroke-width="1" d="M 70 285.5 L 60 285.5" opacity="1"></path><path fill="none" class="highcharts-tick" stroke="#707073" stroke-width="1" d="M 70 231.5 L 60 231.5" opacity="1"></path><path fill="none" class="highcharts-tick" stroke="#707073" stroke-width="1" d="M 70 177.5 L 60 177.5" opacity="1"></path><path fill="none" class="highcharts-tick" stroke="#707073" stroke-width="1" d="M 70 124.5 L 60 124.5" opacity="1"></path><text x="35.68333339691162" data-z-index="7" text-anchor="middle" transform="translate(0,0) rotate(270 35.68333339691162 204.5)" class="highcharts-axis-title" style="font-size: 0.8em; fill: rgb(160, 160, 163);" y="204.5">Quarterly EPS Estimates</text><path fill="none" class="highcharts-axis-line" stroke="#707073" stroke-width="0" data-z-index="7" d="M 70 124 L 70 285"></path></g><g class="highcharts-series-group" data-z-index="3" filter="none"><g class="highcharts-series highcharts-series-0 highcharts-bubble-series highcharts-tracker" data-z-index="0.1" opacity="1" transform="translate(70,124) scale(1 1)" clip-path="url(#highcharts-u9db3w4-17-)"><path fill="#01d54c" d="M 44.5 113.83966666667 A 13 13 0 1 1 44.50019999999999 113.83966666513153 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#01d54c" d="M 108.5 121.16516666667 A 13 13 0 1 1 108.50019999999999 121.16516666513154 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#01d54c" d="M 172.5 109.331666666667 A 13 13 0 1 1 172.50019999999998 109.33166666512854 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#01d54c" d="M 235.5 45.656166666667 A 13 13 0 1 1 235.50019999999998 45.65616666512854 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#01d54c" d="M 299.5 96.371166666667 A 13 13 0 1 1 299.5002 96.37116666512853 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#01d54c" d="M 363.5 94.117166666667 A 13 13 0 1 1 363.5002 94.11716666512854 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path></g><g class="highcharts-markers highcharts-series-0 highcharts-bubble-series" data-z-index="0.1" opacity="1" transform="translate(70,124) scale(1 1)" clip-path="none"></g><g class="highcharts-series highcharts-series-1 highcharts-bubble-series highcharts-tracker" data-z-index="0.1" opacity="1" transform="translate(70,124) scale(1 1)" clip-path="url(#highcharts-u9db3w4-17-)"><path fill="#b98b1d" d="M 44.5 121.21214646667 A 13 13 0 1 1 44.50019999999999 121.21214646513154 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#b98b1d" d="M 108.5 132.93800186667 A 13 13 0 1 1 108.50019999999999 132.93800186513155 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#b98b1d" d="M 172.5 119.84638346667 A 13 13 0 1 1 172.50019999999998 119.84638346513154 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#b98b1d" d="M 235.5 65.417306666667 A 13 13 0 1 1 235.50019999999998 65.41730666512854 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#b98b1d" d="M 299.5 110.649516066667 A 13 13 0 1 1 299.5002 110.64951606512854 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#b98b1d" d="M 363.5 119.82065566667 A 13 13 0 1 1 363.5002 119.82065566513154 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path></g><g class="highcharts-markers highcharts-series-1 highcharts-bubble-series" data-z-index="0.1" opacity="1" transform="translate(70,124) scale(1 1)" clip-path="none"></g><g class="highcharts-series highcharts-series-2 highcharts-bubble-series highcharts-tracker" data-z-index="0.1" opacity="1" transform="translate(70,124) scale(1 1)" clip-path="url(#highcharts-u9db3w4-17-)"><path fill="#098def" d="M 44.5 130.52678 A 13 13 0 1 1 44.50019999999999 130.52677999846154 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#098def" d="M 108.5 144.04326666667 A 13 13 0 1 1 108.50019999999999 144.04326666513154 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#098def" d="M 172.5 132.05198666667002 A 13 13 0 1 1 172.50019999999998 132.05198666513155 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#098def" d="M 235.5 89.3462 A 13 13 0 1 1 235.50019999999998 89.34619999846153 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#098def" d="M 299.5 123.16371333333 A 13 13 0 1 1 299.5002 123.16371333179153 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path><path fill="#098def" d="M 363.5 137.20613333333 A 13 13 0 1 1 363.5002 137.20613333179153 Z" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5" class="highcharts-point"></path></g><g class="highcharts-markers highcharts-series-2 highcharts-bubble-series" data-z-index="0.1" opacity="1" transform="translate(70,124) scale(1 1)" clip-path="none"></g></g><text x="249" class="highcharts-title" data-z-index="4" style="font-size: 20px; font-weight: bold; fill: rgb(169, 169, 169);" text-align="center" y="55" text-anchor="middle" transform-origin="122.96666717529297 23" transform="translate(0,0) scale(1 1)">AAPL - EPS Estimates</text><text x="249" class="highcharts-subtitle" data-z-index="4" style="font-size: 0.8em; text-transform: uppercase; fill: rgb(224, 224, 227);" text-align="center" y="81" text-anchor="middle" transform-origin="20 15" transform="translate(0,0) scale(1 1)"></text><text x="20" text-anchor="start" class="highcharts-caption" data-z-index="4" style="font-size: 0.8em; fill: rgb(102, 102, 102);" text-align="left" y="372" transform-origin="20 15" transform="translate(0,0) scale(1 1)"></text><g class="highcharts-legend highcharts-no-tooltip" data-z-index="7" text-align="center" transform="translate(101,82)"><rect fill="none" class="highcharts-legend-box" rx="0" ry="0" stroke="#999999" stroke-width="0" filter="none" x="0" y="0" width="297" height="30"></rect><g data-z-index="1"><g><g class="highcharts-legend-item highcharts-bubble-series highcharts-color-undefined highcharts-series-0" data-z-index="1" transform="translate(8,3)"><path fill="none" class="highcharts-graph" stroke-width="0" stroke-linecap="round" d="M 0 13 L 16 13" stroke="#01d54c"></path><path fill="#01d54c" d="M 8 19 A 6 6 0 1 1 8.000199999999966 18.999999996666666 Z" class="highcharts-point" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5"></path><text x="21" style="cursor: pointer; font-size: 0.8em; text-decoration: none; fill: rgb(224, 224, 227);" text-anchor="start" data-z-index="2" y="17">EPS High</text></g><g class="highcharts-legend-item highcharts-bubble-series highcharts-color-undefined highcharts-series-1" data-z-index="1" transform="translate(102.79999923706055,3)"><path fill="none" class="highcharts-graph" stroke-width="0" stroke-linecap="round" d="M 0 13 L 16 13" stroke="#b98b1d"></path><path fill="#b98b1d" d="M 8 19 A 6 6 0 1 1 8.000199999999966 18.999999996666666 Z" class="highcharts-point" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5"></path><text x="21" y="17" style="cursor: pointer; font-size: 0.8em; text-decoration: none; fill: rgb(224, 224, 227);" text-anchor="start" data-z-index="2">EPS Average</text></g><g class="highcharts-legend-item highcharts-bubble-series highcharts-color-undefined highcharts-series-2" data-z-index="1" transform="translate(218.23333358764648,3)"><path fill="none" class="highcharts-graph" stroke-width="0" stroke-linecap="round" d="M 0 13 L 16 13" stroke="#098def"></path><path fill="#098def" d="M 8 19 A 6 6 0 1 1 8.000199999999966 18.999999996666666 Z" class="highcharts-point" stroke="#333" stroke-width="1" opacity="1" fill-opacity="0.5"></path><text x="21" y="17" style="cursor: pointer; font-size: 0.8em; text-decoration: none; fill: rgb(224, 224, 227);" text-anchor="start" data-z-index="2">EPS Low</text></g></g></g></g><g class="highcharts-axis-labels highcharts-xaxis-labels" data-z-index="7"><text x="117.65645260245759" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="middle" transform="translate(0,0) rotate(-45 117.65645260245759 308)" y="308" opacity="1">2026-03-31</text><text x="181.32524241136758" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="middle" transform="translate(0,0) rotate(-45 181.32524241136758 308)" y="308" opacity="1">2026-06-30</text><text x="244.9940322202876" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="middle" transform="translate(0,0) rotate(-45 244.9940322202876 308)" y="308" opacity="1">2026-09-30</text><text x="308.66282202920763" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="middle" transform="translate(0,0) rotate(-45 308.66282202920763 308)" y="308" opacity="1">2026-12-31</text><text x="372.3316118381176" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="middle" transform="translate(0,0) rotate(-45 372.3316118381176 308)" y="308" opacity="1">2027-03-31</text><text x="436.0004016470376" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="middle" transform="translate(0,0) rotate(-45 436.0004016470376 308)" y="308" opacity="1">2027-06-30</text></g><g class="highcharts-axis-labels highcharts-yaxis-labels" data-z-index="7"><text x="55" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="end" transform="translate(0,0)" y="288" opacity="1">1</text><text x="55" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="end" transform="translate(0,0)" y="234" opacity="1">2</text><text x="55" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="end" transform="translate(0,0)" y="181" opacity="1">3</text><text x="55" style="cursor: default; font-size: 0.8em; fill: rgb(224, 224, 227);" text-anchor="end" transform="translate(0,0)" y="127" opacity="1">4</text></g></svg></div></div></div>
+<script type="text/javascript" src="eps-estimate_data/eps-estimate.bundle.4417b2dc55463012c008.js"></script><script defer="defer" src="v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;9cc7141d96db443ea49714537441cd0d&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+
+</body></html>

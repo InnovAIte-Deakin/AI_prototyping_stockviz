@@ -44,7 +44,6 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#f9f9f8] text-[#2d3433] flex flex-col selection:bg-[#e4e2e1] selection:text-[#525251]">
       <div className="flex-grow flex flex-col items-center justify-center p-6 md:p-12">
-        {/* Brand Header */}
         <header className="mb-8 text-center shrink-0">
           <Link href="/" className="text-xl font-bold tracking-tighter text-[#5f5e5e]">
             StockViz
@@ -52,7 +51,6 @@ export default function Login() {
         </header>
 
         <div className="w-full max-w-[480px] flex flex-col gap-10 py-6">
-          {/* Auth Card Container */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,7 +63,6 @@ export default function Login() {
               </p>
             </div>
 
-            {/* Login Form */}
             <form onSubmit={handleSubmit} noValidate className="space-y-6">
               {error && (
                 <motion.div
@@ -87,7 +84,7 @@ export default function Login() {
                 >
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                   <Input
-                    className={`w-full pl-12 pr-4 h-[52px] bg-white border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                    className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                     id="email"
                     name="email"
                     placeholder="name@example.com"
@@ -101,9 +98,9 @@ export default function Login() {
                   <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="password">
                     Password
                   </Label>
-                  <a className="text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="#">
+                  <Link className="text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="/forgot-password">
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
                 <motion.div
                   animate={fieldErrors.password ? { x: [-4, 4, -4, 4, 0] } : {}}
@@ -112,7 +109,7 @@ export default function Login() {
                 >
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                   <Input
-                    className={`w-full pl-12 pr-12 h-[52px] bg-white border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                    className={`w-full pl-12 pr-12 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                     id="password"
                     name="password"
                     placeholder="********"
@@ -138,7 +135,6 @@ export default function Login() {
             </form>
           </motion.div>
 
-          {/* Footer Links */}
           <p className="text-center text-sm text-[#5a6060]">
             Don&apos;t have an account?{' '}
             <Link className="font-bold text-[#5f5e5e] hover:text-[#525251] transition-colors underline underline-offset-4" href="/register">
@@ -148,7 +144,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Global Footer */}
       <footer className="mt-auto w-full border-t border-[#adb3b2]/20 bg-[#f9f9f8]">
         <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-8 gap-4 text-[10px] tracking-widest uppercase text-[#5a6060]">
           <div className="flex flex-col md:flex-row gap-6 items-center">

@@ -141,3 +141,50 @@ export interface TrendingResponse {
   source?: string
   trending?: TrendingStock[] | TrendingBuckets
 }
+
+/** Finnhub `GET /stock/market-status` (e.g. exchange=US). See docs/Finnhub_Swagger.json */
+export interface FinnhubMarketStatus {
+  exchange?: string
+  timezone?: string
+  /** pre-market | regular | post-market | null when closed */
+  session?: string | null
+  holiday?: string | null
+  isOpen?: boolean
+  /** Unix seconds */
+  t?: number
+}
+
+/** Finnhub `GET /news` category query param */
+export type FinnhubMarketNewsCategory =
+  | "general"
+  | "forex"
+  | "crypto"
+  | "merger"
+
+/** Finnhub `MarketNews` item. See docs/Finnhub_Swagger.json */
+export interface FinnhubMarketNewsItem {
+  category?: string
+  /** Published time, Unix seconds */
+  datetime?: number
+  headline?: string
+  id?: number
+  image?: string
+  related?: string
+  source?: string
+  summary?: string
+  url?: string
+}
+
+/** Single hit from Finnhub `GET /search` (`SymbolLookupInfo`). */
+export interface FinnhubSymbolLookupInfo {
+  description?: string
+  displaySymbol?: string
+  symbol?: string
+  type?: string
+}
+
+/** Finnhub `GET /search` response (`SymbolLookup`). */
+export interface FinnhubSymbolLookupResponse {
+  count?: number
+  result?: FinnhubSymbolLookupInfo[]
+}

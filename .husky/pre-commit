@@ -1,2 +1,18 @@
+#!/usr/bin/env sh
+set -e
+
 npm run lint:staged
-npm run typecheck
+
+# Skip typecheck when only Finnhub doc mirror paths are staged.
+run_typecheck=false
+for f in $(git diff --cached --name-only --diff-filter=ACM); do
+  case "$f" in
+    docs/Finnhub_Documentation.html) ;;
+    docs/Finnhub_Documentation_files/*) ;;
+    *) run_typecheck=true; break ;;
+  esac
+done
+
+if [ "$run_typecheck" = true ]; then
+  npm run typecheck
+fi
