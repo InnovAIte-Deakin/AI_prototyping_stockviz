@@ -3,9 +3,8 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search } from 'lucide-react'
 
-import { Input } from '@/components/ui/input'
+import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
 import { cn } from '@/lib/utils'
 
 const SHELLLESS_ROUTES = new Set(['/login', '/register', '/forgot-password', '/reset-password'])
@@ -37,21 +36,7 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex min-w-0 flex-1 justify-center">
-            <div className="relative w-full max-w-xl">
-              <Search
-                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                aria-hidden
-              />
-              <Input
-                type="search"
-                name="stock-search"
-                placeholder="Search stocks, tickers, companies, and more…"
-                className="h-9 w-full rounded-md border-border/60 bg-muted/40 pl-9 shadow-none md:text-sm"
-                aria-label="Search stocks"
-                autoComplete="off"
-                readOnly
-              />
-            </div>
+            <StockSymbolSearch />
           </div>
 
           <div className="min-w-[7rem] shrink-0" aria-hidden />
