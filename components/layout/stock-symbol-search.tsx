@@ -71,7 +71,7 @@ export const StockSymbolSearch = ({
     }
     setOpen(false)
     setQuery('')
-    router.push(`/dashboard?symbol=${encodeURIComponent(sym)}`)
+    router.push(`/stock/${encodeURIComponent(sym)}`)
   }
 
   return (
