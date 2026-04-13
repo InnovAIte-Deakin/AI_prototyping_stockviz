@@ -124,3 +124,15 @@ export interface TrendingResponse {
   source?: string
   trending?: TrendingStock[] | TrendingBuckets
 }
+
+/** Finnhub `GET /stock/market-status` (e.g. exchange=US). See docs/Finnhub_Swagger.json */
+export interface FinnhubMarketStatus {
+  exchange?: string
+  timezone?: string
+  /** pre-market | regular | post-market | null when closed */
+  session?: string | null
+  holiday?: string | null
+  isOpen?: boolean
+  /** Unix seconds */
+  t?: number
+}
