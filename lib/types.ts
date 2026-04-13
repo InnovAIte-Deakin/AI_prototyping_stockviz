@@ -136,3 +136,24 @@ export interface FinnhubMarketStatus {
   /** Unix seconds */
   t?: number
 }
+
+/** Finnhub `GET /news` category query param */
+export type FinnhubMarketNewsCategory =
+  | "general"
+  | "forex"
+  | "crypto"
+  | "merger"
+
+/** Finnhub `MarketNews` item. See docs/Finnhub_Swagger.json */
+export interface FinnhubMarketNewsItem {
+  category?: string
+  /** Published time, Unix seconds */
+  datetime?: number
+  headline?: string
+  id?: number
+  image?: string
+  related?: string
+  source?: string
+  summary?: string
+  url?: string
+}
