@@ -188,3 +188,41 @@ export interface FinnhubSymbolLookupResponse {
   count?: number
   result?: FinnhubSymbolLookupInfo[]
 }
+
+// ---------------------------------------------------------------------------
+// Finnhub stock widgets (quote, metric, peers, recommendation)
+// ---------------------------------------------------------------------------
+
+/** Finnhub `GET /quote`. */
+export interface FinnhubQuote {
+  /** Current price */
+  c?: number
+  /** High of day */
+  h?: number
+  /** Low of day */
+  l?: number
+  /** Open price of day */
+  o?: number
+  /** Previous close */
+  pc?: number
+  /** Unix seconds */
+  t?: number
+}
+
+/** Finnhub `GET /stock/metric?metric=all` — `metric` is a flat key → value map. */
+export interface FinnhubStockMetricResponse {
+  metric?: Record<string, string | number | null | undefined>
+}
+
+/** Finnhub `GET /stock/peers` — JSON array of ticker strings. */
+export type FinnhubPeersResponse = string[]
+
+/** Finnhub `GET /stock/recommendation` row. */
+export interface FinnhubRecommendationTrend {
+  period?: string
+  strongBuy?: number
+  buy?: number
+  hold?: number
+  sell?: number
+  strongSell?: number
+}
