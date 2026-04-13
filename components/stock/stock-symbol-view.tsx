@@ -2,6 +2,7 @@
 
 import { BasicFinancialsWidget } from "@/components/stock/widgets/basic-financials-widget"
 import { PeersWidget } from "@/components/stock/widgets/peers-widget"
+import { PriceHistoryChart } from "@/components/stock/widgets/price-history-chart"
 import { QuoteWidget } from "@/components/stock/widgets/quote-widget"
 import { RecommendationWidget } from "@/components/stock/widgets/recommendation-widget"
 import { cn } from "@/lib/utils"
@@ -19,11 +20,14 @@ export const StockSymbolView = ({ symbol, className }: StockSymbolViewProps) => 
           {symbol}
         </h1>
         <p className="text-muted-foreground text-sm">
-          Market data via Finnhub (quote, metrics, peers, analyst recommendations).
+          Quote, metrics, peers, and analyst data via Finnhub; historical prices
+          via Alpha Vantage.
         </p>
       </header>
 
       <QuoteWidget symbol={symbol} />
+
+      <PriceHistoryChart symbol={symbol} />
 
       <div className="grid gap-6 md:grid-cols-2">
         <BasicFinancialsWidget symbol={symbol} className="min-h-0 md:col-span-1" />
