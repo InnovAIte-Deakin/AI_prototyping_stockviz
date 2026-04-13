@@ -17,14 +17,13 @@ const PUBLIC_PAGES = new Set([
 ]);
 
 export const handleAuthProxy = async (request: NextRequest) => {
-  // Refresh the Supabase session (uses getClaims under the hood).
-  // This must run before any auth checks so the cookie stays fresh.
   const response = await updateSession(request);
-
   const pathname = request.nextUrl.pathname;
 
-  // Let the auth callback route through — it handles its own logic.
-  if (pathname.startsWith("/auth/callback")) {
+  // 1. Auth Flow Pages: Always allow these regardless of session.
+  // We don't want to redirect users away from these during the flow.
+  const AUTH_FLOW_PAGES = new Set(["/auth/callback", "/reset-password", "/forgot-password"]);
+  if (AUTH_FLOW_PAGES.has(pathname)) {
     return response;
   }
 
