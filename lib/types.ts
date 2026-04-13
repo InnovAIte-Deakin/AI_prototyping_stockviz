@@ -157,3 +157,17 @@ export interface FinnhubMarketNewsItem {
   summary?: string
   url?: string
 }
+
+/** Single hit from Finnhub `GET /search` (`SymbolLookupInfo`). */
+export interface FinnhubSymbolLookupInfo {
+  description?: string
+  displaySymbol?: string
+  symbol?: string
+  type?: string
+}
+
+/** Finnhub `GET /search` response (`SymbolLookup`). */
+export interface FinnhubSymbolLookupResponse {
+  count?: number
+  result?: FinnhubSymbolLookupInfo[]
+}
