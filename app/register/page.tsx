@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, LayoutDashboard, User, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

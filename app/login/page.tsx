@@ -133,7 +133,7 @@ export default function Login() {
 
         {/* Footer Links */}
         <p className="text-center text-sm text-[#5a6060]">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link className="font-bold text-[#5f5e5e] hover:text-[#525251] transition-colors underline underline-offset-4" href="/register">
             Sign up for free
           </Link>
