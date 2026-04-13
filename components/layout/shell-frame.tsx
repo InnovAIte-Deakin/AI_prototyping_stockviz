@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 
-const SHELLLESS_ROUTES = new Set(['/login', '/register'])
+const SHELLLESS_ROUTES = new Set(['/login', '/register', '/forgot-password', '/reset-password'])
 
 export default function ShellFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname()
