@@ -139,6 +139,7 @@ export type Database = {
           created_at: string
           exchange_mic: string | null
           id: string
+          last_price: number | null
           name: string | null
           symbol: string
           updated_at: string
@@ -147,6 +148,7 @@ export type Database = {
           created_at?: string
           exchange_mic?: string | null
           id?: string
+          last_price?: number | null
           name?: string | null
           symbol: string
           updated_at?: string
@@ -155,6 +157,7 @@ export type Database = {
           created_at?: string
           exchange_mic?: string | null
           id?: string
+          last_price?: number | null
           name?: string | null
           symbol?: string
           updated_at?: string
