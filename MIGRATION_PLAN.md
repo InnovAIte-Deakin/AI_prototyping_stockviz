@@ -113,31 +113,31 @@ Exit criteria:
 
 ## Epic Tracker
 
-| Epic ID | Epic                          | Priority | Owner        | Status        | Sprint     | Checkpoint                                                                   |
-| ------- | ----------------------------- | -------- | ------------ | ------------- | ---------- | ---------------------------------------------------------------------------- |
-| E1      | Platform Foundation           | `P0`     | `Fullstack`  | `done`        | Sprint 1   | Root app is active and auth entry flow is live                               |
-| E2      | Supabase Core                 | `P0`     | `Data`       | `done`        | Sprint 1–2 | Schema, migrations, seed, and RLS all in place                               |
-| E3      | Legacy Backend Extraction     | `P0`     | `Backend`    | `in_progress` | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                |
-| E4      | App Shell Migration           | `P1`     | `Frontend`   | `in_progress` | Sprint 1   | Shared shell is temporarily a top-bar stub while full nav/footer are rebuilt |
-| E5      | Search And Symbol Routing     | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Search to analysis route works                                               |
-| E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `in_progress` | Sprint 3   | Main analysis page is usable                                                 |
-| E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `not_started` | Sprint 4   | Configurable analysis controls work                                          |
-| E8      | Market Pages                  | `P2`     | `Frontend`   | `not_started` | Sprint 4   | Trending and market overview exist                                           |
-| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `in_progress` | Sprint 5   | Auth and persistence are live                                                |
-| E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                        |
-| E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `not_started` | Sprint 6   | Parity verified and legacy removable                                         |
+| Epic ID | Epic                          | Priority | Owner        | Status        | Sprint     | Checkpoint                                                                                                                  |
+| ------- | ----------------------------- | -------- | ------------ | ------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| E1      | Platform Foundation           | `P0`     | `Fullstack`  | `done`        | Sprint 1   | Root app is active and auth entry flow is live                                                                              |
+| E2      | Supabase Core                 | `P0`     | `Data`       | `done`        | Sprint 1–2 | Schema, migrations, seed, and RLS all in place                                                                              |
+| E3      | Legacy Backend Extraction     | `P0`     | `Backend`    | `in_progress` | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                                                               |
+| E4      | App Shell Migration           | `P1`     | `Frontend`   | `done`        | Sprint 1   | Shared shell now mounts the migrated navbar/footer experience with global symbol search and route-aware planned/live states |
+| E5      | Search And Symbol Routing     | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Search to analysis route works                                                                                              |
+| E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                       |
+| E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `not_started` | Sprint 4   | Configurable analysis controls work                                                                                         |
+| E8      | Market Pages                  | `P2`     | `Frontend`   | `in_progress` | Sprint 4   | Stock detail plus market-data primitives are live; dedicated overview/trending pages are still pending                      |
+| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `in_progress` | Sprint 5   | Auth plus password recovery are live; persistence features are still pending                                                |
+| E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                       |
+| E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `not_started` | Sprint 6   | Parity verified and legacy removable                                                                                        |
 
 ## Story Board
 
 ### E1: Platform Foundation
 
-| Story ID | Story                                             | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                            |
-| -------- | ------------------------------------------------- | -------- | ----------- | ------------- | -------- | ------------------------------------------------------------------------------------- |
-| E1-S1    | Replace scaffolded homepage and metadata          | `P0`     | `Frontend`  | `done`        | Sprint 1 | Starter content is removed and the root entry flow is StockViz-auth aware             |
-| E1-S2    | Install dependencies and confirm Next 16 patterns | `P0`     | `Fullstack` | `done`        | Sprint 1 | Local dev works and team is using current conventions                                 |
-| E1-S3    | Establish route structure under `app/`            | `P0`     | `Fullstack` | `in_progress` | Sprint 1 | Auth routes are live; feature routes need to be reintroduced as migration slices land |
-| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done`        | Sprint 1 | Root env template matches active services and legacy aliases are tolerated             |
-| E1-S5    | Add validation and service boundaries             | `P1`     | `Backend`   | `done`        | Sprint 1 | Domain logic is isolated from page components                                         |
+| Story ID | Story                                             | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                                                                                  |
+| -------- | ------------------------------------------------- | -------- | ----------- | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| E1-S1    | Replace scaffolded homepage and metadata          | `P0`     | `Frontend`  | `done`        | Sprint 1 | Starter content is removed and the root entry flow is StockViz-auth aware                                                                   |
+| E1-S2    | Install dependencies and confirm Next 16 patterns | `P0`     | `Fullstack` | `done`        | Sprint 1 | Local dev works and team is using current conventions                                                                                       |
+| E1-S3    | Establish route structure under `app/`            | `P0`     | `Fullstack` | `in_progress` | Sprint 1 | Auth, password reset, analysis, stock detail, and core market API routes are live; dedicated market/portfolio/settings pages remain pending |
+| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done`        | Sprint 1 | Root env template matches active services and legacy aliases are tolerated                                                                  |
+| E1-S5    | Add validation and service boundaries             | `P1`     | `Backend`   | `done`        | Sprint 1 | Domain logic is isolated from page components                                                                                               |
 
 ### E2: Supabase Core
 
@@ -160,11 +160,11 @@ Exit criteria:
 
 ### E4: App Shell Migration
 
-| Story ID | Story                                 | Priority | Owner      | Status        | Sprint   | Checkpoint                                                                   |
-| -------- | ------------------------------------- | -------- | ---------- | ------------- | -------- | ---------------------------------------------------------------------------- |
-| E4-S1    | Rebuild navbar and footer in root app | `P1`     | `Frontend` | `in_progress` | Sprint 1 | Shared shell is temporarily a top-bar stub while full nav/footer are rebuilt |
-| E4-S2    | Add theme and toast providers         | `P1`     | `Frontend` | `done`        | Sprint 1 | UX primitives are available for migrated screens                             |
-| E4-S3    | Decide onboarding scope               | `P3`     | `Product`  | `done`        | Sprint 1 | Decision: deferred to Sprint 5 (P3, depends on user state)                   |
+| Story ID | Story                                 | Priority | Owner      | Status | Sprint   | Checkpoint                                                                                                        |
+| -------- | ------------------------------------- | -------- | ---------- | ------ | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| E4-S1    | Rebuild navbar and footer in root app | `P1`     | `Frontend` | `done` | Sprint 1 | Shared shell mounts the migrated navbar/footer experience while keeping unfinished routes visible as planned work |
+| E4-S2    | Add theme and toast providers         | `P1`     | `Frontend` | `done` | Sprint 1 | UX primitives are available for migrated screens                                                                  |
+| E4-S3    | Decide onboarding scope               | `P3`     | `Product`  | `done` | Sprint 1 | Decision: deferred to Sprint 5 (P3, depends on user state)                                                        |
 
 ### E5: Search And Symbol Routing
 
@@ -176,12 +176,12 @@ Exit criteria:
 
 ### E6: Core Analysis Experience
 
-| Story ID | Story                                   | Priority | Owner      | Status        | Sprint   | Checkpoint                                  |
-| -------- | --------------------------------------- | -------- | ---------- | ------------- | -------- | ------------------------------------------- |
-| E6-S1    | Migrate analysis page layout            | `P1`     | `Frontend` | `done`        | Sprint 3 | Core analysis screen renders in root app    |
-| E6-S2    | Migrate chart and summary panels        | `P1`     | `Frontend` | `done`        | Sprint 3 | Analysis page shows actionable insight      |
-| E6-S3    | Migrate recommendation and scoring UI   | `P1`     | `Frontend` | `done`        | Sprint 3 | Score and recommendation are visible        |
-| E6-S4    | Migrate headlines and sentiment section | `P2`     | `Frontend` | `not_started` | Sprint 3 | News and sentiment render from new services |
+| Story ID | Story                                   | Priority | Owner      | Status | Sprint   | Checkpoint                                                        |
+| -------- | --------------------------------------- | -------- | ---------- | ------ | -------- | ----------------------------------------------------------------- |
+| E6-S1    | Migrate analysis page layout            | `P1`     | `Frontend` | `done` | Sprint 3 | Core analysis screen renders in root app                          |
+| E6-S2    | Migrate chart and summary panels        | `P1`     | `Frontend` | `done` | Sprint 3 | Analysis page shows actionable insight                            |
+| E6-S3    | Migrate recommendation and scoring UI   | `P1`     | `Frontend` | `done` | Sprint 3 | Score and recommendation are visible                              |
+| E6-S4    | Migrate headlines and sentiment section | `P2`     | `Frontend` | `done` | Sprint 3 | News and sentiment render from new services in the analysis route |
 
 ### E7: Indicators And Weighting
 
@@ -193,18 +193,18 @@ Exit criteria:
 
 ### E8: Market Pages
 
-| Story ID | Story                          | Priority | Owner      | Status        | Sprint   | Checkpoint                           |
-| -------- | ------------------------------ | -------- | ---------- | ------------- | -------- | ------------------------------------ |
-| E8-S1    | Migrate trending stocks screen | `P2`     | `Frontend` | `not_started` | Sprint 4 | Discovery view works in root app     |
-| E8-S2    | Migrate market overview page   | `P2`     | `Frontend` | `not_started` | Sprint 4 | Root app supports browse-first flows |
+| Story ID | Story                          | Priority | Owner      | Status        | Sprint   | Checkpoint                                                                                              |
+| -------- | ------------------------------ | -------- | ---------- | ------------- | -------- | ------------------------------------------------------------------------------------------------------- |
+| E8-S1    | Migrate trending stocks screen | `P2`     | `Frontend` | `not_started` | Sprint 4 | Discovery view works in root app                                                                        |
+| E8-S2    | Migrate market overview page   | `P2`     | `Frontend` | `in_progress` | Sprint 4 | Browse-first stock detail flow and market hooks exist; dedicated `/market` composition is still pending |
 
 ### E9: Auth And User Features
 
-| Story ID | Story                                        | Priority | Owner       | Status        | Sprint   | Checkpoint                              |
-| -------- | -------------------------------------------- | -------- | ----------- | ------------- | -------- | --------------------------------------- |
-| E9-S1    | Replace auth context with Supabase auth      | `P2`     | `Fullstack` | `done`        | Sprint 5 | Session and sign-in flow work           |
-| E9-S2    | Migrate portfolio persistence                | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User portfolios can be saved and loaded |
-| E9-S3    | Migrate watchlists, preferences, and presets | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User customization is persistent        |
+| Story ID | Story                                        | Priority | Owner       | Status        | Sprint   | Checkpoint                                               |
+| -------- | -------------------------------------------- | -------- | ----------- | ------------- | -------- | -------------------------------------------------------- |
+| E9-S1    | Replace auth context with Supabase auth      | `P2`     | `Fullstack` | `done`        | Sprint 5 | Session, sign-in, sign-up, and password reset flows work |
+| E9-S2    | Migrate portfolio persistence                | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User portfolios can be saved and loaded                  |
+| E9-S3    | Migrate watchlists, preferences, and presets | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User customization is persistent                         |
 
 ### E10: Learn/Admin/Secondary Screens
 
@@ -230,81 +230,81 @@ This maps legacy files to likely destinations in the new root app.
 
 ### Frontend To Root App
 
-| Legacy File                                                  | Target                                                           | Action                                            | Priority | Owner        | Sprint   | Status        |
-| ------------------------------------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------- | -------- | ------------ | -------- | ------------- |
-| `legacy/frontend/src/App.tsx`                                | split across `app/` routes and layout                            | use as routing/spec reference only                | `P0`     | `Fullstack`  | Sprint 1 | `not_started` |
-| `legacy/frontend/src/main.tsx`                               | none                                                             | do not migrate directly                           | `P0`     | `Fullstack`  | Sprint 1 | `not_started` |
-| `legacy/frontend/src/index.css`                              | `app/globals.css`                                                | selectively merge useful styles                   | `P1`     | `Frontend`   | Sprint 1 | `not_started` |
-| `legacy/frontend/src/components/Layout/Navbar.tsx`           | `components/layout/navbar.tsx`                                   | migrated into root component; still needs shell wiring | `P1` | `Frontend` | Sprint 1 | `in_progress` |
-| `legacy/frontend/src/components/Layout/Footer.tsx`           | `components/layout/footer.tsx`                                   | migrated into root component; still needs shell wiring | `P1` | `Frontend` | Sprint 1 | `in_progress` |
-| `legacy/frontend/src/components/AppShell.tsx`                | absorbed into Next layouts                                       | do not preserve as-is                             | `P2`     | `Frontend`   | Sprint 1 | `not_started` |
-| `legacy/frontend/src/contexts/AuthContext.tsx`               | `app/auth/actions.ts`, `utils/supabase/proxy-auth.ts`            | replaced with Supabase auth actions plus proxy-based route protection | `P1` | `Fullstack` | Sprint 5 | `done` |
-| `legacy/frontend/src/contexts/ThemeContext.tsx`              | `components/providers/theme-provider.tsx`                        | replaced with `next-themes` pattern               | `P1`     | `Frontend`   | Sprint 1 | `done` |
-| `legacy/frontend/src/components/AISummary.tsx`               | `components/analysis/ai-summary.tsx`                             | migrate                                           | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/EnhancedStockAnalysis.tsx`   | `components/analysis/*`                                          | decompose into smaller root components            | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/HeadlineList.tsx`            | `components/analysis/headline-list.tsx`                          | migrate                                           | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/PriceChart.tsx`              | `components/analysis/price-history-chart.tsx`                    | migrated as baseline chart for analysis route     | `P1`     | `Frontend`   | Sprint 3 | `done` |
-| `legacy/frontend/src/components/TradingViewChart.tsx`        | `components/charts/tradingview-chart.tsx`                        | migrate if still preferred chart implementation   | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/SimpleTradingViewChart.tsx`  | merged or dropped                                                | decide canonical chart path                       | `P3`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/RecommendationChip.tsx`      | `components/analysis/recommendation-chip.tsx`                    | migrate                                           | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/ScoreBadge.tsx`              | `components/analysis/score-badge.tsx`                            | migrate                                           | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/SearchBox.tsx`               | `components/search/symbol-search.tsx`                            | migrated and wired into dashboard plus analysis   | `P1`     | `Frontend`   | Sprint 3 | `done` |
-| `legacy/frontend/src/components/IndicatorsPanel.tsx`         | `components/analysis/indicators-panel.tsx`                       | migrate                                           | `P1`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/components/EnhancedIndicatorsPanel.tsx` | merged into canonical indicators panel                           | keep only stronger behavior                       | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/components/WeightsPanel.tsx`            | `components/analysis/weights-panel.tsx`                          | migrate                                           | `P1`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/components/EnhancedWeightsPanel.tsx`    | merged into canonical weights panel                              | keep only stronger behavior                       | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/components/TrendingTabs.tsx`            | `components/market/trending-tabs.tsx`                            | migrate                                           | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/components/LoadingSpinner.tsx`          | `components/feedback/loading-spinner.tsx` or existing UI spinner | migrate or replace                                | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/EmptyState.tsx`              | `components/feedback/empty-state.tsx`                            | migrate                                           | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/ErrorBoundary.tsx`           | `error.tsx` patterns or shared client boundary                   | adapt to Next error model                         | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/components/OnboardingPopup.tsx`         | `components/onboarding/onboarding-dialog.tsx`                    | migrate only if still required                    | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
-| `legacy/frontend/src/components/UIShowcase.tsx`              | `app/showcase/page.tsx` or none                                  | migrate or drop                                   | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
-| `legacy/frontend/src/pages/Home.tsx`                         | `proxy.ts`, `utils/supabase/proxy-auth.ts`                       | replaced with auth-aware root redirect rather than a public `app/page.tsx` route | `P0` | `Frontend` | Sprint 1 | `done` |
-| `legacy/frontend/src/pages/SymbolAnalysis.tsx`               | `app/analysis/[symbol]/page.jsx`                                 | migrated into the active analysis route           | `P1`     | `Fullstack`  | Sprint 3 | `done` |
-| `legacy/frontend/src/pages/AnalysisResultsPage.tsx`          | `app/analysis/[symbol]/page.jsx`                                 | merged into the active analysis route             | `P1`     | `Fullstack`  | Sprint 3 | `done` |
-| `legacy/frontend/src/pages/Indicators.tsx`                   | `app/indicators/page.tsx` or fold into analysis route            | decide final UX                                   | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/pages/Weights.tsx`                      | `app/weights/page.tsx` or fold into analysis route               | decide final UX                                   | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/pages/Market.tsx`                       | `app/market/page.tsx`                                            | migrate                                           | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/pages/Portfolio.tsx`                    | `app/portfolio/page.tsx`                                         | migrate after auth/persistence                    | `P2`     | `Fullstack`  | Sprint 5 | `not_started` |
-| `legacy/frontend/src/pages/Learn.tsx`                        | likely none                                                      | confirm if obsolete                               | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
-| `legacy/frontend/src/pages/LearnPage.tsx`                    | `app/learn/page.tsx`                                             | migrate if retained                               | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
-| `legacy/frontend/src/pages/Admin.tsx`                        | `app/admin/page.tsx`                                             | migrate if still needed                           | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
-| `legacy/frontend/src/lib/api.ts`                             | `lib/api/`, `lib/market/`, `lib/analysis/`                       | split and remove Express coupling                 | `P0`     | `Backend`    | Sprint 2 | `not_started` |
-| `legacy/frontend/src/lib/queries.ts`                         | optional client query layer                                      | keep only where client fetching remains necessary | `P2`     | `Fullstack`  | Sprint 3 | `not_started` |
-| `legacy/frontend/src/lib/types.ts`                           | `lib/types.ts` or feature-local types                            | reused in root app types                          | `P0`     | `Fullstack`  | Sprint 2 | `done` |
-| `legacy/frontend/src/lib/urlState.ts`                        | `lib/url-state.ts`                                               | adapt to Next search params                       | `P1`     | `Fullstack`  | Sprint 4 | `not_started` |
-| `legacy/frontend/src/lib/utils.ts`                           | root `lib/utils.ts`                                              | selectively merged into root utilities            | `P2`     | `Frontend`   | Sprint 2 | `done` |
-| `legacy/frontend/src/store/ui.ts`                            | hooks or feature-local state                                     | reduce scope, do not copy blindly                 | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
-| `legacy/frontend/src/data/companies.ts`                      | Supabase `market_symbols` or import script                       | convert from static frontend data                 | `P1`     | `Data`       | Sprint 2 | `not_started` |
-| `legacy/frontend/src/data/asxCompanies.ts`                   | Supabase `market_symbols` or import script                       | convert                                           | `P1`     | `Data`       | Sprint 2 | `not_started` |
-| `legacy/frontend/src/data/bseCompanies.ts`                   | Supabase `market_symbols` or import script                       | convert                                           | `P1`     | `Data`       | Sprint 2 | `not_started` |
-| `legacy/frontend/src/data/nseCompanies.ts`                   | Supabase `market_symbols` or import script                       | convert                                           | `P1`     | `Data`       | Sprint 2 | `not_started` |
-| `legacy/frontend/src/data/nyseCompanies.ts`                  | Supabase `market_symbols` or import script                       | convert                                           | `P1`     | `Data`       | Sprint 2 | `not_started` |
-| `legacy/frontend/src/data/companies copy.ts`                 | none                                                             | treat as duplicate and review for deletion        | `P3`     | `Unassigned` | Sprint 2 | `not_started` |
-| `legacy/frontend/src/components/ui/*`                        | none                                                             | prefer root `components/ui` instead               | `P0`     | `Frontend`   | Sprint 1 | `not_started` |
+| Legacy File                                                  | Target                                                                                                                                                    | Action                                                                                              | Priority | Owner        | Sprint   | Status        |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------- | ------------ | -------- | ------------- |
+| `legacy/frontend/src/App.tsx`                                | split across `app/` routes and layout                                                                                                                     | use as routing/spec reference only                                                                  | `P0`     | `Fullstack`  | Sprint 1 | `not_started` |
+| `legacy/frontend/src/main.tsx`                               | none                                                                                                                                                      | do not migrate directly                                                                             | `P0`     | `Fullstack`  | Sprint 1 | `not_started` |
+| `legacy/frontend/src/index.css`                              | `app/globals.css`                                                                                                                                         | selectively merge useful styles                                                                     | `P1`     | `Frontend`   | Sprint 1 | `not_started` |
+| `legacy/frontend/src/components/Layout/Navbar.tsx`           | `components/layout/navbar.tsx`, `components/layout/shell-frame.tsx`, `components/layout/stock-symbol-search.tsx`, `components/layout/shell-navigation.ts` | mounted as the protected shared shell with route-aware planned/live states and global symbol search | `P1`     | `Frontend`   | Sprint 1 | `done`        |
+| `legacy/frontend/src/components/Layout/Footer.tsx`           | `components/layout/footer.tsx`, `components/layout/shell-frame.tsx`, `components/layout/shell-navigation.ts`                                              | mounted in the protected shared shell and updated to reflect live versus pending root routes        | `P1`     | `Frontend`   | Sprint 1 | `done`        |
+| `legacy/frontend/src/components/AppShell.tsx`                | absorbed into Next layouts                                                                                                                                | do not preserve as-is                                                                               | `P2`     | `Frontend`   | Sprint 1 | `not_started` |
+| `legacy/frontend/src/contexts/AuthContext.tsx`               | `app/auth/actions.ts`, `utils/supabase/proxy-auth.ts`                                                                                                     | replaced with Supabase auth actions plus proxy-based route protection                               | `P1`     | `Fullstack`  | Sprint 5 | `done`        |
+| `legacy/frontend/src/contexts/ThemeContext.tsx`              | `components/providers/theme-provider.tsx`                                                                                                                 | replaced with `next-themes` pattern                                                                 | `P1`     | `Frontend`   | Sprint 1 | `done`        |
+| `legacy/frontend/src/components/AISummary.tsx`               | `components/analysis/ai-summary.tsx`                                                                                                                      | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/EnhancedStockAnalysis.tsx`   | `components/analysis/*`                                                                                                                                   | decompose into smaller root components                                                              | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/HeadlineList.tsx`            | `components/analysis/sentiment-headlines.tsx`                                                                                                             | migrated as the sentiment/news panel on the analysis route                                          | `P2`     | `Frontend`   | Sprint 3 | `done`        |
+| `legacy/frontend/src/components/PriceChart.tsx`              | `components/analysis/price-history-chart.tsx`                                                                                                             | migrated as baseline chart for analysis route                                                       | `P1`     | `Frontend`   | Sprint 3 | `done`        |
+| `legacy/frontend/src/components/TradingViewChart.tsx`        | `components/charts/tradingview-chart.tsx`                                                                                                                 | migrate if still preferred chart implementation                                                     | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/SimpleTradingViewChart.tsx`  | merged or dropped                                                                                                                                         | decide canonical chart path                                                                         | `P3`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/RecommendationChip.tsx`      | `components/analysis/recommendation-chip.tsx`                                                                                                             | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/ScoreBadge.tsx`              | `components/analysis/score-badge.tsx`                                                                                                                     | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/SearchBox.tsx`               | `components/search/symbol-search.tsx`, `components/layout/stock-symbol-search.tsx`                                                                        | migrated and wired into dashboard, analysis, and the shared shell header                            | `P1`     | `Frontend`   | Sprint 3 | `done`        |
+| `legacy/frontend/src/components/IndicatorsPanel.tsx`         | `components/analysis/indicators-panel.tsx`                                                                                                                | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/EnhancedIndicatorsPanel.tsx` | merged into canonical indicators panel                                                                                                                    | keep only stronger behavior                                                                         | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/WeightsPanel.tsx`            | `components/analysis/weights-panel.tsx`                                                                                                                   | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/EnhancedWeightsPanel.tsx`    | merged into canonical weights panel                                                                                                                       | keep only stronger behavior                                                                         | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/TrendingTabs.tsx`            | `components/market/trending-tabs.tsx`                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/LoadingSpinner.tsx`          | `components/feedback/loading-spinner.tsx` or existing UI spinner                                                                                          | migrate or replace                                                                                  | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/EmptyState.tsx`              | `components/feedback/empty-state.tsx`                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/ErrorBoundary.tsx`           | `error.tsx` patterns or shared client boundary                                                                                                            | adapt to Next error model                                                                           | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/components/OnboardingPopup.tsx`         | `components/onboarding/onboarding-dialog.tsx`                                                                                                             | migrate only if still required                                                                      | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
+| `legacy/frontend/src/components/UIShowcase.tsx`              | `app/showcase/page.tsx` or none                                                                                                                           | migrate or drop                                                                                     | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
+| `legacy/frontend/src/pages/Home.tsx`                         | `proxy.ts`, `utils/supabase/proxy-auth.ts`                                                                                                                | replaced with auth-aware root redirect rather than a public `app/page.tsx` route                    | `P0`     | `Frontend`   | Sprint 1 | `done`        |
+| `legacy/frontend/src/pages/SymbolAnalysis.tsx`               | `app/analysis/[symbol]/page.jsx`                                                                                                                          | migrated into the active analysis route                                                             | `P1`     | `Fullstack`  | Sprint 3 | `done`        |
+| `legacy/frontend/src/pages/AnalysisResultsPage.tsx`          | `app/analysis/[symbol]/page.jsx`                                                                                                                          | merged into the active analysis route                                                               | `P1`     | `Fullstack`  | Sprint 3 | `done`        |
+| `legacy/frontend/src/pages/Indicators.tsx`                   | `app/indicators/page.tsx` or fold into analysis route                                                                                                     | decide final UX                                                                                     | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/pages/Weights.tsx`                      | `app/weights/page.tsx` or fold into analysis route                                                                                                        | decide final UX                                                                                     | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/pages/Market.tsx`                       | `app/market/page.tsx`                                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/pages/Portfolio.tsx`                    | `app/portfolio/page.tsx`                                                                                                                                  | migrate after auth/persistence                                                                      | `P2`     | `Fullstack`  | Sprint 5 | `not_started` |
+| `legacy/frontend/src/pages/Learn.tsx`                        | likely none                                                                                                                                               | confirm if obsolete                                                                                 | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
+| `legacy/frontend/src/pages/LearnPage.tsx`                    | `app/learn/page.tsx`                                                                                                                                      | migrate if retained                                                                                 | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
+| `legacy/frontend/src/pages/Admin.tsx`                        | `app/admin/page.tsx`                                                                                                                                      | migrate if still needed                                                                             | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
+| `legacy/frontend/src/lib/api.ts`                             | `lib/api/`, `lib/market/`, `lib/analysis/`                                                                                                                | split and remove Express coupling                                                                   | `P0`     | `Backend`    | Sprint 2 | `not_started` |
+| `legacy/frontend/src/lib/queries.ts`                         | optional client query layer                                                                                                                               | keep only where client fetching remains necessary                                                   | `P2`     | `Fullstack`  | Sprint 3 | `not_started` |
+| `legacy/frontend/src/lib/types.ts`                           | `lib/types.ts` or feature-local types                                                                                                                     | reused in root app types                                                                            | `P0`     | `Fullstack`  | Sprint 2 | `done`        |
+| `legacy/frontend/src/lib/urlState.ts`                        | `lib/url-state.ts`                                                                                                                                        | adapt to Next search params                                                                         | `P1`     | `Fullstack`  | Sprint 4 | `not_started` |
+| `legacy/frontend/src/lib/utils.ts`                           | root `lib/utils.ts`                                                                                                                                       | selectively merged into root utilities                                                              | `P2`     | `Frontend`   | Sprint 2 | `done`        |
+| `legacy/frontend/src/store/ui.ts`                            | hooks or feature-local state                                                                                                                              | reduce scope, do not copy blindly                                                                   | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
+| `legacy/frontend/src/data/companies.ts`                      | Supabase `market_symbols` or import script                                                                                                                | convert from static frontend data                                                                   | `P1`     | `Data`       | Sprint 2 | `not_started` |
+| `legacy/frontend/src/data/asxCompanies.ts`                   | Supabase `market_symbols` or import script                                                                                                                | convert                                                                                             | `P1`     | `Data`       | Sprint 2 | `not_started` |
+| `legacy/frontend/src/data/bseCompanies.ts`                   | Supabase `market_symbols` or import script                                                                                                                | convert                                                                                             | `P1`     | `Data`       | Sprint 2 | `not_started` |
+| `legacy/frontend/src/data/nseCompanies.ts`                   | Supabase `market_symbols` or import script                                                                                                                | convert                                                                                             | `P1`     | `Data`       | Sprint 2 | `not_started` |
+| `legacy/frontend/src/data/nyseCompanies.ts`                  | Supabase `market_symbols` or import script                                                                                                                | convert                                                                                             | `P1`     | `Data`       | Sprint 2 | `not_started` |
+| `legacy/frontend/src/data/companies copy.ts`                 | none                                                                                                                                                      | treat as duplicate and review for deletion                                                          | `P3`     | `Unassigned` | Sprint 2 | `not_started` |
+| `legacy/frontend/src/components/ui/*`                        | none                                                                                                                                                      | prefer root `components/ui` instead                                                                 | `P0`     | `Frontend`   | Sprint 1 | `not_started` |
 
 ### Backend To Root App
 
-| Legacy File                                             | Target                                                    | Action                                                                   | Priority | Owner     | Sprint   | Status        |
-| ------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------ | -------- | --------- | -------- | ------------- |
-| `legacy/backend/server.js`                              | split across `app/api/*`, `lib/*`, and config             | do not migrate as one file                                               | `P0`     | `Backend` | Sprint 2 | `not_started` |
-| `legacy/backend/routes/stockRoutes.js`                  | `app/api/stocks/*` route handlers                         | convert to thin route wrappers                                           | `P0`     | `Backend` | Sprint 2 | `not_started` |
-| `legacy/backend/controllers/searchController.js`        | `lib/market/search-service.js` and `app/api/search/route.js` | extracted into root search service plus Next route                   | `P1`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/controllers/stockController.js`         | `lib/analysis/*` and `lib/market/*` helpers               | split controller responsibilities                                        | `P1`     | `Backend` | Sprint 2 | `not_started` |
-| `legacy/backend/services/analysisService.js`            | `lib/analysis/analysis-service.js`                        | extracted to root module and backend file now acts as wrapper            | `P0`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/fundamentalAnalysisService.js` | `lib/analysis/fundamental-analysis-service.js`            | extracted to root module and backend file now acts as wrapper            | `P0`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/technicalAnalysisService.js`   | `lib/analysis/technical-analysis-service.js`              | extracted to root module and backend file now acts as wrapper            | `P0`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/sentimentService.js`           | `lib/analysis/sentiment-service.js`                       | extracted to root module and backend file now acts as wrapper            | `P0`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/enhancedScoringService.js`     | `lib/analysis/enhanced-scoring-service.js`                | extracted to root module and backend file now acts as wrapper            | `P0`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/weightService.js`              | `lib/analysis/weight-service.js`                          | extracted to root module and backend file now acts as wrapper            | `P0`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/enhancedTrendingService.js`    | `lib/market/trending.ts`                                  | migrate                                                                  | `P1`     | `Backend` | Sprint 2 | `not_started` |
-| `legacy/backend/services/dataService.js`                | `lib/market/data-service.js`                              | migrated into the root market layer                                      | `P0`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/dataSourceManager.js`          | `lib/market/data-source-manager.js`                       | migrated into the root market layer                                      | `P1`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/geminiService.js`              | `lib/ai/gemini.ts` or provider-agnostic summary interface | still used through adapter injection; full isolation not finished        | `P1`     | `Backend` | Sprint 2 | `in_progress` |
-| `legacy/backend/services/cacheService.js`               | `lib/cache/database-cache.ts`                             | redesign complete; hybrid wrapper provides backward-compatible interface | `P1`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/apiTrackingService.js`         | `lib/observability/database-api-tracker.ts`               | redesign complete; hybrid wrapper provides backward-compatible interface | `P2`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/utils/testConnections.js`               | `scripts/test-provider-connections.ts`                    | convert to developer verification script                                 | `P2`     | `Backend` | Sprint 2 | `not_started` |
-| `legacy/backend/utils/test-sentiment-service.mjs`       | `scripts/test-sentiment-service.ts`                       | convert if still useful                                                  | `P3`     | `Backend` | Sprint 2 | `not_started` |
+| Legacy File                                             | Target                                                                                                                                                                                                                                                                        | Action                                                                                                                 | Priority | Owner     | Sprint   | Status        |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------- | --------- | -------- | ------------- |
+| `legacy/backend/server.js`                              | split across `app/api/*`, `lib/*`, and config                                                                                                                                                                                                                                 | do not migrate as one file                                                                                             | `P0`     | `Backend` | Sprint 2 | `not_started` |
+| `legacy/backend/routes/stockRoutes.js`                  | `app/api/quote/route.ts`, `app/api/stock-metric/route.ts`, `app/api/stock-peers/route.ts`, `app/api/stock-price-series/route.ts`, `app/api/stock-recommendation/route.ts`, `app/api/market-news/route.ts`, `app/api/market-status/route.ts`, `app/api/symbol-search/route.ts` | partially decomposed into thin Next route wrappers; some parity cleanup still pending                                  | `P0`     | `Backend` | Sprint 2 | `in_progress` |
+| `legacy/backend/controllers/searchController.js`        | `lib/market/search-service.js` and `app/api/search/route.js`                                                                                                                                                                                                                  | extracted into root search service plus Next route                                                                     | `P1`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/controllers/stockController.js`         | `lib/analysis/*`, `lib/market/*`, and `components/stock/*` helpers                                                                                                                                                                                                            | stock detail and analysis responsibilities are now split across root services and widgets; parity review still pending | `P1`     | `Backend` | Sprint 2 | `in_progress` |
+| `legacy/backend/services/analysisService.js`            | `lib/analysis/analysis-service.js`                                                                                                                                                                                                                                            | extracted to root module and backend file now acts as wrapper                                                          | `P0`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/fundamentalAnalysisService.js` | `lib/analysis/fundamental-analysis-service.js`                                                                                                                                                                                                                                | extracted to root module and backend file now acts as wrapper                                                          | `P0`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/technicalAnalysisService.js`   | `lib/analysis/technical-analysis-service.js`                                                                                                                                                                                                                                  | extracted to root module and backend file now acts as wrapper                                                          | `P0`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/sentimentService.js`           | `lib/analysis/sentiment-service.js`                                                                                                                                                                                                                                           | extracted to root module and backend file now acts as wrapper                                                          | `P0`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/enhancedScoringService.js`     | `lib/analysis/enhanced-scoring-service.js`                                                                                                                                                                                                                                    | extracted to root module and backend file now acts as wrapper                                                          | `P0`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/weightService.js`              | `lib/analysis/weight-service.js`                                                                                                                                                                                                                                              | extracted to root module and backend file now acts as wrapper                                                          | `P0`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/enhancedTrendingService.js`    | `lib/market/trending.ts`                                                                                                                                                                                                                                                      | migrate                                                                                                                | `P1`     | `Backend` | Sprint 2 | `not_started` |
+| `legacy/backend/services/dataService.js`                | `lib/market/data-service.js`                                                                                                                                                                                                                                                  | migrated into the root market layer                                                                                    | `P0`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/dataSourceManager.js`          | `lib/market/data-source-manager.js`                                                                                                                                                                                                                                           | migrated into the root market layer                                                                                    | `P1`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/geminiService.js`              | `lib/ai/gemini.ts` or provider-agnostic summary interface                                                                                                                                                                                                                     | still used through adapter injection; full isolation not finished                                                      | `P1`     | `Backend` | Sprint 2 | `in_progress` |
+| `legacy/backend/services/cacheService.js`               | `lib/cache/database-cache.ts`                                                                                                                                                                                                                                                 | redesign complete; hybrid wrapper provides backward-compatible interface                                               | `P1`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/services/apiTrackingService.js`         | `lib/observability/database-api-tracker.ts`                                                                                                                                                                                                                                   | redesign complete; hybrid wrapper provides backward-compatible interface                                               | `P2`     | `Backend` | Sprint 2 | `done`        |
+| `legacy/backend/utils/testConnections.js`               | `scripts/test-provider-connections.ts`                                                                                                                                                                                                                                        | convert to developer verification script                                                                               | `P2`     | `Backend` | Sprint 2 | `not_started` |
+| `legacy/backend/utils/test-sentiment-service.mjs`       | `scripts/test-sentiment-service.ts`                                                                                                                                                                                                                                           | convert if still useful                                                                                                | `P3`     | `Backend` | Sprint 2 | `not_started` |
 
 ## Execution Checkpoints
 
@@ -313,7 +313,7 @@ This maps legacy files to likely destinations in the new root app.
 - starter public homepage has been removed and `/` now redirects into the auth flow via `proxy.ts`
 - `app/layout.tsx` contains real metadata plus shared providers (`ThemeProvider`, `Toaster`, shell frame)
 - root env template exists at `.env.local.example` and matches the active service contract
-- auth routes are live now, but placeholder feature routes were removed and need to return during the next migration slices
+- auth, password reset, analysis, stock detail, and core market proxy routes are live; dedicated market, portfolio, indicators, weights, learn, and admin pages remain pending
 
 ### Checkpoint B: Logic Extracted
 
@@ -331,7 +331,7 @@ Current state:
 - `lib/analysis/weight-service.js` created
 - legacy backend service files now delegate to root analysis modules
 - syntax verification completed with `node --check` on new modules and wrappers
-- market/data extraction is still pending
+- market/data extraction now powers search, analysis, stock detail, and market-data proxy routes
 - **cache redesign complete**: `lib/cache/database-cache.ts` with Supabase `analysis_cache` table
 - **API tracking redesign complete**: `lib/observability/database-api-tracker.ts` with `api_call_log` table
 - cleanup script added: `npm run cache:cleanup`
@@ -342,7 +342,8 @@ Current state:
 - search works
 - symbol route works
 - analysis result renders in root app
-- chart, score, and summary are visible
+- chart, score, summary, and sentiment headlines are visible
+- a browse-first `/stock/[symbol]` route now exists for quote, peers, recommendation, and price-history validation
 
 ### Checkpoint D: Configurable Analysis Delivered
 
@@ -352,9 +353,9 @@ Current state:
 
 ### Checkpoint E: Auth And Persistence Delivered
 
-- user can sign in
+- user can sign in and recover access via password reset
 - user-owned data is stored in Supabase
-- portfolio or watchlist flow is functional
+- portfolio and watchlist persistence surfaces are still pending
 
 ### Checkpoint F: Cutover Ready
 
@@ -376,19 +377,24 @@ These files need redesign rather than direct migration:
 
 ## Immediate Next Actions
 
-| Order | Action                                                                      | Owner       | Status                                          |
-| ----- | --------------------------------------------------------------------------- | ----------- | ----------------------------------------------- |
-| 1     | Replace starter root homepage and layout metadata                           | `Frontend`  | `done`                                          |
-| 2     | Add Supabase client/server setup in root app                                | `Fullstack` | `done`                                          |
-| 3     | Extract `dataService.js` and `dataSourceManager.js` into root `lib/market/` | `Backend`   | `done`                                          |
-| 4     | Extract analysis services from legacy backend into root `lib/analysis/`     | `Backend`   | `done`                                          |
-| 5     | Design first-pass Supabase schema and create migrations                     | `Data`      | `done`                                          |
-| 6     | Isolate Gemini, cache, and API tracking behind root adapters                | `Backend`   | `partial` — cache/tracking done, Gemini pending |
-| 7     | Build symbol search and `/analysis/[symbol]` route with live data           | `Fullstack` | `done`                                          |
-| 8     | Migrate score, recommendation, summary, and chart components                | `Frontend`  | `done`                                          |
-| 9     | Add cleanup script and schedule for cache/tracking                          | `Backend`   | `done`                                          |
+| Order | Action                                                                                                                                | Owner       | Status                                          |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------- |
+| 1     | Finish the shared shell strategy so the lightweight header either reaches parity or is replaced by the final navbar/footer experience | `Frontend`  | `done`                                          |
+| 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `not_started`                                   |
+| 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `in_progress`                                   |
+| 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `not_started`                                   |
+| 5     | Implement watchlist and preferences flows on top of `watchlist_items` and `profiles.preferences`                                      | `Fullstack` | `not_started`                                   |
+| 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `partial` — cache/tracking done, Gemini pending |
+| 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `not_started`                                   |
 
 ## Progress Log
+
+### Shared Shell Parity - Completed (2026-04-15)
+
+- Mounted `components/layout/navbar.tsx` and `components/layout/footer.tsx` from `components/layout/shell-frame.tsx`, replacing the temporary lightweight header on protected routes
+- Added `components/layout/shell-navigation.ts` so the shared shell can distinguish live routes from planned migration targets without sending users to missing pages
+- Replaced static navbar auth placeholders with protected-shell theme controls plus sign out, while keeping `/login`, `/register`, `/forgot-password`, and `/reset-password` shellless
+- Verification: `npm run lint`, `npm run typecheck`, and `npm run build` all pass (build requires normal network access because `app/layout.tsx` uses `next/font/google`)
 
 ### Cache & API Tracking Redesign — Completed (2026-04-03)
 
@@ -443,8 +449,8 @@ These files need redesign rather than direct migration:
 - Uses `getClaims()` for auth token validation (current Supabase best practice)
 - Added graceful pass-through when Supabase env vars are not configured
 - Auth route guarding now exists via `proxy.ts` and `utils/supabase/proxy-auth.ts`
-- Auth routes now exist for `/login`, `/register`, and `/dashboard`
-- Server actions now handle sign-in, sign-up, and sign-out via Supabase auth
+- Auth routes now exist for `/login`, `/register`, `/forgot-password`, `/reset-password`, and `/dashboard`
+- Server actions now handle sign-in, sign-up, sign-out, and password recovery via Supabase auth
 - Sprint 5 remains incomplete because persistence features are still pending
 - Environment template created at `supabase/.env.local.example` with local Docker defaults (port 64321)
 
@@ -466,7 +472,7 @@ These files need redesign rather than direct migration:
 
 - Removed the starter public homepage; `/` now redirects through `proxy.ts` and `utils/supabase/proxy-auth.ts`
 - Replaced starter metadata in `app/layout.tsx` with StockViz SEO metadata and title template
-- Current routed surface: `/`, `/login`, `/register`, `/dashboard`, `/analysis/[symbol]`, and `/api/search`
+- Current routed surface: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and the root market-data API routes
 - Feature routes such as `/market`, `/portfolio`, `/indicators`, `/weights`, `/learn`, and `/admin` remain pending migration
 - Active routes use Next.js 16 conventions where applicable (`params` as `Promise`, `generateMetadata`)
 - Created `.env.local.example` at root documenting Supabase, Gemini, and market data keys using the current active variable names
@@ -478,11 +484,12 @@ These files need redesign rather than direct migration:
 
 - Rebuilt navbar in `components/layout/navbar.tsx` - adapted from react-router-dom to Next.js Link/usePathname
 - Rebuilt footer in `components/layout/footer.tsx` - adapted from react-router-dom to Next.js Link
-- `components/layout/shell-frame.tsx` still renders a temporary top-bar stub, so the rebuilt navbar/footer are not yet mounted in the shared shell
+- `components/layout/shell-frame.tsx` now mounts the rebuilt navbar/footer as the protected shared shell while still leaving auth routes shellless
 - Created `components/providers/theme-provider.tsx` - thin client wrapper around `next-themes`
 - Added `Toaster` from `sonner` to root layout
 - Theme uses `storageKey: "stockviz-ui-theme"` matching legacy convention
-- Auth-dependent navbar sections replaced with static Sign In / Sign Up buttons (Sprint 5)
+- Added `components/layout/shell-navigation.ts` so live routes stay clickable while unfinished routes render as planned rather than linking to dead pages
+- Protected shell actions now expose theme controls plus sign out instead of static auth placeholders
 - Onboarding popup decision: deferred (P3, depends on user state)
 
 #### Auth Flow Merged From Auth Branch (E9-S1 done)
@@ -490,18 +497,18 @@ These files need redesign rather than direct migration:
 - Added auth-aware `proxy.ts` flow using `utils/supabase/proxy-auth.ts`
 - Anonymous users are redirected to `/login`
 - Authenticated users are redirected away from `/login` and `/register` to `/dashboard`
-- Login and register pages now submit to Supabase server actions
-- Dashboard page now supports sign out via server action
-- Current limitation: navbar auth buttons are still static placeholders and persistence stories remain pending
+- Login and register pages now submit to Supabase server actions, and password recovery is available through `/forgot-password` and `/reset-password`
+- Dashboard page and the protected shared shell now support sign out via server action
+- Current limitation: persistence stories remain pending, but the navbar no longer relies on static auth placeholders
 
-#### Branch Sync From Main/Staging (2026-04-03)
+#### Branch Sync From Main/Staging (2026-04-13)
 
-- Synced `migration` with `origin/main`; `origin/staging` matched the same tip, so no extra merge was needed
+- Merged `origin/main` into `migration`, resolving env, Supabase helper, login, and Next config conflicts in favor of the active migration contract
+- Merged `origin/staging` into `migration` afterward to bring in the stock-detail slice, market hooks/routes, and password-recovery screens
 - Confirmed `origin/auth` and `origin/chore/ci` do not contain newer work beyond what `migration` already had
-- Archived the legacy source trees under `legacy/frontend/` and `legacy/backend/`
-- Updated the auth proxy so `/` redirects to `/login` for anonymous users and `/dashboard` for authenticated users
-- The root app currently exposes `/login`, `/register`, and `/dashboard`; feature routes like `/analysis/[symbol]`, `/market`, `/portfolio`, `/indicators`, `/weights`, `/learn`, and `/admin` need to be reintroduced as real migrated screens
-- `components/layout/shell-frame.tsx` is currently a top-bar stub without the previous navbar/footer, so E4 remains in progress
+- Archived legacy source trees remain under `legacy/frontend/` and `legacy/backend/` for reference only
+- Current routed surface now includes `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and root API routes for search, symbol lookup, quote, metrics, peers, price series, recommendations, market news, and market status
+- `components/layout/shell-frame.tsx` now mounts the rebuilt navbar/footer shell with global symbol search and route-aware planned/live navigation states
 
 #### Search And Analysis Slice Restored (2026-04-03)
 
@@ -510,30 +517,41 @@ These files need redesign rather than direct migration:
 - Added a root analysis runtime that wires extracted analysis services to the new market layer plus a temporary fallback summary adapter
 - Restored authenticated symbol search on `/dashboard` and added `/api/search` from the root app
 - Added `/analysis/[symbol]` with live data, timeframe switching, score cards, summary output, and a baseline price-history chart
+- Added `components/analysis/sentiment-headlines.tsx` so the analysis route now renders recent headlines and sentiment context
 - Pinned `turbopack.root` to the project directory in `next.config.ts` so local builds stay scoped to this repo
+
+#### Stock Detail, Market Data, And Password Recovery (2026-04-13)
+
+- Added `app/stock/[symbol]/page.tsx` with `components/stock/stock-symbol-view.tsx` and dedicated widgets for quote, financial metrics, recommendations, peers, and historical prices
+- Added `app/api/quote/route.ts`, `app/api/stock-metric/route.ts`, `app/api/stock-peers/route.ts`, `app/api/stock-price-series/route.ts`, and `app/api/stock-recommendation/route.ts` for the browse-first stock flow
+- Added `app/api/market-status/route.ts`, `app/api/market-news/route.ts`, and `app/api/symbol-search/route.ts` plus the corresponding `useUsMarketStatus`, `useMarketNews`, and `useSymbolSearch` hooks
+- Added `components/layout/stock-symbol-search.tsx` and mounted it in the shared shell header so symbol lookup is available outside the dashboard
+- Added `app/forgot-password/page.tsx`, `app/reset-password/page.tsx`, and the supporting auth server actions/callback flow for password recovery
+- Added `supabase/migrations/20260413100000_stocks_add_last_price.sql` and `lib/stocks/upsert-stock.ts` so symbol search results can be cached against canonical stock rows
 
 #### Verification
 
-- `origin/main` merged cleanly into `migration`; Git auto-commit failed on Windows due to a signal-pipe error, so the merge was finished with a normal follow-up commit
+- `origin/main` and `origin/staging` both merged into `migration`; the main-branch merge needed a normal follow-up commit after Git auto-commit failed on Windows with a signal-pipe error
 - `legacy/` is excluded from ESLint and TypeScript active checks
 - `npm run lint` passes on the active root app
-- `npm run typecheck` passes with the restored market/search/analysis slice
+- `npm run typecheck` passes with the merged market/search/analysis/stock slices
 - `npm run build` passes after pinning `turbopack.root`; sandboxed builds still need network access for Google Fonts in `app/layout.tsx`
-- Current routed surface now includes `/`, `/login`, `/register`, `/dashboard`, `/analysis/[symbol]`, and `/api/search`
-- Remaining feature-route work is still pending for `/market`, `/portfolio`, `/indicators`, `/weights`, `/learn`, and `/admin`
+- Current routed surface now includes `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and the root market-data API routes
+- Remaining feature-route work is still pending for dedicated `/market`, `/portfolio`, `/indicators`, `/weights`, `/learn`, and `/admin` screens
 
 ### Plan Reconciliation (2026-04-13)
 
 - Reconciled the root env contract: examples now use the active Supabase and market-data variable names, and runtime env reads tolerate the previous legacy aliases
 - Clarified that the current root entry flow is implemented with proxy-based redirects rather than a public `app/page.tsx` route
 - Updated the file-by-file migration map to reflect migrated navbar/footer/theme/auth/search/analysis items that already exist in the repo
+- Reconciled the story board and checkpoint notes with the merged `main` + `staging` branch state, including stock detail, password recovery, and market-data proxy routes
 
 ### Remaining Backend Gaps
 
 - Gemini provider migration is still incomplete; the root runtime currently uses a fallback summary adapter instead of the legacy Gemini service
 - ~~The root cache and API tracking adapters are still in-memory~~ — **Done**: now database-backed using Supabase
-- Search and analysis are live, but market overview, portfolio, indicators, weights, learn, and admin routes still need migrated implementations
-- The shared app shell is still a temporary top-bar stub rather than the final navbar/footer experience
+- Search, analysis, stock detail, market status/news, and password recovery are live, but dedicated market overview, portfolio, indicators, weights, learn, and admin routes still need migrated implementations
+- The shared app shell now mounts the rebuilt navbar/footer experience with global symbol search; remaining surface work is now focused on the pending feature routes
 
 ## Notes
 

@@ -1,71 +1,45 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { Button } from '@/components/ui/button'
 import {
-  Sun,
-  Moon,
-  Monitor,
-  Menu,
+  ArrowRight,
   BarChart3,
-  TrendingUp,
-  BookOpen,
-  Globe,
-  Search,
-  Activity,
-  Sliders,
+  LogOut,
+  Menu,
+  Monitor,
+  Moon,
+  Sun,
 } from 'lucide-react'
+
+import { signOut } from '@/app/auth/actions'
+import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
+import {
+  isNavItemActive,
+  primaryNavItems,
+} from '@/components/layout/shell-navigation'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Input } from '@/components/ui/input'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
-
-const navItems = [
-  {
-    href: '/',
-    label: 'Home',
-    icon: BarChart3,
-    description: 'Main dashboard',
-  },
-  {
-    href: '/market',
-    label: 'Market',
-    icon: Globe,
-    description: 'Market overview',
-  },
-  {
-    href: '/portfolio',
-    label: 'Portfolio',
-    icon: TrendingUp,
-    description: 'Portfolio management',
-  },
-  {
-    href: '/learn',
-    label: 'Learn',
-    icon: BookOpen,
-    description: 'Learning center',
-  },
-  {
-    href: '/indicators',
-    label: 'Indicators',
-    icon: Activity,
-    description: 'Technical indicators',
-  },
-  {
-    href: '/weights',
-    label: 'Weights',
-    icon: Sliders,
-    description: 'Analysis weights',
-  },
-]
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -77,6 +51,7 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }
+
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -92,10 +67,8 @@ export default function Navbar() {
     }
   }
 
-  const isActive = (path: string) => {
-    if (path === '/') return pathname === '/'
-    return pathname.startsWith(path)
-  }
+  const themeLabel =
+    theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'
 
   return (
     <nav
@@ -103,81 +76,114 @@ export default function Navbar() {
       className={cn(
         'sticky top-0 z-50 w-full transition-all duration-300',
         isScrolled
-          ? 'bg-background/95 backdrop-blur-md border-b border-border/40 shadow-lg'
-          : 'bg-background/80 backdrop-blur-sm'
+          ? 'border-b border-[#ddd6d0] bg-[#f9f9f8]/95 shadow-[0_14px_34px_rgba(55,49,45,0.08)] backdrop-blur-md'
+          : 'bg-[#f9f9f8]/88 backdrop-blur-sm'
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo and Brand */}
-          <div className="flex items-center space-x-6">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <BarChart3 className="h-6 w-6 text-white" />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-[4.5rem] items-center gap-3 py-3">
+          <div className="flex min-w-0 items-center gap-4 lg:gap-6">
+            <Link href="/dashboard" className="group flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#d8d1cb] bg-white text-[#5f5e5e] shadow-[0_10px_30px_rgba(55,49,45,0.07)] transition-transform duration-300 group-hover:-translate-y-0.5">
+                <BarChart3 className="h-5 w-5" />
               </div>
-              <div className="hidden sm:block">
-                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                  StockViz
-                </span>
-                <div className="text-xs text-muted-foreground -mt-1">
-                  Analysis Platform
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold tracking-tight text-[#4f4e4e]">
+                    StockViz
+                  </span>
+                  <Badge className="hidden border-[#ddd6d0] bg-[#f3eeea] text-[#6a706f] lg:inline-flex">
+                    Migration shell
+                  </Badge>
                 </div>
+                <p className="hidden text-xs text-[#7b7f7f] sm:block">
+                  Root app workspace
+                </p>
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
-              {navItems.map((item) => {
+            <div className="hidden xl:flex items-center gap-1">
+              {primaryNavItems.map((item) => {
                 const Icon = item.icon
+                const active = isNavItemActive(pathname, item)
+                const statusTone =
+                  item.status === 'live'
+                    ? 'border-[#d4ddd8] bg-[#edf4f0] text-[#2f6b43]'
+                    : 'border-[#ddd6d0] bg-[#f5f1ee] text-[#7b7f7f]'
+
+                if (!item.href) {
+                  return (
+                    <div
+                      key={item.label}
+                      className="flex items-center gap-2 rounded-full border border-transparent px-3 py-2 text-sm text-[#7b7f7f]"
+                      aria-disabled="true"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                      <Badge
+                        variant="outline"
+                        className={cn('rounded-full px-2 text-[11px]', statusTone)}
+                      >
+                        Planned
+                      </Badge>
+                    </div>
+                  )
+                }
+
                 return (
                   <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
                     className={cn(
-                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative group',
-                      isActive(item.href)
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      'group flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-all duration-200',
+                      active
+                        ? 'border-[#5f5e5e] bg-[#5f5e5e] text-white shadow-[0_10px_24px_rgba(55,49,45,0.12)]'
+                        : 'border-transparent text-[#5a6060] hover:border-[#ddd6d0] hover:bg-white hover:text-[#2d3433]'
                     )}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.label}</span>
-                    {isActive(item.href) && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-foreground rounded-full" />
-                    )}
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        'rounded-full px-2 text-[11px]',
+                        active
+                          ? 'border-white/25 bg-white/10 text-white'
+                          : statusTone
+                      )}
+                    >
+                      Live
+                    </Badge>
                   </Link>
                 )
               })}
             </div>
           </div>
 
-          {/* Center Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search stocks, companies..."
-                className="pl-10 bg-muted/50 border-border/50 focus:bg-background transition-all duration-200"
-              />
-            </div>
+          <div className="hidden min-w-0 flex-1 justify-center md:flex">
+            <StockSymbolSearch className="max-w-xl" />
           </div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center space-x-2">
-            {/* Theme Toggle */}
+          <div className="ml-auto flex items-center gap-2">
+            <Badge className="hidden border-[#d7dfdb] bg-[#eef4f1] text-[#2f6b43] lg:inline-flex">
+              Protected workspace
+            </Badge>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   id="theme-toggle"
                   variant="ghost"
-                  size="sm"
-                  className="h-9 w-9 p-0 hover:bg-accent"
+                  size="icon-sm"
+                  className="rounded-full border border-transparent text-[#5a6060] hover:border-[#ddd6d0] hover:bg-white hover:text-[#2d3433]"
                 >
                   {getThemeIcon()}
                   <span className="sr-only">Toggle theme</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuLabel>Theme</DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setTheme('light')}
                   className="cursor-pointer"
@@ -202,69 +208,169 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Auth placeholder — Sprint 5 */}
-            <div className="hidden sm:flex items-center space-x-2">
-              <Button variant="ghost" size="sm">
-                Sign In
-              </Button>
+            <form action={signOut} className="hidden lg:block">
               <Button
+                type="submit"
+                variant="outline"
                 size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="h-9 rounded-full border-[#d8d1cb] bg-white px-4 text-[#5f5e5e] hover:bg-[#f3efeb]"
               >
-                Sign Up
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out
               </Button>
-            </div>
+            </form>
 
-            {/* Mobile Menu Button */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button
                   id="mobile-menu-toggle"
                   variant="ghost"
-                  size="sm"
-                  className="lg:hidden h-9 w-9 p-0"
+                  size="icon-sm"
+                  className="rounded-full border border-[#ddd6d0] bg-white text-[#5f5e5e] lg:hidden"
                 >
                   <Menu className="h-4 w-4" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="flex flex-col space-y-6 mt-8">
-                  {/* Mobile Search */}
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      placeholder="Search stocks..."
-                      className="pl-10 bg-muted/50"
-                    />
+              <SheetContent
+                side="right"
+                className="w-[320px] border-l-[#ddd6d0] bg-[#f9f9f8] sm:w-[380px]"
+              >
+                <SheetHeader className="px-0 pt-10">
+                  <SheetTitle>Workspace navigation</SheetTitle>
+                  <SheetDescription>
+                    Access the live routes now and keep the upcoming migration
+                    surfaces visible without linking to unfinished pages.
+                  </SheetDescription>
+                </SheetHeader>
+
+                <div className="space-y-6 px-4">
+                  <div className="rounded-[22px] border border-[#e2dbd4] bg-white p-4 shadow-[0_12px_28px_rgba(55,49,45,0.05)]">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-[#7b7f7f]">
+                      Global search
+                    </p>
+                    <StockSymbolSearch className="max-w-none" />
                   </div>
 
-                  {/* Mobile Navigation */}
-                  {navItems.map((item) => {
-                    const Icon = item.icon
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={cn(
-                          'flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200',
-                          isActive(item.href)
-                            ? 'bg-primary text-primary-foreground'
-                            : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                        )}
-                      >
-                        <Icon className="h-5 w-5" />
-                        <div className="flex-1">
-                          <div>{item.label}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {item.description}
+                  <div className="space-y-2">
+                    {primaryNavItems.map((item) => {
+                      const Icon = item.icon
+                      const statusText =
+                        item.status === 'live' ? 'Live now' : 'Planned'
+                      const statusTone =
+                        item.status === 'live'
+                          ? 'border-[#d7dfdb] bg-[#eef4f1] text-[#2f6b43]'
+                          : 'border-[#ddd6d0] bg-[#f5f1ee] text-[#7b7f7f]'
+                      const active = isNavItemActive(pathname, item)
+
+                      if (!item.href) {
+                        return (
+                          <div
+                            key={item.label}
+                            className="rounded-[20px] border border-[#e2dbd4] bg-white px-4 py-3 text-left"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="mt-0.5 rounded-2xl bg-[#f3eeea] p-2 text-[#5f5e5e]">
+                                <Icon className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between gap-3">
+                                  <p className="font-medium text-[#4f4e4e]">
+                                    {item.label}
+                                  </p>
+                                  <Badge
+                                    variant="outline"
+                                    className={cn(
+                                      'rounded-full px-2 text-[11px]',
+                                      statusTone
+                                    )}
+                                  >
+                                    {statusText}
+                                  </Badge>
+                                </div>
+                                <p className="mt-1 text-sm leading-6 text-[#6a706f]">
+                                  {item.description}
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    )
-                  })}
+                        )
+                      }
+
+                      return (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={cn(
+                            'block rounded-[20px] border px-4 py-3 transition-colors',
+                            active
+                              ? 'border-[#5f5e5e] bg-[#5f5e5e] text-white'
+                              : 'border-[#e2dbd4] bg-white hover:bg-[#f6f3f0]'
+                          )}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div
+                              className={cn(
+                                'mt-0.5 rounded-2xl p-2',
+                                active
+                                  ? 'bg-white/10 text-white'
+                                  : 'bg-[#f3eeea] text-[#5f5e5e]'
+                              )}
+                            >
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between gap-3">
+                                <p className="font-medium">{item.label}</p>
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    'rounded-full px-2 text-[11px]',
+                                    active
+                                      ? 'border-white/20 bg-white/10 text-white'
+                                      : statusTone
+                                  )}
+                                >
+                                  {statusText}
+                                </Badge>
+                              </div>
+                              <p
+                                className={cn(
+                                  'mt-1 text-sm leading-6',
+                                  active ? 'text-white/80' : 'text-[#6a706f]'
+                                )}
+                              >
+                                {item.description}
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
+                      )
+                    })}
+                  </div>
                 </div>
+
+                <SheetFooter className="gap-3 border-t border-[#e2dbd4] px-4 pb-4 pt-4">
+                  <div className="flex items-center justify-between rounded-[18px] bg-white px-4 py-3">
+                    <div>
+                      <p className="text-sm font-medium text-[#4f4e4e]">
+                        Theme
+                      </p>
+                      <p className="text-xs text-[#6a706f]">{themeLabel}</p>
+                    </div>
+                    <div className="text-[#5f5e5e]">{getThemeIcon()}</div>
+                  </div>
+                  <form action={signOut}>
+                    <Button
+                      type="submit"
+                      className="h-11 w-full rounded-full bg-[#5f5e5e] text-white hover:bg-[#4f4e4e]"
+                    >
+                      Sign out
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </form>
+                </SheetFooter>
               </SheetContent>
             </Sheet>
           </div>
