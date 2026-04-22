@@ -30,10 +30,10 @@ export const primaryNavItems: ShellNavItem[] = [
   {
     label: "Market",
     description:
-      "Dedicated market overview routing is still pending migration into the root app.",
+      "Browse the live market session, news, and curated symbol discovery from the root app.",
     icon: Globe,
-    href: null,
-    status: "planned",
+    href: "/market",
+    status: "live",
     matchPrefixes: ["/market"],
   },
   {
@@ -57,7 +57,7 @@ export const primaryNavItems: ShellNavItem[] = [
   {
     label: "Indicators",
     description:
-      "Technical indicator controls still need to move into the root analysis UX.",
+      "Indicator controls now live inside analysis; a standalone route is still deferred.",
     icon: Activity,
     href: null,
     status: "planned",
@@ -66,7 +66,7 @@ export const primaryNavItems: ShellNavItem[] = [
   {
     label: "Weights",
     description:
-      "Analysis weighting controls remain on the migration backlog for the root app.",
+      "Weight controls now live inside analysis; a standalone route is still deferred.",
     icon: Sliders,
     href: null,
     status: "planned",
@@ -79,6 +79,11 @@ export const liveRouteShortcuts = [
     label: "Dashboard",
     href: "/dashboard",
     description: "Protected launch surface for the migrated workspace.",
+  },
+  {
+    label: "Market",
+    href: "/market",
+    description: "Browse live session status, news, and curated stock discovery.",
   },
   {
     label: "Sample analysis",

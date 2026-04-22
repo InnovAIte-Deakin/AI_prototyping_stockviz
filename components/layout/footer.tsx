@@ -177,8 +177,9 @@ export default function Footer() {
             expansion continues from the migration plan.
           </p>
           <p className="sm:text-right">
-            Dashboard, analysis, and stock detail are live. Market, portfolio,
-            learn, indicators, and weights remain staged.
+            Dashboard, market, analysis, and stock detail are live. Portfolio
+            and learn remain staged, while indicators and weights now live
+            inside analysis.
           </p>
         </div>
       </div>

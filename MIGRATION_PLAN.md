@@ -122,7 +122,7 @@ Exit criteria:
 | E5      | Search And Symbol Routing     | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Search to analysis route works                                                                                              |
 | E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                       |
 | E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `done`        | Sprint 4   | Configurable analysis controls work                                                                                         |
-| E8      | Market Pages                  | `P2`     | `Frontend`   | `in_progress` | Sprint 4   | Stock detail plus market-data primitives are live; dedicated overview/trending pages are still pending                      |
+| E8      | Market Pages                  | `P2`     | `Frontend`   | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                     |
 | E9      | Auth And User Features        | `P2`     | `Fullstack`  | `in_progress` | Sprint 5   | Auth plus password recovery are live; persistence features are still pending                                                |
 | E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                       |
 | E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `not_started` | Sprint 6   | Parity verified and legacy removable                                                                                        |
@@ -131,13 +131,13 @@ Exit criteria:
 
 ### E1: Platform Foundation
 
-| Story ID | Story                                             | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                                                                                  |
-| -------- | ------------------------------------------------- | -------- | ----------- | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| E1-S1    | Replace scaffolded homepage and metadata          | `P0`     | `Frontend`  | `done`        | Sprint 1 | Starter content is removed and the root entry flow is StockViz-auth aware                                                                   |
-| E1-S2    | Install dependencies and confirm Next 16 patterns | `P0`     | `Fullstack` | `done`        | Sprint 1 | Local dev works and team is using current conventions                                                                                       |
-| E1-S3    | Establish route structure under `app/`            | `P0`     | `Fullstack` | `in_progress` | Sprint 1 | Auth, password reset, analysis, stock detail, and core market API routes are live; dedicated market/portfolio/settings pages remain pending |
-| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done`        | Sprint 1 | Root env template matches active services and legacy aliases are tolerated                                                                  |
-| E1-S5    | Add validation and service boundaries             | `P1`     | `Backend`   | `done`        | Sprint 1 | Domain logic is isolated from page components                                                                                               |
+| Story ID | Story                                             | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                                                                  |
+| -------- | ------------------------------------------------- | -------- | ----------- | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
+| E1-S1    | Replace scaffolded homepage and metadata          | `P0`     | `Frontend`  | `done`        | Sprint 1 | Starter content is removed and the root entry flow is StockViz-auth aware                                                   |
+| E1-S2    | Install dependencies and confirm Next 16 patterns | `P0`     | `Fullstack` | `done`        | Sprint 1 | Local dev works and team is using current conventions                                                                       |
+| E1-S3    | Establish route structure under `app/`            | `P0`     | `Fullstack` | `in_progress` | Sprint 1 | Auth, password reset, analysis, stock detail, and market routes are live; dedicated portfolio/settings pages remain pending |
+| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done`        | Sprint 1 | Root env template matches active services and legacy aliases are tolerated                                                  |
+| E1-S5    | Add validation and service boundaries             | `P1`     | `Backend`   | `done`        | Sprint 1 | Domain logic is isolated from page components                                                                               |
 
 ### E2: Supabase Core
 
@@ -193,10 +193,10 @@ Exit criteria:
 
 ### E8: Market Pages
 
-| Story ID | Story                          | Priority | Owner      | Status        | Sprint   | Checkpoint                                                                                              |
-| -------- | ------------------------------ | -------- | ---------- | ------------- | -------- | ------------------------------------------------------------------------------------------------------- |
-| E8-S1    | Migrate trending stocks screen | `P2`     | `Frontend` | `not_started` | Sprint 4 | Discovery view works in root app                                                                        |
-| E8-S2    | Migrate market overview page   | `P2`     | `Frontend` | `in_progress` | Sprint 4 | Browse-first stock detail flow and market hooks exist; dedicated `/market` composition is still pending |
+| Story ID | Story                          | Priority | Owner      | Status | Sprint   | Checkpoint                                                                                      |
+| -------- | ------------------------------ | -------- | ---------- | ------ | -------- | ----------------------------------------------------------------------------------------------- |
+| E8-S1    | Migrate trending stocks screen | `P2`     | `Frontend` | `done` | Sprint 4 | Curated discovery tabs work in the root app and link into stock detail plus analysis            |
+| E8-S2    | Migrate market overview page   | `P2`     | `Frontend` | `done` | Sprint 4 | Browse-first `/market` route composes live market status, news, and discovery into stock detail |
 
 ### E9: Auth And User Features
 
@@ -446,6 +446,13 @@ Acceptance criteria:
 - no legacy hardcoded market cards are required for the MVP route
 - the shell navigation marks `/market` as live
 - trending can ship as curated symbols first if `lib/market/trending.ts` is still pending
+
+Implementation notes (2026-04-22):
+
+- Landed `app/market/page.tsx` with a dedicated market overview route in the root app
+- Added live market status and market news panels backed by the existing hooks and API proxies
+- Added curated discovery tabs that branch into migrated stock detail and analysis routes
+- Flipped the shell navigation metadata so `/market` is marked live
 
 ### Track 3: Portfolio Persistence MVP (`E9-S2`)
 
