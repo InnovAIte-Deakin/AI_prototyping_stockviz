@@ -39,10 +39,10 @@ export const primaryNavItems: ShellNavItem[] = [
   {
     label: "Portfolio",
     description:
-      "Portfolio persistence and holdings workflows are queued after the shell work.",
+      "Manage persisted holdings for the signed-in user from the root app portfolio route.",
     icon: TrendingUp,
-    href: null,
-    status: "planned",
+    href: "/portfolio",
+    status: "live",
     matchPrefixes: ["/portfolio"],
   },
   {
@@ -84,6 +84,11 @@ export const liveRouteShortcuts = [
     label: "Market",
     href: "/market",
     description: "Browse live session status, news, and curated stock discovery.",
+  },
+  {
+    label: "Portfolio",
+    href: "/portfolio",
+    description: "View, add, edit, and delete persisted holdings for the signed-in user.",
   },
   {
     label: "Sample analysis",

@@ -123,7 +123,7 @@ Exit criteria:
 | E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                       |
 | E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `done`        | Sprint 4   | Configurable analysis controls work                                                                                         |
 | E8      | Market Pages                  | `P2`     | `Frontend`   | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                     |
-| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `in_progress` | Sprint 5   | Auth plus password recovery are live; persistence features are still pending                                                |
+| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `in_progress` | Sprint 5   | Auth, password recovery, and portfolio persistence are live; wishlist/preferences are still pending                         |
 | E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                       |
 | E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `not_started` | Sprint 6   | Parity verified and legacy removable                                                                                        |
 
@@ -131,13 +131,13 @@ Exit criteria:
 
 ### E1: Platform Foundation
 
-| Story ID | Story                                             | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                                                                  |
-| -------- | ------------------------------------------------- | -------- | ----------- | ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
-| E1-S1    | Replace scaffolded homepage and metadata          | `P0`     | `Frontend`  | `done`        | Sprint 1 | Starter content is removed and the root entry flow is StockViz-auth aware                                                   |
-| E1-S2    | Install dependencies and confirm Next 16 patterns | `P0`     | `Fullstack` | `done`        | Sprint 1 | Local dev works and team is using current conventions                                                                       |
-| E1-S3    | Establish route structure under `app/`            | `P0`     | `Fullstack` | `in_progress` | Sprint 1 | Auth, password reset, analysis, stock detail, and market routes are live; dedicated portfolio/settings pages remain pending |
-| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done`        | Sprint 1 | Root env template matches active services and legacy aliases are tolerated                                                  |
-| E1-S5    | Add validation and service boundaries             | `P1`     | `Backend`   | `done`        | Sprint 1 | Domain logic is isolated from page components                                                                               |
+| Story ID | Story                                             | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                                                                   |
+| -------- | ------------------------------------------------- | -------- | ----------- | ------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| E1-S1    | Replace scaffolded homepage and metadata          | `P0`     | `Frontend`  | `done`        | Sprint 1 | Starter content is removed and the root entry flow is StockViz-auth aware                                                    |
+| E1-S2    | Install dependencies and confirm Next 16 patterns | `P0`     | `Fullstack` | `done`        | Sprint 1 | Local dev works and team is using current conventions                                                                        |
+| E1-S3    | Establish route structure under `app/`            | `P0`     | `Fullstack` | `in_progress` | Sprint 1 | Auth, password reset, analysis, stock detail, market, and portfolio routes are live; dedicated settings pages remain pending |
+| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done`        | Sprint 1 | Root env template matches active services and legacy aliases are tolerated                                                   |
+| E1-S5    | Add validation and service boundaries             | `P1`     | `Backend`   | `done`        | Sprint 1 | Domain logic is isolated from page components                                                                                |
 
 ### E2: Supabase Core
 
@@ -200,11 +200,11 @@ Exit criteria:
 
 ### E9: Auth And User Features
 
-| Story ID | Story                                        | Priority | Owner       | Status        | Sprint   | Checkpoint                                               |
-| -------- | -------------------------------------------- | -------- | ----------- | ------------- | -------- | -------------------------------------------------------- |
-| E9-S1    | Replace auth context with Supabase auth      | `P2`     | `Fullstack` | `done`        | Sprint 5 | Session, sign-in, sign-up, and password reset flows work |
-| E9-S2    | Migrate portfolio persistence                | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User portfolios can be saved and loaded                  |
-| E9-S3    | Migrate watchlists, preferences, and presets | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User customization is persistent                         |
+| Story ID | Story                                        | Priority | Owner       | Status        | Sprint   | Checkpoint                                                |
+| -------- | -------------------------------------------- | -------- | ----------- | ------------- | -------- | --------------------------------------------------------- |
+| E9-S1    | Replace auth context with Supabase auth      | `P2`     | `Fullstack` | `done`        | Sprint 5 | Session, sign-in, sign-up, and password reset flows work  |
+| E9-S2    | Migrate portfolio persistence                | `P2`     | `Fullstack` | `done`        | Sprint 5 | Authenticated users can save, update, and remove holdings |
+| E9-S3    | Migrate watchlists, preferences, and presets | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User customization is persistent                          |
 
 ### E10: Learn/Admin/Secondary Screens
 
@@ -253,7 +253,7 @@ This maps legacy files to likely destinations in the new root app.
 | `legacy/frontend/src/components/EnhancedIndicatorsPanel.tsx` | merged into canonical indicators panel                                                                                                                    | keep only stronger behavior                                                                         | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
 | `legacy/frontend/src/components/WeightsPanel.tsx`            | `components/analysis/weights-panel.tsx`                                                                                                                   | migrated into the root analysis controls                                                            | `P1`     | `Frontend`   | Sprint 4 | `done`        |
 | `legacy/frontend/src/components/EnhancedWeightsPanel.tsx`    | merged into canonical weights panel                                                                                                                       | keep only stronger behavior                                                                         | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/components/TrendingTabs.tsx`            | `components/market/trending-tabs.tsx`                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/TrendingTabs.tsx`            | `components/market/trending-tabs.tsx`                                                                                                                     | reimplemented as curated discovery tabs in the root market route                                    | `P2`     | `Frontend`   | Sprint 4 | `done`        |
 | `legacy/frontend/src/components/LoadingSpinner.tsx`          | `components/feedback/loading-spinner.tsx` or existing UI spinner                                                                                          | migrate or replace                                                                                  | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
 | `legacy/frontend/src/components/EmptyState.tsx`              | `components/feedback/empty-state.tsx`                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
 | `legacy/frontend/src/components/ErrorBoundary.tsx`           | `error.tsx` patterns or shared client boundary                                                                                                            | adapt to Next error model                                                                           | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
@@ -264,8 +264,8 @@ This maps legacy files to likely destinations in the new root app.
 | `legacy/frontend/src/pages/AnalysisResultsPage.tsx`          | `app/analysis/[symbol]/page.jsx`                                                                                                                          | merged into the active analysis route                                                               | `P1`     | `Fullstack`  | Sprint 3 | `done`        |
 | `legacy/frontend/src/pages/Indicators.tsx`                   | folded into `app/analysis/[symbol]/page.jsx`                                                                                                              | migrated into the analysis route instead of a standalone page                                       | `P2`     | `Frontend`   | Sprint 4 | `done`        |
 | `legacy/frontend/src/pages/Weights.tsx`                      | folded into `app/analysis/[symbol]/page.jsx`                                                                                                              | migrated into the analysis route instead of a standalone page                                       | `P2`     | `Frontend`   | Sprint 4 | `done`        |
-| `legacy/frontend/src/pages/Market.tsx`                       | `app/market/page.tsx`                                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/pages/Portfolio.tsx`                    | `app/portfolio/page.tsx`                                                                                                                                  | migrate after auth/persistence                                                                      | `P2`     | `Fullstack`  | Sprint 5 | `not_started` |
+| `legacy/frontend/src/pages/Market.tsx`                       | `app/market/page.tsx`                                                                                                                                     | migrated into the root app with live status/news plus curated discovery                             | `P2`     | `Frontend`   | Sprint 4 | `done`        |
+| `legacy/frontend/src/pages/Portfolio.tsx`                    | `app/portfolio/page.tsx`                                                                                                                                  | migrated into the root app with authenticated Supabase-backed holdings persistence                  | `P2`     | `Fullstack`  | Sprint 5 | `done`        |
 | `legacy/frontend/src/pages/Learn.tsx`                        | likely none                                                                                                                                               | confirm if obsolete                                                                                 | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
 | `legacy/frontend/src/pages/LearnPage.tsx`                    | `app/learn/page.tsx`                                                                                                                                      | migrate if retained                                                                                 | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
 | `legacy/frontend/src/pages/Admin.tsx`                        | `app/admin/page.tsx`                                                                                                                                      | migrate if still needed                                                                             | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
@@ -481,6 +481,14 @@ Acceptance criteria:
 - holdings rendering stays isolated from raw Supabase calls via a root service boundary
 - `npm run lint`, `npm run typecheck`, and `npm run build` pass
 
+Implementation notes (2026-04-22):
+
+- Landed `app/portfolio/page.tsx` with a dedicated authenticated portfolio route
+- Added `app/portfolio/actions.ts` server actions for add, update, and delete flows
+- Added `lib/portfolio/holdings-service.ts` as the data-access boundary over `portfolio_holdings`
+- Added `components/portfolio/portfolio-view.tsx`, `holding-form.tsx`, and `holdings-table.tsx` for the MVP UX
+- Flipped the shell navigation metadata so `/portfolio` is marked live
+
 ### Track 4: Test Harness And Parity Prep (`E11-S1`, `E11-S2`, `E11-S3`)
 
 Goal:
@@ -605,8 +613,8 @@ Acceptance criteria:
 
 - Removed the starter public homepage; `/` now redirects through `proxy.ts` and `utils/supabase/proxy-auth.ts`
 - Replaced starter metadata in `app/layout.tsx` with StockViz SEO metadata and title template
-- Current routed surface: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and the root market-data API routes
-- Feature routes such as `/market`, `/portfolio`, `/indicators`, `/weights`, `/learn`, and `/admin` remain pending migration
+- Current routed surface: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/market`, `/portfolio`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and the root market-data API routes
+- Feature routes such as `/learn` and `/admin` remain pending migration, while standalone `/indicators` and `/weights` routes stay intentionally folded into `/analysis/[symbol]`
 - Active routes use Next.js 16 conventions where applicable (`params` as `Promise`, `generateMetadata`)
 - Created `.env.local.example` at root documenting Supabase, Gemini, and market data keys using the current active variable names
 - Added `!.env.example` exception to `.gitignore`
@@ -632,7 +640,7 @@ Acceptance criteria:
 - Authenticated users are redirected away from `/login` and `/register` to `/dashboard`
 - Login and register pages now submit to Supabase server actions, and password recovery is available through `/forgot-password` and `/reset-password`
 - Dashboard page and the protected shared shell now support sign out via server action
-- Current limitation: persistence stories remain pending, but the navbar no longer relies on static auth placeholders
+- Current limitation: wishlist/preferences stories remain pending, but the navbar no longer relies on static auth placeholders
 
 #### Branch Sync From Main/Staging (2026-04-13)
 
@@ -640,7 +648,7 @@ Acceptance criteria:
 - Merged `origin/staging` into `migration` afterward to bring in the stock-detail slice, market hooks/routes, and password-recovery screens
 - Confirmed `origin/auth` and `origin/chore/ci` do not contain newer work beyond what `migration` already had
 - Archived legacy source trees remain under `legacy/frontend/` and `legacy/backend/` for reference only
-- Current routed surface now includes `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and root API routes for search, symbol lookup, quote, metrics, peers, price series, recommendations, market news, and market status
+- Current routed surface now includes `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/market`, `/portfolio`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and root API routes for search, symbol lookup, quote, metrics, peers, price series, recommendations, market news, and market status
 - `components/layout/shell-frame.tsx` now mounts the rebuilt navbar/footer shell with global symbol search and route-aware planned/live navigation states
 
 #### Search And Analysis Slice Restored (2026-04-03)
@@ -669,8 +677,8 @@ Acceptance criteria:
 - `npm run lint` passes on the active root app
 - `npm run typecheck` passes with the merged market/search/analysis/stock slices
 - `npm run build` passes after pinning `turbopack.root`; sandboxed builds still need network access for Google Fonts in `app/layout.tsx`
-- Current routed surface now includes `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and the root market-data API routes
-- Remaining feature-route work is still pending for dedicated `/market`, `/portfolio`, `/indicators`, `/weights`, `/learn`, and `/admin` screens
+- Current routed surface now includes `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/dashboard`, `/market`, `/portfolio`, `/analysis/[symbol]`, `/stock/[symbol]`, `/auth/callback`, and the root market-data API routes
+- Remaining feature-route work is still pending for dedicated `/learn` and `/admin` screens, while standalone `/indicators` and `/weights` remain intentionally folded into `/analysis/[symbol]`
 
 ### Plan Reconciliation (2026-04-13)
 
@@ -683,7 +691,7 @@ Acceptance criteria:
 
 - Gemini provider migration is still incomplete; the root runtime currently uses a fallback summary adapter instead of the legacy Gemini service
 - ~~The root cache and API tracking adapters are still in-memory~~ — **Done**: now database-backed using Supabase
-- Search, analysis, stock detail, market status/news, and password recovery are live, but dedicated market overview, portfolio, indicators, weights, learn, and admin routes still need migrated implementations
+- Search, analysis, stock detail, market overview, portfolio, market status/news, and password recovery are live, but dedicated learn and admin routes still need migrated implementations
 - The shared app shell now mounts the rebuilt navbar/footer experience with global symbol search; remaining surface work is now focused on the pending feature routes
 
 ## Notes
