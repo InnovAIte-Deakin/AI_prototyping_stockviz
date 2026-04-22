@@ -25,36 +25,40 @@ const METRIC_LABELS: Record<string, string> = {
   currentRatioAnnual: "Current ratio",
   quickRatioAnnual: "Quick ratio",
   netInterestCoverageAnnual: "Interest coverage",
-}
+};
 
 const humanizeKey = (key: string): string => {
-  const spaced = key.replace(/([A-Z0-9])/g, " $1").replace(/^./, (c) => c.toUpperCase())
-  return spaced.replace(/\s+/g, " ").trim()
-}
+  const spaced = key
+    .replace(/([A-Z0-9])/g, " $1")
+    .replace(/^./, (c) => c.toUpperCase());
+  return spaced.replace(/\s+/g, " ").trim();
+};
 
 export const labelForMetricKey = (key: string): string => {
-  return METRIC_LABELS[key] ?? humanizeKey(key)
-}
+  return METRIC_LABELS[key] ?? humanizeKey(key);
+};
 
-export const formatMetricValue = (value: string | number | null | undefined): string => {
+export const formatMetricValue = (
+  value: string | number | null | undefined,
+): string => {
   if (value === null || value === undefined || value === "") {
-    return "—"
+    return "—";
   }
   if (typeof value === "number") {
     if (!Number.isFinite(value)) {
-      return "—"
+      return "—";
     }
     if (Math.abs(value) >= 1e12) {
-      return value.toExponential(2)
+      return value.toExponential(2);
     }
     return new Intl.NumberFormat(undefined, {
       maximumFractionDigits: 4,
-    }).format(value)
+    }).format(value);
   }
-  const s = String(value).trim()
-  const num = Number(s)
+  const s = String(value).trim();
+  const num = Number(s);
   if (s !== "" && !Number.isNaN(num) && /^-?\d/.test(s)) {
-    return formatMetricValue(num)
+    return formatMetricValue(num);
   }
-  return s
-}
+  return s;
+};

@@ -11,27 +11,27 @@
 // ---------------------------------------------------------------------------
 
 export interface ScoreBlock {
-  score?: number
-  recommendation?: string
-  weight?: string
-  [key: string]: unknown
+  score?: number;
+  recommendation?: string;
+  weight?: string;
+  [key: string]: unknown;
 }
 
 export interface SentimentHeadline {
-  title?: string
-  publisher?: string
-  score?: number
-  sentiment?: number
-  url?: string
-  timePublished?: string
-  [key: string]: unknown
+  title?: string;
+  publisher?: string;
+  score?: number;
+  sentiment?: number;
+  url?: string;
+  timePublished?: string;
+  [key: string]: unknown;
 }
 
 export interface SentimentAnalysis extends ScoreBlock {
-  source?: string
-  summary?: string
-  headlines?: SentimentHeadline[]
-  newsItems?: SentimentHeadline[]
+  source?: string;
+  summary?: string;
+  headlines?: SentimentHeadline[];
+  newsItems?: SentimentHeadline[];
 }
 
 // ---------------------------------------------------------------------------
@@ -39,18 +39,18 @@ export interface SentimentAnalysis extends ScoreBlock {
 // ---------------------------------------------------------------------------
 
 export interface TechnicalAnalysis {
-  score: number
-  recommendation: string
-  indicators: Record<string, unknown>
-  configuration?: Record<string, unknown>
-  error?: string
+  score: number;
+  recommendation: string;
+  indicators: Record<string, unknown>;
+  configuration?: Record<string, unknown>;
+  error?: string;
 }
 
 export interface CandlePattern {
-  index: number
-  pattern: string
-  direction: string
-  confidence: number
+  index: number;
+  pattern: string;
+  direction: string;
+  confidence: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -58,21 +58,21 @@ export interface CandlePattern {
 // ---------------------------------------------------------------------------
 
 export interface AnalysisResult {
-  mode: string
-  timeframe: string
-  timestamp?: string
-  fundamental?: ScoreBlock
-  technical?: TechnicalAnalysis
-  sentiment?: SentimentAnalysis
-  overall?: ScoreBlock
-  aiInsights?: { summary?: string }
-  meta?: Record<string, unknown>
+  mode: string;
+  timeframe: string;
+  timestamp?: string;
+  fundamental?: ScoreBlock;
+  technical?: TechnicalAnalysis;
+  sentiment?: SentimentAnalysis;
+  overall?: ScoreBlock;
+  aiInsights?: { summary?: string };
+  meta?: Record<string, unknown>;
 }
 
 export interface AnalysisResponse {
-  status: string
-  symbol: string
-  analysis: AnalysisResult
+  status: string;
+  symbol: string;
+  analysis: AnalysisResult;
 }
 
 // ---------------------------------------------------------------------------
@@ -80,10 +80,10 @@ export interface AnalysisResponse {
 // ---------------------------------------------------------------------------
 
 export interface IndicatorsResponse {
-  status: string
-  availableIndicators?: Record<string, string[]>
-  defaultConfig?: Record<string, unknown>
-  description?: string
+  status: string;
+  availableIndicators?: Record<string, string[]>;
+  defaultConfig?: Record<string, unknown>;
+  description?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -91,10 +91,10 @@ export interface IndicatorsResponse {
 // ---------------------------------------------------------------------------
 
 export interface WeightsDefaultsResponse {
-  status: string
-  defaultWeights: Record<string, number>
-  description?: Record<string, string>
-  examples?: Record<string, unknown>[]
+  status: string;
+  defaultWeights: Record<string, number>;
+  description?: Record<string, string>;
+  examples?: Record<string, unknown>[];
 }
 
 // ---------------------------------------------------------------------------
@@ -102,15 +102,15 @@ export interface WeightsDefaultsResponse {
 // ---------------------------------------------------------------------------
 
 export interface SearchResultItem {
-  symbol: string
-  name?: string
-  region?: string
-  type?: string
+  symbol: string;
+  name?: string;
+  region?: string;
+  type?: string;
 }
 
 export interface SearchResponse {
-  status?: string
-  results?: SearchResultItem[]
+  status?: string;
+  results?: SearchResultItem[];
 }
 
 // ---------------------------------------------------------------------------
@@ -118,40 +118,40 @@ export interface SearchResponse {
 // ---------------------------------------------------------------------------
 
 export interface TrendingStock {
-  symbol: string
-  name?: string
-  price?: number
-  change?: number
-  changeAmount?: number
-  volume?: number
-  category?: string
+  symbol: string;
+  name?: string;
+  price?: number;
+  change?: number;
+  changeAmount?: number;
+  volume?: number;
+  category?: string;
 }
 
 export interface TrendingBuckets {
-  gainers?: TrendingStock[]
-  losers?: TrendingStock[]
-  mostActive?: TrendingStock[]
-  lastUpdated?: string
+  gainers?: TrendingStock[];
+  losers?: TrendingStock[];
+  mostActive?: TrendingStock[];
+  lastUpdated?: string;
 }
 
 export interface TrendingResponse {
-  status?: string
-  lastUpdated?: string
-  timestamp?: string
-  source?: string
-  trending?: TrendingStock[] | TrendingBuckets
+  status?: string;
+  lastUpdated?: string;
+  timestamp?: string;
+  source?: string;
+  trending?: TrendingStock[] | TrendingBuckets;
 }
 
 /** Finnhub `GET /stock/market-status` (e.g. exchange=US). See docs/Finnhub_Swagger.json */
 export interface FinnhubMarketStatus {
-  exchange?: string
-  timezone?: string
+  exchange?: string;
+  timezone?: string;
   /** pre-market | regular | post-market | null when closed */
-  session?: string | null
-  holiday?: string | null
-  isOpen?: boolean
+  session?: string | null;
+  holiday?: string | null;
+  isOpen?: boolean;
   /** Unix seconds */
-  t?: number
+  t?: number;
 }
 
 /** Finnhub `GET /news` category query param */
@@ -159,34 +159,34 @@ export type FinnhubMarketNewsCategory =
   | "general"
   | "forex"
   | "crypto"
-  | "merger"
+  | "merger";
 
 /** Finnhub `MarketNews` item. See docs/Finnhub_Swagger.json */
 export interface FinnhubMarketNewsItem {
-  category?: string
+  category?: string;
   /** Published time, Unix seconds */
-  datetime?: number
-  headline?: string
-  id?: number
-  image?: string
-  related?: string
-  source?: string
-  summary?: string
-  url?: string
+  datetime?: number;
+  headline?: string;
+  id?: number;
+  image?: string;
+  related?: string;
+  source?: string;
+  summary?: string;
+  url?: string;
 }
 
 /** Single hit from Finnhub `GET /search` (`SymbolLookupInfo`). */
 export interface FinnhubSymbolLookupInfo {
-  description?: string
-  displaySymbol?: string
-  symbol?: string
-  type?: string
+  description?: string;
+  displaySymbol?: string;
+  symbol?: string;
+  type?: string;
 }
 
 /** Finnhub `GET /search` response (`SymbolLookup`). */
 export interface FinnhubSymbolLookupResponse {
-  count?: number
-  result?: FinnhubSymbolLookupInfo[]
+  count?: number;
+  result?: FinnhubSymbolLookupInfo[];
 }
 
 // ---------------------------------------------------------------------------
@@ -196,33 +196,33 @@ export interface FinnhubSymbolLookupResponse {
 /** Finnhub `GET /quote`. */
 export interface FinnhubQuote {
   /** Current price */
-  c?: number
+  c?: number;
   /** High of day */
-  h?: number
+  h?: number;
   /** Low of day */
-  l?: number
+  l?: number;
   /** Open price of day */
-  o?: number
+  o?: number;
   /** Previous close */
-  pc?: number
+  pc?: number;
   /** Unix seconds */
-  t?: number
+  t?: number;
 }
 
 /** Finnhub `GET /stock/metric?metric=all` — `metric` is a flat key → value map. */
 export interface FinnhubStockMetricResponse {
-  metric?: Record<string, string | number | null | undefined>
+  metric?: Record<string, string | number | null | undefined>;
 }
 
 /** Finnhub `GET /stock/peers` — JSON array of ticker strings. */
-export type FinnhubPeersResponse = string[]
+export type FinnhubPeersResponse = string[];
 
 /** Finnhub `GET /stock/recommendation` row. */
 export interface FinnhubRecommendationTrend {
-  period?: string
-  strongBuy?: number
-  buy?: number
-  hold?: number
-  sell?: number
-  strongSell?: number
+  period?: string;
+  strongBuy?: number;
+  buy?: number;
+  hold?: number;
+  sell?: number;
+  strongSell?: number;
 }

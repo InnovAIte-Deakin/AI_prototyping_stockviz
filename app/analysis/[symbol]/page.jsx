@@ -1,11 +1,27 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, BarChart3, Gauge, MessageSquareText, Newspaper } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BarChart3,
+  Gauge,
+  MessageSquareText,
+  Newspaper,
+} from "lucide-react";
 import runtime from "@/lib/analysis/runtime";
+import { AnalysisControls } from "@/components/analysis/analysis-controls";
 import { SymbolSearch } from "@/components/search/symbol-search";
 import { PriceHistoryChart } from "@/components/analysis/price-history-chart";
 import { SentimentHeadlines } from "@/components/analysis/sentiment-headlines";
 import { Button } from "@/components/ui/button";
+import {
+  buildAnalysisSearchParams,
+  decodeIndicatorConfig,
+  getEnabledIndicatorNames,
+  getSingleSearchParam,
+  normalizeIndicatorConfig,
+  normalizeWeights,
+} from "@/lib/url-state";
 
 const TIMEFRAMES = ["1D", "1W", "1M", "3M", "6M", "1Y", "2Y"];
 const { analyzeSymbol } = runtime;
@@ -24,7 +40,9 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const { symbol } = await params;
-  const normalizedSymbol = String(symbol || "").trim().toUpperCase();
+  const normalizedSymbol = String(symbol || "")
+    .trim()
+    .toUpperCase();
 
   return {
     title: normalizedSymbol ? `${normalizedSymbol} Analysis` : "Analysis",
@@ -35,23 +53,67 @@ export async function generateMetadata({ params }) {
 export default async function AnalysisPage({ params, searchParams }) {
   const { symbol } = await params;
   const resolvedSearchParams = (await searchParams) || {};
-  const normalizedSymbol = String(symbol || "").trim().toUpperCase();
+  const normalizedSymbol = String(symbol || "")
+    .trim()
+    .toUpperCase();
 
   if (!normalizedSymbol) notFound();
 
-  const timeframe = normalizeTimeframe(resolvedSearchParams.tf);
-  const { analysis, stockData, weights } = await analyzeSymbol(normalizedSymbol, {
-    timeframe,
-    mode: "advanced",
+  const timeframe = normalizeTimeframe(
+    getSingleSearchParam(resolvedSearchParams.tf),
+  );
+  const availableIndicators =
+    runtime.technicalAnalysisService.getAvailableIndicators();
+  const defaultIndicatorConfig = normalizeIndicatorConfig(
+    {},
+    runtime.technicalAnalysisService.getDefaultConfig(),
+    availableIndicators,
+  );
+  const selectedWeights = normalizeWeights({
+    fundamental: getSingleSearchParam(resolvedSearchParams.wf),
+    technical: getSingleSearchParam(resolvedSearchParams.wt),
+    sentiment: getSingleSearchParam(resolvedSearchParams.ws),
   });
+  const activeIndicatorConfig = decodeIndicatorConfig(
+    resolvedSearchParams.ic,
+    defaultIndicatorConfig,
+    availableIndicators,
+  );
+  const { analysis, stockData, weights } = await analyzeSymbol(
+    normalizedSymbol,
+    {
+      timeframe,
+      mode: "advanced",
+      weights: selectedWeights,
+      indicatorsConfig: activeIndicatorConfig,
+    },
+  );
 
-  const summary = analysis?.analysis?.aiInsights?.summary || "No summary available.";
+  const summary =
+    analysis?.analysis?.aiInsights?.summary || "No summary available.";
   const overall = analysis?.analysis?.overall || {};
   const fundamental = analysis?.analysis?.fundamental || {};
   const technical = analysis?.analysis?.technical || {};
   const sentiment = analysis?.analysis?.sentiment || {};
   const chartData = Array.isArray(stockData?.ohlcv) ? stockData.ohlcv : [];
   const latestPoint = chartData.at(-1);
+  const activeIndicatorNames = getEnabledIndicatorNames(activeIndicatorConfig);
+  const timeframeHrefs = Object.fromEntries(
+    TIMEFRAMES.map((candidate) => {
+      const nextSearchParams = buildAnalysisSearchParams({
+        timeframe: candidate,
+        weights,
+        indicatorConfig: activeIndicatorConfig,
+        defaultIndicatorConfig,
+        availableIndicators,
+      });
+      const href = nextSearchParams.toString()
+        ? `/analysis/${encodeURIComponent(normalizedSymbol)}?${nextSearchParams.toString()}`
+        : `/analysis/${encodeURIComponent(normalizedSymbol)}`;
+
+      return [candidate, href];
+    }),
+  );
 
   const scoreCards = [
     {
@@ -85,13 +147,19 @@ export default async function AnalysisPage({ params, searchParams }) {
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex flex-col gap-4 rounded-[28px] border border-[#e6e0db] bg-white p-7 shadow-[0_20px_60px_rgba(55,49,45,0.06)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Button asChild variant="ghost" className="h-10 rounded-xl px-3 text-[#5f5e5e] hover:bg-[#f5f1ee]">
+            <Button
+              asChild
+              variant="ghost"
+              className="h-10 rounded-xl px-3 text-[#5f5e5e] hover:bg-[#f5f1ee]"
+            >
               <Link href="/dashboard">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to dashboard
               </Link>
             </Button>
-            <p className="text-sm text-[#6a706f]">Source: {stockData?.source || "Unknown data source"}</p>
+            <p className="text-sm text-[#6a706f]">
+              Source: {stockData?.source || "Unknown data source"}
+            </p>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
@@ -104,8 +172,9 @@ export default async function AnalysisPage({ params, searchParams }) {
                   {normalizedSymbol} analysis
                 </h1>
                 <p className="mt-3 max-w-2xl text-base leading-7 text-[#636968]">
-                  This screen is powered by the new root market data layer and extracted analysis
-                  services. It is the first end-to-end slice back on the App Router.
+                  This screen is powered by the new root market data layer and
+                  extracted analysis services. It is the first end-to-end slice
+                  back on the App Router.
                 </p>
               </div>
 
@@ -116,18 +185,26 @@ export default async function AnalysisPage({ params, searchParams }) {
                     asChild
                     variant="outline"
                     className={`h-10 rounded-xl border-[#d7d1cc] px-4 ${
-                      candidate === timeframe ? "bg-[#5f5e5e] text-white hover:bg-[#4f4e4e]" : "bg-white text-[#5f5e5e]"
+                      candidate === timeframe
+                        ? "bg-[#5f5e5e] text-white hover:bg-[#4f4e4e]"
+                        : "bg-white text-[#5f5e5e]"
                     }`}
                   >
-                    <Link href={`/analysis/${encodeURIComponent(normalizedSymbol)}?tf=${candidate}`}>{candidate}</Link>
+                    <Link href={timeframeHrefs[candidate]}>{candidate}</Link>
                   </Button>
                 ))}
               </div>
             </div>
 
             <div className="rounded-[24px] border border-[#ece6e1] bg-[#fbf8f6] p-5">
-              <p className="mb-3 text-sm font-medium text-[#6a706f]">Search another symbol</p>
-              <SymbolSearch compact submitLabel="Go" initialQuery={normalizedSymbol} />
+              <p className="mb-3 text-sm font-medium text-[#6a706f]">
+                Search another symbol
+              </p>
+              <SymbolSearch
+                compact
+                submitLabel="Go"
+                initialQuery={normalizedSymbol}
+              />
             </div>
           </div>
         </div>
@@ -141,14 +218,20 @@ export default async function AnalysisPage({ params, searchParams }) {
                 className="rounded-[22px] border border-[#e6e0db] bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="text-sm font-medium text-[#6a706f]">{card.label}</span>
+                  <span className="text-sm font-medium text-[#6a706f]">
+                    {card.label}
+                  </span>
                   <div className="rounded-2xl bg-[#f1ece8] p-2 text-[#5f5e5e]">
                     <Icon className="h-4 w-4" />
                   </div>
                 </div>
                 <div className="flex items-end gap-3">
-                  <p className="text-4xl font-semibold text-[#4f4e4e]">{card.score}</p>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getTone(card.score)}`}>
+                  <p className="text-4xl font-semibold text-[#4f4e4e]">
+                    {card.score}
+                  </p>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${getTone(card.score)}`}
+                  >
                     {card.note}
                   </span>
                 </div>
@@ -157,19 +240,33 @@ export default async function AnalysisPage({ params, searchParams }) {
           })}
         </div>
 
+        <AnalysisControls
+          symbol={normalizedSymbol}
+          timeframe={timeframe}
+          weights={weights}
+          indicatorConfig={activeIndicatorConfig}
+          defaultIndicatorConfig={defaultIndicatorConfig}
+          availableIndicators={availableIndicators}
+        />
+
         <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
           <div className="rounded-[24px] border border-[#e6e0db] bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-[#4f4e4e]">Price history</h2>
+                <h2 className="text-xl font-semibold text-[#4f4e4e]">
+                  Price history
+                </h2>
                 <p className="text-sm text-[#6a706f]">
-                  {chartData.length} points loaded from {stockData?.source || "the active provider"}.
+                  {chartData.length} points loaded from{" "}
+                  {stockData?.source || "the active provider"}.
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-[#6a706f]">Latest close</p>
                 <p className="text-2xl font-semibold text-[#4f4e4e]">
-                  {latestPoint?.close ? `$${Number(latestPoint.close).toFixed(2)}` : "Unavailable"}
+                  {latestPoint?.close
+                    ? `$${Number(latestPoint.close).toFixed(2)}`
+                    : "Unavailable"}
                 </p>
               </div>
             </div>
@@ -183,8 +280,12 @@ export default async function AnalysisPage({ params, searchParams }) {
                   <MessageSquareText className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-[#4f4e4e]">Summary</h2>
-                  <p className="text-sm text-[#6a706f]">Blended output from extracted root analysis services.</p>
+                  <h2 className="text-xl font-semibold text-[#4f4e4e]">
+                    Summary
+                  </h2>
+                  <p className="text-sm text-[#6a706f]">
+                    Blended output from extracted root analysis services.
+                  </p>
                 </div>
               </div>
               <p className="mt-5 text-sm leading-7 text-[#4b514f]">{summary}</p>
@@ -192,26 +293,44 @@ export default async function AnalysisPage({ params, searchParams }) {
               <dl className="mt-6 grid grid-cols-2 gap-4 rounded-[20px] bg-[#fbf8f6] p-4 text-sm">
                 <div>
                   <dt className="text-[#7b7f7f]">Timeframe</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">{timeframe}</dd>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                    {timeframe}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-[#7b7f7f]">Weights</dt>
                   <dd className="mt-1 font-medium text-[#4f4e4e]">
-                    F {weights.fundamental}% / T {weights.technical}% / S {weights.sentiment}%
+                    F {weights.fundamental}% / T {weights.technical}% / S{" "}
+                    {weights.sentiment}%
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[#7b7f7f]">Indicators</dt>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                    {activeIndicatorNames.length > 0
+                      ? activeIndicatorNames.join(", ")
+                      : "None enabled"}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-[#7b7f7f]">Recommendation</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">{overall.recommendation || "HOLD"}</dd>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                    {overall.recommendation || "HOLD"}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-[#7b7f7f]">Data source</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">{stockData?.source || "Unknown"}</dd>
+                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                    {stockData?.source || "Unknown"}
+                  </dd>
                 </div>
               </dl>
             </div>
 
-            <SentimentHeadlines sentiment={sentiment} symbol={normalizedSymbol} />
+            <SentimentHeadlines
+              sentiment={sentiment}
+              symbol={normalizedSymbol}
+            />
           </div>
         </div>
       </div>

@@ -3,138 +3,140 @@
  * Replaces the in-memory CacheService for production readiness.
  */
 
-import { createClient as createServerClient } from '@/lib/supabase/server'
-import { requireSupabasePublicEnv } from '@/lib/supabase/env'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { requireSupabasePublicEnv } from "@/lib/supabase/env";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface CacheEntry {
-  cache_key: string
-  data: unknown
-  expires_at: string
-  created_at: string
+  cache_key: string;
+  data: unknown;
+  expires_at: string;
+  created_at: string;
 }
 
 export interface CacheStats {
-  total: number
-  valid: number
-  expired: number
-  timeout: number
+  total: number;
+  valid: number;
+  expired: number;
+  timeout: number;
 }
 
 // Buffer time in milliseconds to avoid returning nearly-expired entries
-const EXPIRATION_BUFFER_MS = 5000
+const EXPIRATION_BUFFER_MS = 5000;
 
 export class DatabaseCacheService {
-  private defaultTimeoutMs: number
-  private supabaseClient: SupabaseClient | null = null
+  private defaultTimeoutMs: number;
+  private supabaseClient: SupabaseClient | null = null;
 
   constructor({ defaultTimeoutMs = 5 * 60 * 1000 } = {}) {
-    this.defaultTimeoutMs = defaultTimeoutMs
+    this.defaultTimeoutMs = defaultTimeoutMs;
   }
 
   private async getSupabaseClient() {
     if (!this.supabaseClient) {
-      requireSupabasePublicEnv()
+      requireSupabasePublicEnv();
 
-      this.supabaseClient = await createServerClient()
+      this.supabaseClient = await createServerClient();
     }
-    return this.supabaseClient
+    return this.supabaseClient;
   }
 
   async get<T = unknown>(key: string): Promise<T | null> {
     try {
-      const supabase = await this.getSupabaseClient()
+      const supabase = await this.getSupabaseClient();
       const { data, error } = await supabase
-        .from('analysis_cache')
-        .select('data, expires_at')
-        .eq('cache_key', key)
-        .single()
+        .from("analysis_cache")
+        .select("data, expires_at")
+        .eq("cache_key", key)
+        .single();
 
       if (error || !data) {
-        return null
+        return null;
       }
 
       // Add buffer to expiration check to avoid returning nearly-expired entries
-      const expiresAt = new Date(data.expires_at).getTime()
+      const expiresAt = new Date(data.expires_at).getTime();
       if (Date.now() + EXPIRATION_BUFFER_MS > expiresAt) {
         // Cache expired or nearly expired - delete it and return null
-        await this.delete(key)
-        return null
+        await this.delete(key);
+        return null;
       }
 
-      return data.data as T
+      return data.data as T;
     } catch (error) {
-      console.error('[cache] get error:', error)
-      return null
+      console.error("[cache] get error:", error);
+      return null;
     }
   }
 
-  async set(key: string, data: unknown, ttlMs: number = this.defaultTimeoutMs): Promise<void> {
+  async set(
+    key: string,
+    data: unknown,
+    ttlMs: number = this.defaultTimeoutMs,
+  ): Promise<void> {
     try {
-      const supabase = await this.getSupabaseClient()
-      const expiresAt = new Date(Date.now() + ttlMs).toISOString()
+      const supabase = await this.getSupabaseClient();
+      const expiresAt = new Date(Date.now() + ttlMs).toISOString();
 
-      const { error } = await supabase
-        .from('analysis_cache')
-        .upsert(
-          {
-            cache_key: key,
-            data,
-            expires_at: expiresAt,
-          },
-          {
-            onConflict: 'cache_key',
-          }
-        )
+      const { error } = await supabase.from("analysis_cache").upsert(
+        {
+          cache_key: key,
+          data,
+          expires_at: expiresAt,
+        },
+        {
+          onConflict: "cache_key",
+        },
+      );
 
       if (error) {
-        console.error('[cache] set error:', error)
+        console.error("[cache] set error:", error);
       }
     } catch (error) {
-      console.error('[cache] set error:', error)
+      console.error("[cache] set error:", error);
     }
   }
 
   async delete(key: string): Promise<void> {
     try {
-      const supabase = await this.getSupabaseClient()
-      await supabase.from('analysis_cache').delete().eq('cache_key', key)
+      const supabase = await this.getSupabaseClient();
+      await supabase.from("analysis_cache").delete().eq("cache_key", key);
     } catch (error) {
-      console.error('[cache] delete error:', error)
+      console.error("[cache] delete error:", error);
     }
   }
 
   async clear(): Promise<void> {
     try {
-      const supabase = await this.getSupabaseClient()
-      await supabase.from('analysis_cache').delete()
+      const supabase = await this.getSupabaseClient();
+      await supabase.from("analysis_cache").delete();
     } catch (error) {
-      console.error('[cache] clear error:', error)
+      console.error("[cache] clear error:", error);
     }
   }
 
   async stats(): Promise<CacheStats> {
     try {
-      const supabase = await this.getSupabaseClient()
+      const supabase = await this.getSupabaseClient();
       // Single query with conditional aggregation
       const { data, error } = await supabase
-        .from('analysis_cache')
-        .select('expires_at', { count: 'exact' })
+        .from("analysis_cache")
+        .select("expires_at", { count: "exact" });
 
       if (error) {
-        throw error
+        throw error;
       }
 
-      const total = data?.length || 0
-      let valid = 0
-      let expired = 0
+      const total = data?.length || 0;
+      let valid = 0;
+      let expired = 0;
 
       for (const row of data || []) {
-        const expiresAt = new Date(row.expires_at).getTime()
+        const expiresAt = new Date(row.expires_at).getTime();
         if (Date.now() + EXPIRATION_BUFFER_MS > expiresAt) {
-          expired++
+          expired++;
         } else {
-          valid++
+          valid++;
         }
       }
 
@@ -143,44 +145,46 @@ export class DatabaseCacheService {
         valid,
         expired,
         timeout: this.defaultTimeoutMs,
-      }
+      };
     } catch (error) {
-      console.error('[cache] stats error:', error)
+      console.error("[cache] stats error:", error);
       return {
         total: 0,
         valid: 0,
         expired: 0,
         timeout: this.defaultTimeoutMs,
-      }
+      };
     }
   }
 
   async cleanupExpired(limit: number = 1000): Promise<number> {
     try {
-      const supabase = await this.getSupabaseClient()
-      const now = new Date().toISOString()
+      const supabase = await this.getSupabaseClient();
+      const now = new Date().toISOString();
 
       // Delete in batches to avoid timeout on large datasets
       const { data, error } = await supabase
-        .from('analysis_cache')
+        .from("analysis_cache")
         .delete()
-        .lte('expires_at', now)
-        .select('cache_key')
-        .limit(limit)
+        .lte("expires_at", now)
+        .select("cache_key")
+        .limit(limit);
 
       if (error) {
-        console.error('[cache] cleanup error:', error)
-        return 0
+        console.error("[cache] cleanup error:", error);
+        return 0;
       }
 
-      return data?.length || 0
+      return data?.length || 0;
     } catch (error) {
-      console.error('[cache] cleanup error:', error)
-      return 0
+      console.error("[cache] cleanup error:", error);
+      return 0;
     }
   }
 }
 
-export function createDatabaseCacheService(options?: { defaultTimeoutMs?: number }) {
-  return new DatabaseCacheService(options)
+export function createDatabaseCacheService(options?: {
+  defaultTimeoutMs?: number;
+}) {
+  return new DatabaseCacheService(options);
 }

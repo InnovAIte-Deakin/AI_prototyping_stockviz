@@ -3,7 +3,7 @@
  * Used by both the database cache service and standalone cleanup scripts.
  */
 
-import { SupabaseClient } from '@supabase/supabase-js'
+import { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Delete expired cache entries in batches.
@@ -15,38 +15,41 @@ import { SupabaseClient } from '@supabase/supabase-js'
 export async function cleanupExpiredCacheBatch(
   supabase: SupabaseClient,
   batchSize: number = 1000,
-  maxBatches: number = 10
+  maxBatches: number = 10,
 ): Promise<number> {
-  let totalDeleted = 0
-  let batchNum = 0
+  let totalDeleted = 0;
+  let batchNum = 0;
 
   while (batchNum < maxBatches) {
-    const now = new Date().toISOString()
+    const now = new Date().toISOString();
 
     const { data, error } = await supabase
-      .from('analysis_cache')
+      .from("analysis_cache")
       .delete()
-      .lte('expires_at', now)
-      .select('cache_key')
-      .limit(batchSize)
+      .lte("expires_at", now)
+      .select("cache_key")
+      .limit(batchSize);
 
     if (error) {
-      console.error(`[cache-cleanup] Batch ${batchNum + 1} error:`, error.message)
-      break
+      console.error(
+        `[cache-cleanup] Batch ${batchNum + 1} error:`,
+        error.message,
+      );
+      break;
     }
 
-    const deletedCount = data?.length || 0
-    totalDeleted += deletedCount
+    const deletedCount = data?.length || 0;
+    totalDeleted += deletedCount;
 
     // Stop if no more entries to delete
     if (deletedCount < batchSize) {
-      break
+      break;
     }
 
-    batchNum++
+    batchNum++;
   }
 
-  return totalDeleted
+  return totalDeleted;
 }
 
 /**
@@ -57,51 +60,51 @@ export async function cleanupExpiredCacheBatch(
  */
 export async function cleanupOldApiLogsBatch(
   supabase: SupabaseClient,
-  maxRecords: number = 1000
+  maxRecords: number = 1000,
 ): Promise<number> {
   try {
     // Get current count
     const { count } = await supabase
-      .from('api_call_log')
-      .select('*', { count: 'exact', head: true })
+      .from("api_call_log")
+      .select("*", { count: "exact", head: true });
 
     if (!count || count <= maxRecords) {
-      return 0
+      return 0;
     }
 
-    const toDelete = count - maxRecords
+    const toDelete = count - maxRecords;
 
     // Get IDs of oldest records to delete
     const { data: oldest } = await supabase
-      .from('api_call_log')
-      .select('id')
-      .order('created_at', { ascending: true })
-      .limit(toDelete)
+      .from("api_call_log")
+      .select("id")
+      .order("created_at", { ascending: true })
+      .limit(toDelete);
 
     if (!oldest || oldest.length === 0) {
-      return 0
+      return 0;
     }
 
     // Delete in batches to avoid URL length limits
-    const batchSize = 500
-    let deletedCount = 0
+    const batchSize = 500;
+    let deletedCount = 0;
 
     for (let i = 0; i < oldest.length; i += batchSize) {
-      const batch = oldest.slice(i, i + batchSize)
-      const idsToDelete = batch.map((r) => r.id)
+      const batch = oldest.slice(i, i + batchSize);
+      const idsToDelete = batch.map((r) => r.id);
 
       const { data: deleted } = await supabase
-        .from('api_call_log')
+        .from("api_call_log")
         .delete()
-        .in('id', idsToDelete)
-        .select('id')
+        .in("id", idsToDelete)
+        .select("id");
 
-      deletedCount += deleted?.length || 0
+      deletedCount += deleted?.length || 0;
     }
 
-    return deletedCount
+    return deletedCount;
   } catch (error) {
-    console.error('[api-cleanup] Error:', error)
-    return 0
+    console.error("[api-cleanup] Error:", error);
+    return 0;
   }
 }

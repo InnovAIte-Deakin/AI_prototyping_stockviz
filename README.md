@@ -1,34 +1,27 @@
 # StockViz
 
-> A stock screening and visualization application for the modern web.
-
----
+> A stock screening and visualization application built with Next.js 16 and Supabase.
 
 ## Overview
 
-StockViz is a web-based stock screening tool built for exploring, filtering, and visualizing market data. Now transitioning to a modern full-stack architecture.
-
----
+StockViz is a web application for exploring, filtering, and visualizing stock market data. The active product now runs as a Next.js App Router application with Supabase-backed authentication and data services, while the earlier prototype remains archived in this repository for reference.
 
 ## Current Architecture
 
-This repository now runs on **Next.js** (bootstrapped with `create-next-app`) with **Supabase** as the backend — bringing server-side rendering, a managed Postgres database, authentication, and real-time capabilities out of the box.
-
-### Legacy Code
-
-The `frontend/` and `backend/` directories at the root contain the **original prototype** — a standalone React frontend paired with an Express API server. These folders are kept for reference and inspection only. They are no longer the active codebase.
-
----
+- `app/` contains the active Next.js 16 App Router routes, layouts, and API endpoints.
+- `components/`, `hooks/`, `lib/`, and `utils/` hold the shared UI, client hooks, and server-side helpers used by the live application.
+- `supabase/` contains backend configuration and supporting project assets.
+- `legacy/frontend/` and `legacy/backend/` contain the original React and Express prototype and are no longer part of the active runtime.
 
 ## Getting Started
 
-**Install dependencies:**
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-**Start the development server:**
+Start the development server:
 
 ```bash
 npm run dev
@@ -36,27 +29,36 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
+## Useful Commands
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run format:check
+```
 
 ## Project Structure
 
-```
+```text
 stockviz/
-├── app/          # Next.js App Router (active codebase)
-├── frontend/     # Legacy React prototype (inspection only)
-└── backend/      # Legacy Express API (inspection only)
+|- app/                  # Active Next.js App Router codebase
+|- components/           # Shared UI and feature components
+|- hooks/                # Client hooks
+|- lib/                  # Data, analysis, and server utilities
+|- supabase/             # Supabase project assets
+|- docs/                 # Project documentation and evidence
+`- legacy/
+   |- frontend/          # Archived React prototype
+   `- backend/           # Archived Express API prototype
 ```
-
----
 
 ## Roadmap
 
-- [x] Prototype with standalone React + Express
-- [x] Bootstrap Next.js with App Router
-- [ ] Integrate Supabase (Postgres + Auth + Edge Functions)
-- [ ] Migrate features from legacy prototype
-- [ ] Real-time data subscriptions
+- [x] Prototype with standalone React and Express
+- [x] Bootstrap the active Next.js App Router application
+- [ ] Complete the Supabase-backed migration
+- [ ] Finish migrating remaining legacy features
+- [ ] Add real-time data subscriptions where they provide clear user value
 
----
-
-*StockViz — Capstone AI Prototyping Project*
+_StockViz - Capstone AI Prototyping Project_

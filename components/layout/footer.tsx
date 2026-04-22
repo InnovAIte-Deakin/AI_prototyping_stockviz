@@ -1,22 +1,24 @@
-import Link from 'next/link'
+import Link from "next/link";
 import {
   ArrowRight,
   BarChart3,
   DatabaseZap,
   Search,
   ShieldCheck,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from "@/components/ui/badge";
 import {
   liveRouteShortcuts,
   primaryNavItems,
   shellHighlights,
-} from '@/components/layout/shell-navigation'
+} from "@/components/layout/shell-navigation";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
-  const plannedRoutes = primaryNavItems.filter((item) => item.status === 'planned')
+  const currentYear = new Date().getFullYear();
+  const plannedRoutes = primaryNavItems.filter(
+    (item) => item.status === "planned",
+  );
 
   return (
     <footer
@@ -57,8 +59,8 @@ export default function Footer() {
                     Symbol-first workflow
                   </p>
                   <p className="mt-1 text-sm leading-6 text-[#6a706f]">
-                    Use the header search to jump directly into `/stock/[symbol]`
-                    from anywhere in the protected shell.
+                    Use the header search to jump directly into
+                    `/stock/[symbol]` from anywhere in the protected shell.
                   </p>
                 </div>
               </div>
@@ -101,7 +103,7 @@ export default function Footer() {
             <h3 className="font-semibold text-[#4f4e4e]">Roadmap in shell</h3>
             <ul className="space-y-2 text-sm">
               {plannedRoutes.map((item) => {
-                const Icon = item.icon
+                const Icon = item.icon;
 
                 return (
                   <li
@@ -128,7 +130,7 @@ export default function Footer() {
                       </p>
                     </div>
                   </li>
-                )
+                );
               })}
             </ul>
           </div>
@@ -138,7 +140,11 @@ export default function Footer() {
             <div className="space-y-3">
               {shellHighlights.map((item, index) => {
                 const Icon =
-                  index === 0 ? Search : index === 1 ? ShieldCheck : DatabaseZap
+                  index === 0
+                    ? Search
+                    : index === 1
+                      ? ShieldCheck
+                      : DatabaseZap;
 
                 return (
                   <div
@@ -159,7 +165,7 @@ export default function Footer() {
                       </div>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -177,5 +183,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

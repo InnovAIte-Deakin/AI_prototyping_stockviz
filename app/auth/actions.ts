@@ -9,26 +9,22 @@ export async function createClient() {
   const cookieStore = await cookies();
   const { supabaseUrl, supabasePublishableKey } = requireSupabasePublicEnv();
 
-  return createServerClient(
-    supabaseUrl,
-    supabasePublishableKey,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // Can be ignored if handled by proxy later
-          }
-        },
+  return createServerClient(supabaseUrl, supabasePublishableKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        } catch {
+          // Can be ignored if handled by proxy later
+        }
+      },
+    },
+  });
 }
 
 export async function login(formData: FormData) {
@@ -78,7 +74,6 @@ export async function signOut() {
   await supabase.auth.signOut();
   return redirect("/login");
 }
-
 
 // ---------------------------------------------------------------------------
 // Password Reset

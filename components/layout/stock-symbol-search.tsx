@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import * as React from 'react'
-import { useRouter } from 'next/navigation'
-import { Search } from 'lucide-react'
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
 
 import {
   Command,
@@ -10,79 +10,79 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTitle,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { useSymbolSearch } from '@/hooks/use-symbol-search'
-import type { FinnhubSymbolLookupInfo } from '@/lib/types'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/popover";
+import { useSymbolSearch } from "@/hooks/use-symbol-search";
+import type { FinnhubSymbolLookupInfo } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
-const MAX_RESULTS = 10
+const MAX_RESULTS = 10;
 
-const PLACEHOLDER = 'Search stocks, tickers, companies, and more…'
+const PLACEHOLDER = "Search stocks, tickers, companies, and more…";
 
 type StockSymbolSearchProps = {
-  className?: string
+  className?: string;
   /** Optional Finnhub `exchange` filter (e.g. `US`). See GET `/search`. */
-  exchange?: string
-}
+  exchange?: string;
+};
 
 export const StockSymbolSearch = ({
   className,
   exchange,
 }: StockSymbolSearchProps) => {
-  const router = useRouter()
-  const [open, setOpen] = React.useState(false)
-  const [query, setQuery] = React.useState('')
+  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
 
   const { results, error, isLoading } = useSymbolSearch({
-    query: open ? query : '',
+    query: open ? query : "",
     exchange,
     minQueryLength: 2,
-  })
+  });
 
   const topMatches = React.useMemo(
     () => results.slice(0, MAX_RESULTS),
-    [results]
-  )
+    [results],
+  );
 
-  const trimmed = query.trim()
-  const showHint = trimmed.length < 2
-  const showLoading = !showHint && isLoading
-  const showError = !showHint && !isLoading && Boolean(error)
+  const trimmed = query.trim();
+  const showHint = trimmed.length < 2;
+  const showLoading = !showHint && isLoading;
+  const showError = !showHint && !isLoading && Boolean(error);
   const showNoHits =
-    !showHint && !isLoading && !error && topMatches.length === 0
+    !showHint && !isLoading && !error && topMatches.length === 0;
 
   const handleOpenChange = (next: boolean) => {
-    setOpen(next)
+    setOpen(next);
     if (!next) {
-      setQuery('')
+      setQuery("");
     }
-  }
+  };
 
   const handleSelectSymbol = (item: FinnhubSymbolLookupInfo) => {
-    const sym = item.displaySymbol ?? item.symbol
+    const sym = item.displaySymbol ?? item.symbol;
     if (!sym) {
-      return
+      return;
     }
-    setOpen(false)
-    setQuery('')
-    router.push(`/stock/${encodeURIComponent(sym)}`)
-  }
+    setOpen(false);
+    setQuery("");
+    router.push(`/stock/${encodeURIComponent(sym)}`);
+  };
 
   return (
-    <div className={cn('relative w-full max-w-xl', className)}>
+    <div className={cn("relative w-full max-w-xl", className)}>
       <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <button
             type="button"
             className={cn(
-              'relative flex h-9 w-full items-center gap-2 rounded-md border border-border/60 bg-muted/40 pl-9 pr-3 text-left text-sm shadow-none outline-none',
-              'transition-colors hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50'
+              "relative flex h-9 w-full items-center gap-2 rounded-md border border-border/60 bg-muted/40 pl-9 pr-3 text-left text-sm shadow-none outline-none",
+              "transition-colors hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
             )}
             aria-expanded={open}
             aria-haspopup="dialog"
@@ -92,7 +92,9 @@ export const StockSymbolSearch = ({
               className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden
             />
-            <span className="truncate text-muted-foreground">{PLACEHOLDER}</span>
+            <span className="truncate text-muted-foreground">
+              {PLACEHOLDER}
+            </span>
           </button>
         </PopoverTrigger>
 
@@ -142,15 +144,15 @@ export const StockSymbolSearch = ({
               {topMatches.length > 0 ? (
                 <CommandGroup heading="Top matches">
                   {topMatches.map((item, index) => {
-                    const label = item.displaySymbol ?? item.symbol ?? '—'
-                    const description = item.description ?? ''
-                    const value = `${label}-${index}`
+                    const label = item.displaySymbol ?? item.symbol ?? "—";
+                    const description = item.description ?? "";
+                    const value = `${label}-${index}`;
                     return (
                       <CommandItem
                         key={value}
                         value={value}
                         onSelect={() => {
-                          handleSelectSymbol(item)
+                          handleSelectSymbol(item);
                         }}
                       >
                         <span className="shrink-0 font-medium tabular-nums">
@@ -162,7 +164,7 @@ export const StockSymbolSearch = ({
                           </span>
                         ) : null}
                       </CommandItem>
-                    )
+                    );
                   })}
                 </CommandGroup>
               ) : null}
@@ -171,5 +173,5 @@ export const StockSymbolSearch = ({
         </PopoverContent>
       </Popover>
     </div>
-  )
-}
+  );
+};

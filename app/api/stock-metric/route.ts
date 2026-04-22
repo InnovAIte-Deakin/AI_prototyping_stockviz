@@ -1,55 +1,55 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
 
-const FINNHUB_API = "https://finnhub.io/api/v1/stock/metric"
+const FINNHUB_API = "https://finnhub.io/api/v1/stock/metric";
 
 const validateSymbol = (raw: string | null): string | null => {
-  const s = raw?.trim() ?? ""
+  const s = raw?.trim() ?? "";
   if (!s || s.length > 32) {
-    return null
+    return null;
   }
   if (!/^[\w.:^-]+$/i.test(s)) {
-    return null
+    return null;
   }
-  return s
-}
+  return s;
+};
 
 /** Proxies Finnhub `GET /stock/metric` (basic financials). */
 export async function GET(request: Request) {
-  const token = process.env.FINNHUB_API_KEY
+  const token = process.env.FINNHUB_API_KEY;
   if (!token) {
     return NextResponse.json(
       { error: "FINNHUB_API_KEY is not configured" },
-      { status: 503 }
-    )
+      { status: 503 },
+    );
   }
 
-  const { searchParams } = new URL(request.url)
-  const symbol = validateSymbol(searchParams.get("symbol"))
+  const { searchParams } = new URL(request.url);
+  const symbol = validateSymbol(searchParams.get("symbol"));
   if (!symbol) {
     return NextResponse.json(
       { error: "Missing or invalid query parameter symbol" },
-      { status: 400 }
-    )
+      { status: 400 },
+    );
   }
 
   const params = new URLSearchParams({
     symbol,
     metric: "all",
     token,
-  })
-  const url = `${FINNHUB_API}?${params}`
+  });
+  const url = `${FINNHUB_API}?${params}`;
   const upstream = await fetch(url, {
     next: { revalidate: 300 },
-  })
+  });
 
   if (!upstream.ok) {
-    const body = await upstream.text()
+    const body = await upstream.text();
     return NextResponse.json(
       { error: "Finnhub stock metric request failed", details: body },
-      { status: upstream.status }
-    )
+      { status: upstream.status },
+    );
   }
 
-  const data: unknown = await upstream.json()
-  return NextResponse.json(data)
+  const data: unknown = await upstream.json();
+  return NextResponse.json(data);
 }

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, memo } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import React, { useEffect, useRef, memo } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 
 declare global {
   interface Window {
@@ -15,26 +15,46 @@ interface TradingViewChartProps {
 
 // Helper function to format symbol for TradingView
 const formatSymbolForTradingView = (symbol: string): string => {
-  if (!symbol) return 'NASDAQ:AAPL';
-  if (symbol.includes(':')) return symbol.toUpperCase();
+  if (!symbol) return "NASDAQ:AAPL";
+  if (symbol.includes(":")) return symbol.toUpperCase();
 
   // Pre-populated exchange map for common stocks
   const exchangeMap: Record<string, string> = {
-    'AAPL': 'NASDAQ', 'GOOGL': 'NASDAQ', 'MSFT': 'NASDAQ', 'AMZN': 'NASDAQ', 'TSLA': 'NASDAQ',
-    'META': 'NASDAQ', 'NFLX': 'NASDAQ', 'NVDA': 'NASDAQ', 'AMD': 'NASDAQ', 'INTC': 'NASDAQ',
-    'JPM': 'NYSE', 'JNJ': 'NYSE', 'V': 'NYSE', 'PG': 'NYSE', 'UNH': 'NYSE',
-    'HD': 'NYSE', 'MA': 'NYSE', 'BAC': 'NYSE', 'XOM': 'NYSE', 'CVX': 'NYSE',
-    'RELIANCE': 'BSE', 'TCS': 'BSE', 'HDFCBANK': 'BSE',
-    'INFY': 'NSE', 'HDFC': 'NSE', 'ICICIBANK': 'NSE',
+    AAPL: "NASDAQ",
+    GOOGL: "NASDAQ",
+    MSFT: "NASDAQ",
+    AMZN: "NASDAQ",
+    TSLA: "NASDAQ",
+    META: "NASDAQ",
+    NFLX: "NASDAQ",
+    NVDA: "NASDAQ",
+    AMD: "NASDAQ",
+    INTC: "NASDAQ",
+    JPM: "NYSE",
+    JNJ: "NYSE",
+    V: "NYSE",
+    PG: "NYSE",
+    UNH: "NYSE",
+    HD: "NYSE",
+    MA: "NYSE",
+    BAC: "NYSE",
+    XOM: "NYSE",
+    CVX: "NYSE",
+    RELIANCE: "BSE",
+    TCS: "BSE",
+    HDFCBANK: "BSE",
+    INFY: "NSE",
+    HDFC: "NSE",
+    ICICIBANK: "NSE",
   };
 
   const upperSymbol = symbol.toUpperCase();
-  const exchange = exchangeMap[upperSymbol] || 'NASDAQ'; // Default to NASDAQ
+  const exchange = exchangeMap[upperSymbol] || "NASDAQ"; // Default to NASDAQ
   return `${exchange}:${upperSymbol}`;
 };
 
 const TradingViewChart: React.FC<TradingViewChartProps> = ({
-  symbol = 'AAPL',
+  symbol = "AAPL",
   height = 500,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,11 +71,11 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       const widgetOptions = {
         autosize: true,
         symbol: formattedSymbol,
-        interval: 'D',
-        timezone: 'Etc/UTC',
-        theme: resolvedTheme === 'dark' ? 'dark' : 'light',
-        style: '1',
-        locale: 'en',
+        interval: "D",
+        timezone: "Etc/UTC",
+        theme: resolvedTheme === "dark" ? "dark" : "light",
+        style: "1",
+        locale: "en",
         enable_publishing: false,
         allow_symbol_change: true,
         container_id: `tradingview-widget-container-${symbol}`,
@@ -68,11 +88,11 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
     if (!container) return;
 
     // Clear previous widget
-    container.innerHTML = '';
-    const widgetContainer = document.createElement('div');
+    container.innerHTML = "";
+    const widgetContainer = document.createElement("div");
     widgetContainer.id = `tradingview-widget-container-${symbol}`;
-    widgetContainer.style.height = '100%';
-    widgetContainer.style.width = '100%';
+    widgetContainer.style.height = "100%";
+    widgetContainer.style.width = "100%";
     container.appendChild(widgetContainer);
 
     if (scriptRef.current && document.body.contains(scriptRef.current)) {
@@ -84,8 +104,8 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       }
     } else {
       // If script is not there, create and append it
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/tv.js';
+      const script = document.createElement("script");
+      script.src = "https://s3.tradingview.com/tv.js";
       script.async = true;
       script.onload = createWidget;
       document.body.appendChild(script);
@@ -99,7 +119,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         // as it could be used by other chart instances.
         // Instead, we just clean the container.
         if (container) {
-          container.innerHTML = '';
+          container.innerHTML = "";
         }
       }
     };

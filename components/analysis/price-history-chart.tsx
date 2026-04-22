@@ -32,7 +32,10 @@ export function PriceHistoryChart({ data }: PriceHistoryChartProps) {
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={{ top: 16, right: 8, left: 0, bottom: 0 }}>
+        <AreaChart
+          data={chartData}
+          margin={{ top: 16, right: 8, left: 0, bottom: 0 }}
+        >
           <defs>
             <linearGradient id="stockviz-area" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#5f5e5e" stopOpacity={0.3} />
@@ -40,7 +43,12 @@ export function PriceHistoryChart({ data }: PriceHistoryChartProps) {
             </linearGradient>
           </defs>
           <CartesianGrid stroke="#ece6e1" vertical={false} />
-          <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={28} />
+          <XAxis
+            dataKey="label"
+            tickLine={false}
+            axisLine={false}
+            minTickGap={28}
+          />
           <YAxis
             tickLine={false}
             axisLine={false}

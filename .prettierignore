@@ -1,3 +1,5 @@
-# Finnhub offline doc mirror — excluded from format checks
+# Vendor documentation mirrors and machine-generated API docs
+docs/API Documentation _ Alpha Vantage.html
 docs/Finnhub_Documentation.html
 docs/Finnhub_Documentation_files/
+docs/Finnhub_Swagger.json

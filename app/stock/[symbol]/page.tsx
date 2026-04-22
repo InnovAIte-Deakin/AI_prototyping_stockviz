@@ -1,25 +1,25 @@
-import { notFound } from "next/navigation"
+import { notFound } from "next/navigation";
 
-import { StockSymbolView } from "@/components/stock/stock-symbol-view"
+import { StockSymbolView } from "@/components/stock/stock-symbol-view";
 
 const decodeSymbol = (raw: string): string => {
   try {
-    return decodeURIComponent(raw).trim()
+    return decodeURIComponent(raw).trim();
   } catch {
-    return raw.trim()
+    return raw.trim();
   }
-}
+};
 
 export default async function StockSymbolPage({
   params,
 }: {
-  params: Promise<{ symbol: string }>
+  params: Promise<{ symbol: string }>;
 }) {
-  const { symbol: raw } = await params
-  const symbol = decodeSymbol(raw)
+  const { symbol: raw } = await params;
+  const symbol = decodeSymbol(raw);
   if (!symbol) {
-    notFound()
+    notFound();
   }
 
-  return <StockSymbolView symbol={symbol} />
+  return <StockSymbolView symbol={symbol} />;
 }

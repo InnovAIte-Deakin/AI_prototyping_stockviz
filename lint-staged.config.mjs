@@ -6,7 +6,8 @@ const isHuskyExcludedPath = (filePath) =>
   filePath === "docs/Finnhub_Documentation.html" ||
   filePath.startsWith("docs/Finnhub_Documentation_files/");
 
-const toQuotedPaths = (filePaths) => filePaths.map((filePath) => `"${filePath}"`).join(" ");
+const toQuotedPaths = (filePaths) =>
+  filePaths.map((filePath) => `"${filePath}"`).join(" ");
 
 const config = {
   "*.{ts,tsx,js,jsx}": (filePaths) => {

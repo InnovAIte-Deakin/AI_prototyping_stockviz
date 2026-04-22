@@ -61,7 +61,10 @@ export default function ResetPassword() {
       <div className="flex-grow flex flex-col items-center justify-center p-6 md:p-12">
         {/* Brand Header */}
         <header className="mb-8 text-center shrink-0">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-[#5f5e5e]">
+          <Link
+            href="/"
+            className="text-xl font-bold tracking-tighter text-[#5f5e5e]"
+          >
             StockViz
           </Link>
         </header>
@@ -73,7 +76,9 @@ export default function ResetPassword() {
             className="w-full flex flex-col gap-10"
           >
             <div className="text-center">
-              <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">Set new password</h2>
+              <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">
+                Set new password
+              </h2>
               <p className="text-[#5a6060] text-base leading-relaxed">
                 Enter your new password below.
               </p>
@@ -111,7 +116,10 @@ export default function ResetPassword() {
                     placeholder="Min. 8 characters"
                     type={showPassword ? "text" : "password"}
                     onChange={() =>
-                      setFieldErrors((prev) => ({ ...prev, password: undefined }))
+                      setFieldErrors((prev) => ({
+                        ...prev,
+                        password: undefined,
+                      }))
                     }
                   />
                   <button
@@ -133,7 +141,9 @@ export default function ResetPassword() {
                   Confirm Password
                 </Label>
                 <motion.div
-                  animate={fieldErrors.confirmPassword ? { x: [-4, 4, -4, 4, 0] } : {}}
+                  animate={
+                    fieldErrors.confirmPassword ? { x: [-4, 4, -4, 4, 0] } : {}
+                  }
                   transition={{ duration: 0.4 }}
                   className="relative"
                 >
@@ -145,7 +155,10 @@ export default function ResetPassword() {
                     placeholder="Re-enter your password"
                     type={showConfirm ? "text" : "password"}
                     onChange={() =>
-                      setFieldErrors((prev) => ({ ...prev, confirmPassword: undefined }))
+                      setFieldErrors((prev) => ({
+                        ...prev,
+                        confirmPassword: undefined,
+                      }))
                     }
                   />
                   <button
@@ -187,9 +200,15 @@ export default function ResetPassword() {
             <span>© 2024 StockViz Editorial. All rights reserved.</span>
           </div>
           <nav className="flex gap-8">
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Legal Disclosures</a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">
+              Privacy Policy
+            </a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">
+              Terms of Service
+            </a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">
+              Legal Disclosures
+            </a>
           </nav>
         </div>
       </footer>

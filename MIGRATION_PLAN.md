@@ -121,7 +121,7 @@ Exit criteria:
 | E4      | App Shell Migration           | `P1`     | `Frontend`   | `done`        | Sprint 1   | Shared shell now mounts the migrated navbar/footer experience with global symbol search and route-aware planned/live states |
 | E5      | Search And Symbol Routing     | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Search to analysis route works                                                                                              |
 | E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                       |
-| E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `not_started` | Sprint 4   | Configurable analysis controls work                                                                                         |
+| E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `done`        | Sprint 4   | Configurable analysis controls work                                                                                         |
 | E8      | Market Pages                  | `P2`     | `Frontend`   | `in_progress` | Sprint 4   | Stock detail plus market-data primitives are live; dedicated overview/trending pages are still pending                      |
 | E9      | Auth And User Features        | `P2`     | `Fullstack`  | `in_progress` | Sprint 5   | Auth plus password recovery are live; persistence features are still pending                                                |
 | E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                       |
@@ -185,11 +185,11 @@ Exit criteria:
 
 ### E7: Indicators And Weighting
 
-| Story ID | Story                                                  | Priority | Owner       | Status        | Sprint   | Checkpoint                              |
-| -------- | ------------------------------------------------------ | -------- | ----------- | ------------- | -------- | --------------------------------------- |
-| E7-S1    | Migrate indicators panel                               | `P1`     | `Frontend`  | `not_started` | Sprint 4 | Indicators are configurable in root app |
-| E7-S2    | Migrate weights panel                                  | `P1`     | `Frontend`  | `not_started` | Sprint 4 | Weight controls work in root app        |
-| E7-S3    | Move configuration state to Next-friendly URL handling | `P1`     | `Fullstack` | `not_started` | Sprint 4 | Links are shareable and restore state   |
+| Story ID | Story                                                  | Priority | Owner       | Status | Sprint   | Checkpoint                              |
+| -------- | ------------------------------------------------------ | -------- | ----------- | ------ | -------- | --------------------------------------- |
+| E7-S1    | Migrate indicators panel                               | `P1`     | `Frontend`  | `done` | Sprint 4 | Indicators are configurable in root app |
+| E7-S2    | Migrate weights panel                                  | `P1`     | `Frontend`  | `done` | Sprint 4 | Weight controls work in root app        |
+| E7-S3    | Move configuration state to Next-friendly URL handling | `P1`     | `Fullstack` | `done` | Sprint 4 | Links are shareable and restore state   |
 
 ### E8: Market Pages
 
@@ -249,9 +249,9 @@ This maps legacy files to likely destinations in the new root app.
 | `legacy/frontend/src/components/RecommendationChip.tsx`      | `components/analysis/recommendation-chip.tsx`                                                                                                             | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
 | `legacy/frontend/src/components/ScoreBadge.tsx`              | `components/analysis/score-badge.tsx`                                                                                                                     | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 3 | `not_started` |
 | `legacy/frontend/src/components/SearchBox.tsx`               | `components/search/symbol-search.tsx`, `components/layout/stock-symbol-search.tsx`                                                                        | migrated and wired into dashboard, analysis, and the shared shell header                            | `P1`     | `Frontend`   | Sprint 3 | `done`        |
-| `legacy/frontend/src/components/IndicatorsPanel.tsx`         | `components/analysis/indicators-panel.tsx`                                                                                                                | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/IndicatorsPanel.tsx`         | `components/analysis/indicators-panel.tsx`                                                                                                                | migrated into the root analysis controls                                                            | `P1`     | `Frontend`   | Sprint 4 | `done`        |
 | `legacy/frontend/src/components/EnhancedIndicatorsPanel.tsx` | merged into canonical indicators panel                                                                                                                    | keep only stronger behavior                                                                         | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/components/WeightsPanel.tsx`            | `components/analysis/weights-panel.tsx`                                                                                                                   | migrate                                                                                             | `P1`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/components/WeightsPanel.tsx`            | `components/analysis/weights-panel.tsx`                                                                                                                   | migrated into the root analysis controls                                                            | `P1`     | `Frontend`   | Sprint 4 | `done`        |
 | `legacy/frontend/src/components/EnhancedWeightsPanel.tsx`    | merged into canonical weights panel                                                                                                                       | keep only stronger behavior                                                                         | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
 | `legacy/frontend/src/components/TrendingTabs.tsx`            | `components/market/trending-tabs.tsx`                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
 | `legacy/frontend/src/components/LoadingSpinner.tsx`          | `components/feedback/loading-spinner.tsx` or existing UI spinner                                                                                          | migrate or replace                                                                                  | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
@@ -262,8 +262,8 @@ This maps legacy files to likely destinations in the new root app.
 | `legacy/frontend/src/pages/Home.tsx`                         | `proxy.ts`, `utils/supabase/proxy-auth.ts`                                                                                                                | replaced with auth-aware root redirect rather than a public `app/page.tsx` route                    | `P0`     | `Frontend`   | Sprint 1 | `done`        |
 | `legacy/frontend/src/pages/SymbolAnalysis.tsx`               | `app/analysis/[symbol]/page.jsx`                                                                                                                          | migrated into the active analysis route                                                             | `P1`     | `Fullstack`  | Sprint 3 | `done`        |
 | `legacy/frontend/src/pages/AnalysisResultsPage.tsx`          | `app/analysis/[symbol]/page.jsx`                                                                                                                          | merged into the active analysis route                                                               | `P1`     | `Fullstack`  | Sprint 3 | `done`        |
-| `legacy/frontend/src/pages/Indicators.tsx`                   | `app/indicators/page.tsx` or fold into analysis route                                                                                                     | decide final UX                                                                                     | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
-| `legacy/frontend/src/pages/Weights.tsx`                      | `app/weights/page.tsx` or fold into analysis route                                                                                                        | decide final UX                                                                                     | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
+| `legacy/frontend/src/pages/Indicators.tsx`                   | folded into `app/analysis/[symbol]/page.jsx`                                                                                                              | migrated into the analysis route instead of a standalone page                                       | `P2`     | `Frontend`   | Sprint 4 | `done`        |
+| `legacy/frontend/src/pages/Weights.tsx`                      | folded into `app/analysis/[symbol]/page.jsx`                                                                                                              | migrated into the analysis route instead of a standalone page                                       | `P2`     | `Frontend`   | Sprint 4 | `done`        |
 | `legacy/frontend/src/pages/Market.tsx`                       | `app/market/page.tsx`                                                                                                                                     | migrate                                                                                             | `P2`     | `Frontend`   | Sprint 4 | `not_started` |
 | `legacy/frontend/src/pages/Portfolio.tsx`                    | `app/portfolio/page.tsx`                                                                                                                                  | migrate after auth/persistence                                                                      | `P2`     | `Fullstack`  | Sprint 5 | `not_started` |
 | `legacy/frontend/src/pages/Learn.tsx`                        | likely none                                                                                                                                               | confirm if obsolete                                                                                 | `P3`     | `Unassigned` | Sprint 5 | `not_started` |
@@ -272,7 +272,7 @@ This maps legacy files to likely destinations in the new root app.
 | `legacy/frontend/src/lib/api.ts`                             | `lib/api/`, `lib/market/`, `lib/analysis/`                                                                                                                | split and remove Express coupling                                                                   | `P0`     | `Backend`    | Sprint 2 | `not_started` |
 | `legacy/frontend/src/lib/queries.ts`                         | optional client query layer                                                                                                                               | keep only where client fetching remains necessary                                                   | `P2`     | `Fullstack`  | Sprint 3 | `not_started` |
 | `legacy/frontend/src/lib/types.ts`                           | `lib/types.ts` or feature-local types                                                                                                                     | reused in root app types                                                                            | `P0`     | `Fullstack`  | Sprint 2 | `done`        |
-| `legacy/frontend/src/lib/urlState.ts`                        | `lib/url-state.ts`                                                                                                                                        | adapt to Next search params                                                                         | `P1`     | `Fullstack`  | Sprint 4 | `not_started` |
+| `legacy/frontend/src/lib/urlState.ts`                        | `lib/url-state.ts`                                                                                                                                        | adapted to Next-friendly search param handling                                                      | `P1`     | `Fullstack`  | Sprint 4 | `done`        |
 | `legacy/frontend/src/lib/utils.ts`                           | root `lib/utils.ts`                                                                                                                                       | selectively merged into root utilities                                                              | `P2`     | `Frontend`   | Sprint 2 | `done`        |
 | `legacy/frontend/src/store/ui.ts`                            | hooks or feature-local state                                                                                                                              | reduce scope, do not copy blindly                                                                   | `P2`     | `Frontend`   | Sprint 3 | `not_started` |
 | `legacy/frontend/src/data/companies.ts`                      | Supabase `market_symbols` or import script                                                                                                                | convert from static frontend data                                                                   | `P1`     | `Data`       | Sprint 2 | `not_started` |
@@ -380,14 +380,139 @@ These files need redesign rather than direct migration:
 | Order | Action                                                                                                                                | Owner       | Status                                          |
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------- |
 | 1     | Finish the shared shell strategy so the lightweight header either reaches parity or is replaced by the final navbar/footer experience | `Frontend`  | `done`                                          |
-| 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `not_started`                                   |
+| 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `done`                                          |
 | 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `in_progress`                                   |
 | 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `not_started`                                   |
-| 5     | Implement watchlist and preferences flows on top of `watchlist_items` and `profiles.preferences`                                      | `Fullstack` | `not_started`                                   |
+| 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `not_started`                                   |
 | 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `partial` — cache/tracking done, Gemini pending |
 | 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `not_started`                                   |
 
+## Near-Term Implementation Board (2026-04-22)
+
+This board turns the next migration steps into implementation-ready slices with concrete file targets and exit criteria.
+
+### Track 1: Configurable Analysis Controls (`E7-S1`, `E7-S2`, `E7-S3`)
+
+Goal:
+
+- finish the analysis-route controls inside the root app without regressing the current server-first data load
+
+Primary file targets:
+
+- `components/analysis/indicators-panel.tsx` (new)
+- `components/analysis/weights-panel.tsx` (new)
+- `lib/url-state.ts` (new; adapt the lightweight encode/decode approach from `legacy/frontend/src/lib/urlState.ts`)
+- `app/analysis/[symbol]/page.jsx` (parse, normalize, and pass `weights` plus `indicatorsConfig` into `analyzeSymbol`)
+- `legacy/frontend/src/components/IndicatorsPanel.tsx` and `legacy/frontend/src/components/WeightsPanel.tsx` (reference only)
+
+Recommended URL contract:
+
+- keep `tf` as the timeframe key
+- add `wf`, `wt`, and `ws` for normalized weights
+- add `ic` for encoded indicator configuration
+
+Acceptance criteria:
+
+- analysis controls render inside the root analysis experience
+- changing timeframe, weights, or indicators updates the URL and re-runs analysis with the same symbol
+- refresh and shared links restore the same state
+- invalid query params normalize back to safe defaults
+- `npm run lint`, `npm run typecheck`, and `npm run build` pass
+
+### Track 2: Dedicated `/market` Page (`E8-S2`, then `E8-S1`)
+
+Goal:
+
+- land a browse-first market surface using the APIs, hooks, and stock-detail primitives that already exist in the root app
+
+Primary file targets:
+
+- `app/market/page.tsx` (new)
+- `components/market/market-overview.tsx` (new)
+- `components/market/market-status-card.tsx` (new)
+- `components/market/market-news-feed.tsx` (new)
+- `components/market/trending-tabs.tsx` (new, second pass once the page skeleton is live)
+- `components/layout/shell-navigation.ts` (flip `/market` from planned to live once the route lands)
+- `hooks/use-us-market-status.ts`
+- `hooks/use-market-news.ts`
+- `components/layout/stock-symbol-search.tsx`
+- `components/stock/stock-symbol-view.tsx` (reuse or link into it rather than duplicating detail widgets)
+- `legacy/frontend/src/pages/Market.tsx` and `legacy/frontend/src/components/TrendingTabs.tsx` (reference only)
+
+Acceptance criteria:
+
+- `/market` renders live market status and live news through the current root APIs
+- the page supports browse-first discovery and links users into `/stock/[symbol]`
+- no legacy hardcoded market cards are required for the MVP route
+- the shell navigation marks `/market` as live
+- trending can ship as curated symbols first if `lib/market/trending.ts` is still pending
+
+### Track 3: Portfolio Persistence MVP (`E9-S2`)
+
+Goal:
+
+- deliver the first authenticated persistence surface before expanding into watchlists or preference presets
+
+Primary file targets:
+
+- `app/portfolio/page.tsx` (new)
+- `app/portfolio/actions.ts` (new server actions for add, update, delete)
+- `components/portfolio/portfolio-view.tsx` (new)
+- `components/portfolio/holdings-table.tsx` (new)
+- `components/portfolio/holding-form.tsx` (new)
+- `lib/portfolio/holdings-service.ts` (new data-access boundary over `portfolio_holdings`)
+- `lib/supabase/server.ts`
+- `lib/database.types.ts`
+- `components/layout/shell-navigation.ts` (flip `/portfolio` from planned to live when ready)
+- `legacy/frontend/src/pages/Portfolio.tsx` (reference only)
+
+Acceptance criteria:
+
+- authenticated users can view only their own holdings
+- add, edit, and delete flows persist correctly to `portfolio_holdings`
+- the page works behind the existing proxy auth flow without extra route exceptions
+- holdings rendering stays isolated from raw Supabase calls via a root service boundary
+- `npm run lint`, `npm run typecheck`, and `npm run build` pass
+
+### Track 4: Test Harness And Parity Prep (`E11-S1`, `E11-S2`, `E11-S3`)
+
+Goal:
+
+- add enough automated coverage to protect the migrated surfaces before more route expansion
+
+Primary file targets:
+
+- `package.json` (add `test` scripts)
+- `vitest.config.ts` (new)
+- `playwright.config.ts` (new)
+- `tests/unit/analysis/*.test.ts` (new)
+- `tests/integration/services/*.test.ts` (new)
+- `tests/e2e/search-analysis.spec.ts` (new)
+- `tests/e2e/market.spec.ts` (new after `/market` lands)
+- `tests/e2e/portfolio.spec.ts` (new after persistence lands)
+
+Acceptance criteria:
+
+- the repo has a repeatable local test entry point instead of only lint/typecheck/build checks
+- unit coverage exists for analysis weighting and parameter normalization
+- integration coverage exists for root service behavior that touches Supabase-backed persistence
+- end-to-end coverage exists for search -> analysis and for each newly landed `/market` and `/portfolio` route
+
+### Planning Notes
+
+- `runtime.analyzeSymbol()` already accepts `weights` and `indicatorsConfig`, so the analysis-controls work should wire into existing runtime seams instead of introducing a second analysis path.
+- The live schema and generated types currently use `wishlist`, not `watchlist_items`. Keep the naming aligned in docs and code unless the team explicitly chooses to add a migration rename.
+- There is currently no `test` script or test runner in `package.json`, so test tooling setup is part of the next implementation phase rather than a follow-up cleanup.
+
 ## Progress Log
+
+### Configurable Analysis Controls - Completed (2026-04-22)
+
+- Added `lib/url-state.ts` to normalize and serialize timeframe, weights, and indicator configuration in Next-friendly query params
+- Added `components/analysis/analysis-controls.tsx`, `components/analysis/weights-panel.tsx`, and `components/analysis/indicators-panel.tsx`
+- Updated `app/analysis/[symbol]/page.jsx` to read URL state on the server, pass `weights` and `indicatorsConfig` into `analyzeSymbol`, and preserve custom state across timeframe changes
+- Updated `lib/analysis/basic-technical-analysis-service.js` so indicator toggles and parameter overrides change the actual technical-analysis result instead of only changing UI state
+- Verification: `npm run lint`, `npm run typecheck`, and `npm run build` all pass (build requires normal network access because `app/layout.tsx` uses `next/font/google`)
 
 ### Shared Shell Parity - Completed (2026-04-15)
 
@@ -457,9 +582,10 @@ These files need redesign rather than direct migration:
 #### Supabase Schema (E2-S2/S3/S4)
 
 - Designed and created initial schema in `supabase/migrations/20260329000000_initial_schema.sql`
-- 5 tables: `profiles`, `watchlist_items`, `portfolio_holdings`, `analysis_cache`, `api_call_log`
+- 6 tables: `profiles`, `stocks`, `wishlist`, `portfolio_holdings`, `analysis_cache`, `api_call_log`
+- Current implementation note: the live schema and generated types use `wishlist`; older references to `watchlist_items` below are historical and should not be used for new work.
 - `profiles` auto-created via trigger on `auth.users` insert — includes preferences jsonb
-- `watchlist_items` — one entry per symbol per user (unique constraint)
+- `wishlist` — one entry per stock per user (unique constraint)
 - `portfolio_holdings` — single-lot-per-symbol model matching legacy UI data structure
 - `analysis_cache` — replaces legacy in-memory `CacheService` (Map with TTL) — uses `expires_at` for cleanup
 - `api_call_log` — replaces legacy in-memory `APITrackingService` (capped array) — indexed for admin queries

@@ -1,33 +1,31 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { aggregateMonthlyToYearly } from "@/lib/alphavantage/aggregate-yearly"
-import type { AlphaVantageOhlcPoint } from "@/lib/alphavantage/parse-time-series"
+import { aggregateMonthlyToYearly } from "@/lib/alphavantage/aggregate-yearly";
+import type { AlphaVantageOhlcPoint } from "@/lib/alphavantage/parse-time-series";
 
-export type PriceHistoryTab = "daily" | "monthly" | "yearly"
+export type PriceHistoryTab = "daily" | "monthly" | "yearly";
 
 export type AlphaVantageSeriesState = {
-  daily: AlphaVantageOhlcPoint[] | null
-  monthly: AlphaVantageOhlcPoint[] | null
-  yearly: ReturnType<typeof aggregateMonthlyToYearly>
-  errorDaily: string | null
-  errorMonthly: string | null
-  isLoadingDaily: boolean
-  isLoadingMonthly: boolean
-}
+  daily: AlphaVantageOhlcPoint[] | null;
+  monthly: AlphaVantageOhlcPoint[] | null;
+  yearly: ReturnType<typeof aggregateMonthlyToYearly>;
+  errorDaily: string | null;
+  errorMonthly: string | null;
+  isLoadingDaily: boolean;
+  isLoadingMonthly: boolean;
+};
 
 const buildQuery = (symbol: string, interval: "daily" | "monthly"): string => {
   const params = new URLSearchParams({
     symbol: symbol.trim(),
     interval,
-  })
-  return params.toString()
-}
+  });
+  return params.toString();
+};
 
-type SeriesResponse =
-  | { series: AlphaVantageOhlcPoint[] }
-  | { error?: string }
+type SeriesResponse = { series: AlphaVantageOhlcPoint[] } | { error?: string };
 
 /**
  * Loads daily and/or monthly OHLC from the app proxy. Monthly is shared for Monthly + Yearly tabs;
@@ -38,166 +36,168 @@ type SeriesResponse =
  */
 export const useAlphaVantageSeries = (
   symbol: string,
-  activeTab: PriceHistoryTab
+  activeTab: PriceHistoryTab,
 ): AlphaVantageSeriesState => {
-  const [daily, setDaily] = React.useState<AlphaVantageOhlcPoint[] | null>(null)
+  const [daily, setDaily] = React.useState<AlphaVantageOhlcPoint[] | null>(
+    null,
+  );
   const [monthly, setMonthly] = React.useState<AlphaVantageOhlcPoint[] | null>(
-    null
-  )
-  const [errorDaily, setErrorDaily] = React.useState<string | null>(null)
-  const [errorMonthly, setErrorMonthly] = React.useState<string | null>(null)
-  const [isLoadingDaily, setIsLoadingDaily] = React.useState(false)
-  const [isLoadingMonthly, setIsLoadingMonthly] = React.useState(false)
+    null,
+  );
+  const [errorDaily, setErrorDaily] = React.useState<string | null>(null);
+  const [errorMonthly, setErrorMonthly] = React.useState<string | null>(null);
+  const [isLoadingDaily, setIsLoadingDaily] = React.useState(false);
+  const [isLoadingMonthly, setIsLoadingMonthly] = React.useState(false);
 
-  const trimmed = symbol.trim()
+  const trimmed = symbol.trim();
 
   const yearly = React.useMemo(
     () => (monthly ? aggregateMonthlyToYearly(monthly) : []),
-    [monthly]
-  )
+    [monthly],
+  );
 
   React.useEffect(() => {
-    setDaily(null)
-    setMonthly(null)
-    setErrorDaily(null)
-    setErrorMonthly(null)
-    setIsLoadingDaily(false)
-    setIsLoadingMonthly(false)
-  }, [trimmed])
+    setDaily(null);
+    setMonthly(null);
+    setErrorDaily(null);
+    setErrorMonthly(null);
+    setIsLoadingDaily(false);
+    setIsLoadingMonthly(false);
+  }, [trimmed]);
 
   React.useEffect(() => {
     if (!trimmed) {
-      return
+      return;
     }
     if (activeTab !== "daily") {
-      return
+      return;
     }
     if (daily !== null) {
-      return
+      return;
     }
 
-    const controller = new AbortController()
-    let cancelled = false
+    const controller = new AbortController();
+    let cancelled = false;
 
-    setIsLoadingDaily(true)
-    setErrorDaily(null)
+    setIsLoadingDaily(true);
+    setErrorDaily(null);
 
     void (async () => {
       try {
         const res = await fetch(
           `/api/stock-price-series?${buildQuery(trimmed, "daily")}`,
-          { signal: controller.signal }
-        )
-        const payload = (await res.json()) as SeriesResponse
+          { signal: controller.signal },
+        );
+        const payload = (await res.json()) as SeriesResponse;
 
         if (cancelled) {
-          return
+          return;
         }
 
         if (!res.ok) {
           const msg =
             "error" in payload && typeof payload.error === "string"
               ? payload.error
-              : `Request failed (${res.status})`
-          throw new Error(msg)
+              : `Request failed (${res.status})`;
+          throw new Error(msg);
         }
 
         if (!("series" in payload) || !Array.isArray(payload.series)) {
-          throw new Error("Unexpected response shape")
+          throw new Error("Unexpected response shape");
         }
 
-        setDaily(payload.series)
+        setDaily(payload.series);
       } catch (e) {
         if (cancelled) {
-          return
+          return;
         }
         if (e instanceof DOMException && e.name === "AbortError") {
-          return
+          return;
         }
         setErrorDaily(
-          e instanceof Error ? e.message : "Failed to load daily series"
-        )
-        setDaily(null)
+          e instanceof Error ? e.message : "Failed to load daily series",
+        );
+        setDaily(null);
       } finally {
         if (!cancelled) {
-          setIsLoadingDaily(false)
+          setIsLoadingDaily(false);
         }
       }
-    })()
+    })();
 
     return () => {
-      cancelled = true
-      controller.abort()
-      setIsLoadingDaily(false)
-    }
-  }, [trimmed, activeTab, daily])
+      cancelled = true;
+      controller.abort();
+      setIsLoadingDaily(false);
+    };
+  }, [trimmed, activeTab, daily]);
 
   React.useEffect(() => {
     if (!trimmed) {
-      return
+      return;
     }
     if (activeTab === "daily") {
-      return
+      return;
     }
     if (monthly !== null) {
-      return
+      return;
     }
 
-    const controller = new AbortController()
-    let cancelled = false
+    const controller = new AbortController();
+    let cancelled = false;
 
-    setIsLoadingMonthly(true)
-    setErrorMonthly(null)
+    setIsLoadingMonthly(true);
+    setErrorMonthly(null);
 
     void (async () => {
       try {
         const res = await fetch(
           `/api/stock-price-series?${buildQuery(trimmed, "monthly")}`,
-          { signal: controller.signal }
-        )
-        const payload = (await res.json()) as SeriesResponse
+          { signal: controller.signal },
+        );
+        const payload = (await res.json()) as SeriesResponse;
 
         if (cancelled) {
-          return
+          return;
         }
 
         if (!res.ok) {
           const msg =
             "error" in payload && typeof payload.error === "string"
               ? payload.error
-              : `Request failed (${res.status})`
-          throw new Error(msg)
+              : `Request failed (${res.status})`;
+          throw new Error(msg);
         }
 
         if (!("series" in payload) || !Array.isArray(payload.series)) {
-          throw new Error("Unexpected response shape")
+          throw new Error("Unexpected response shape");
         }
 
-        setMonthly(payload.series)
+        setMonthly(payload.series);
       } catch (e) {
         if (cancelled) {
-          return
+          return;
         }
         if (e instanceof DOMException && e.name === "AbortError") {
-          return
+          return;
         }
         setErrorMonthly(
-          e instanceof Error ? e.message : "Failed to load monthly series"
-        )
-        setMonthly(null)
+          e instanceof Error ? e.message : "Failed to load monthly series",
+        );
+        setMonthly(null);
       } finally {
         if (!cancelled) {
-          setIsLoadingMonthly(false)
+          setIsLoadingMonthly(false);
         }
       }
-    })()
+    })();
 
     return () => {
-      cancelled = true
-      controller.abort()
-      setIsLoadingMonthly(false)
-    }
-  }, [trimmed, activeTab, monthly])
+      cancelled = true;
+      controller.abort();
+      setIsLoadingMonthly(false);
+    };
+  }, [trimmed, activeTab, monthly]);
 
   return {
     daily,
@@ -207,5 +207,5 @@ export const useAlphaVantageSeries = (
     errorMonthly,
     isLoadingDaily,
     isLoadingMonthly,
-  }
-}
+  };
+};

@@ -1,18 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  BookOpen, 
+import React from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  BarChart3,
+  TrendingUp,
+  BookOpen,
   Globe,
   Activity,
   Sliders,
   Settings,
   Mail,
   Github,
-  Twitter
-} from 'lucide-react';
+  Twitter,
+} from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -30,7 +30,8 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Advanced stock analysis platform combining fundamental, technical, and sentiment analysis for intelligent investment decisions.
+              Advanced stock analysis platform combining fundamental, technical,
+              and sentiment analysis for intelligent investment decisions.
             </p>
             <div className="flex space-x-4">
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -53,25 +54,37 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground">Navigation</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <Link
+                  to="/"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <BarChart3 className="h-3 w-3" />
                   <span>Home Dashboard</span>
                 </Link>
               </li>
               <li>
-                <Link to="/indicators" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <Link
+                  to="/indicators"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <Activity className="h-3 w-3" />
                   <span>Technical Indicators</span>
                 </Link>
               </li>
               <li>
-                <Link to="/weights" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <Link
+                  to="/weights"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <Sliders className="h-3 w-3" />
                   <span>Analysis Weights</span>
                 </Link>
               </li>
               <li>
-                <Link to="/admin" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <Link
+                  to="/admin"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <Settings className="h-3 w-3" />
                   <span>Admin Panel</span>
                 </Link>
@@ -115,25 +128,37 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground">Support</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <BookOpen className="h-3 w-3" />
                   <span>Documentation</span>
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <Mail className="h-3 w-3" />
                   <span>Contact Support</span>
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <Settings className="h-3 w-3" />
                   <span>Privacy Policy</span>
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2">
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-2"
+                >
                   <Globe className="h-3 w-3" />
                   <span>Terms of Service</span>
                 </a>

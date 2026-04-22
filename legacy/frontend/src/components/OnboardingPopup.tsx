@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,8 +16,8 @@ import {
   BookOpen,
   Wallet,
   ArrowRight,
-  Sparkles
-} from 'lucide-react';
+  Sparkles,
+} from "lucide-react";
 
 interface OnboardingStep {
   id: number;
@@ -34,14 +34,16 @@ const OnboardingPopup = () => {
 
   useEffect(() => {
     // Check if user has seen onboarding
-    const hasSeenOnboarding = localStorage.getItem('stockviz_onboarding_completed');
-    
+    const hasSeenOnboarding = localStorage.getItem(
+      "stockviz_onboarding_completed",
+    );
+
     if (!hasSeenOnboarding) {
       // Show onboarding after a brief delay
       const timer = setTimeout(() => {
         setIsOpen(true);
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
   }, []);
@@ -65,10 +67,11 @@ const OnboardingPopup = () => {
               Welcome to StockViz
             </h3>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Discover powerful stock analysis tools, real-time market data, and educational resources all in one platform.
+              Discover powerful stock analysis tools, real-time market data, and
+              educational resources all in one platform.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-3 gap-3 mt-6">
             <Card className="text-center p-3">
               <CardContent className="p-0">
@@ -90,7 +93,7 @@ const OnboardingPopup = () => {
             </Card>
           </div>
         </div>
-      )
+      ),
     },
     {
       id: 2,
@@ -108,7 +111,7 @@ const OnboardingPopup = () => {
             </div>
             <h3 className="text-xl font-bold">Everything You Need</h3>
           </div>
-          
+
           <div className="space-y-3">
             <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-center w-8 h-8 bg-blue-500 rounded-lg">
@@ -116,33 +119,39 @@ const OnboardingPopup = () => {
               </div>
               <div className="flex-1">
                 <h4 className="font-medium">Advanced Analytics</h4>
-                <p className="text-sm text-muted-foreground">Technical & fundamental analysis</p>
+                <p className="text-sm text-muted-foreground">
+                  Technical & fundamental analysis
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-center w-8 h-8 bg-green-500 rounded-lg">
                 <Globe className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1">
                 <h4 className="font-medium">Market Overview</h4>
-                <p className="text-sm text-muted-foreground">Real-time market data</p>
+                <p className="text-sm text-muted-foreground">
+                  Real-time market data
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-center w-8 h-8 bg-purple-500 rounded-lg">
                 <Wallet className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1">
                 <h4 className="font-medium">Portfolio Tracking</h4>
-                <p className="text-sm text-muted-foreground">Manage your investments</p>
+                <p className="text-sm text-muted-foreground">
+                  Manage your investments
+                </p>
               </div>
             </div>
           </div>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   const handleNext = () => {
@@ -159,7 +168,7 @@ const OnboardingPopup = () => {
   };
 
   const handleComplete = () => {
-    localStorage.setItem('stockviz_onboarding_completed', 'true');
+    localStorage.setItem("stockviz_onboarding_completed", "true");
     setIsOpen(false);
   };
 
@@ -178,7 +187,7 @@ const OnboardingPopup = () => {
                   className={`w-2 h-2 rounded-full transition-colors duration-200 ${
                     index <= currentStep
                       ? `bg-gradient-to-r ${currentStepData.color}`
-                      : 'bg-gray-200'
+                      : "bg-gray-200"
                   }`}
                 />
               ))}
@@ -195,23 +204,17 @@ const OnboardingPopup = () => {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          {currentStepData.content}
-        </div>
+        <div className="py-4">{currentStepData.content}</div>
 
         <div className="flex justify-between space-x-3">
-          <Button
-            variant="ghost"
-            onClick={handleSkip}
-            className="flex-1"
-          >
+          <Button variant="ghost" onClick={handleSkip} className="flex-1">
             Skip Tour
           </Button>
           <Button
             onClick={handleNext}
             className={`flex-1 bg-gradient-to-r ${currentStepData.color} text-white hover:opacity-90`}
           >
-            {isLastStep ? 'Get Started' : 'Next'}
+            {isLastStep ? "Get Started" : "Next"}
             {!isLastStep && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         </div>

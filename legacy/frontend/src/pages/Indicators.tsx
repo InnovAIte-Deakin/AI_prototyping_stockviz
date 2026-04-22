@@ -1,24 +1,34 @@
-import EnhancedIndicatorsPanel from '../components/EnhancedIndicatorsPanel'
-import { useState } from 'react'
-import { useIndicators } from '../lib/queries'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { TrendingUp, Activity, BarChart3, Target } from 'lucide-react'
+import EnhancedIndicatorsPanel from "../components/EnhancedIndicatorsPanel";
+import { useState } from "react";
+import { useIndicators } from "../lib/queries";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, Activity, BarChart3, Target } from "lucide-react";
 
 export default function Indicators() {
-  const [config, setConfig] = useState<Record<string, any>>({})
-  const { data } = useIndicators()
-  
+  const [config, setConfig] = useState<Record<string, any>>({});
+  const { data } = useIndicators();
+
   // Calculate some stats from the config
-  const enabledCount = Object.values(config).filter(cfg => cfg?.enabled !== false).length
-  
+  const enabledCount = Object.values(config).filter(
+    (cfg) => cfg?.enabled !== false,
+  ).length;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Technical Indicators</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Technical Indicators
+            </h1>
             <p className="text-muted-foreground mt-2">
               Configure technical indicators for advanced stock analysis
             </p>
@@ -30,14 +40,14 @@ export default function Indicators() {
           )}
         </div>
       </div>
-      
+
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Indicators Panel - Takes up 2 columns on XL screens */}
         <div className="xl:col-span-2">
           <EnhancedIndicatorsPanel onChange={setConfig} />
         </div>
-        
+
         {/* Info Sidebar */}
         <div className="space-y-6">
           {/* Current Configuration */}
@@ -64,14 +74,16 @@ export default function Indicators() {
                       .filter(([_, cfg]) => cfg?.enabled !== false)
                       .slice(0, 5)
                       .map(([name, cfg]) => (
-                        <div key={name} className="flex justify-between text-xs">
+                        <div
+                          key={name}
+                          className="flex justify-between text-xs"
+                        >
                           <span className="font-medium">{name}</span>
                           <span className="text-muted-foreground">
                             {Object.keys(cfg || {}).length - 1} params
                           </span>
                         </div>
-                      ))
-                    }
+                      ))}
                     {enabledCount > 5 && (
                       <p className="text-xs text-muted-foreground">
                         ... and {enabledCount - 5} more
@@ -82,7 +94,7 @@ export default function Indicators() {
               )}
             </CardContent>
           </Card>
-          
+
           {/* About Technical Indicators */}
           <Card>
             <CardHeader>
@@ -105,7 +117,7 @@ export default function Indicators() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <Activity className="h-4 w-4 mt-1 text-green-500" />
                   <div>
@@ -115,17 +127,19 @@ export default function Indicators() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <BarChart3 className="h-4 w-4 mt-1 text-purple-500" />
                   <div>
-                    <h4 className="font-medium text-sm">Volatility Indicators</h4>
+                    <h4 className="font-medium text-sm">
+                      Volatility Indicators
+                    </h4>
                     <p className="text-xs text-muted-foreground">
                       Measure price fluctuation intensity
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <Target className="h-4 w-4 mt-1 text-orange-500" />
                   <div>
@@ -138,7 +152,7 @@ export default function Indicators() {
               </div>
             </CardContent>
           </Card>
-          
+
           {/* Pattern Recognition */}
           <Card>
             <CardHeader>
@@ -164,7 +178,7 @@ export default function Indicators() {
               </div>
             </CardContent>
           </Card>
-          
+
           {/* Usage Tips */}
           <Card>
             <CardHeader>
@@ -181,7 +195,7 @@ export default function Indicators() {
           </Card>
         </div>
       </div>
-      
+
       {/* Configuration Debug (only show if there are indicators selected) */}
       {Object.keys(config).length > 0 && (
         <Card>
@@ -199,5 +213,5 @@ export default function Indicators() {
         </Card>
       )}
     </div>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/server";
 
 type StockInput = {
-  symbol: string
-  name?: string
-  exchangeMic?: string
-}
+  symbol: string;
+  name?: string;
+  exchangeMic?: string;
+};
 
 /**
  * Bulk-upserts stocks into the canonical `public.stocks` table.
@@ -17,45 +17,45 @@ type StockInput = {
  */
 export async function upsertStocks(stocks: StockInput[]): Promise<void> {
   if (stocks.length === 0) {
-    return
+    return;
   }
 
   try {
-    const supabase = await createClient()
+    const supabase = await createClient();
 
     // Deduplicate by uppercased symbol within the batch
-    const seen = new Map<string, StockInput>()
+    const seen = new Map<string, StockInput>();
     for (const s of stocks) {
-      const key = s.symbol.trim().toUpperCase()
+      const key = s.symbol.trim().toUpperCase();
       if (key && !seen.has(key)) {
-        seen.set(key, s)
+        seen.set(key, s);
       }
     }
 
-    const unique = Array.from(seen.values())
+    const unique = Array.from(seen.values());
 
     // Fetch existing stocks in one query
-    const symbols = unique.map((s) => s.symbol.trim().toUpperCase())
+    const symbols = unique.map((s) => s.symbol.trim().toUpperCase());
     const { data: existing } = await supabase
       .from("stocks")
       .select("id, symbol, name")
-      .filter(
-        "symbol",
-        "in",
-        `(${symbols.map((s) => `"${s}"`).join(",")})`
-      )
+      .filter("symbol", "in", `(${symbols.map((s) => `"${s}"`).join(",")})`);
 
     const existingMap = new Map(
-      (existing ?? []).map((row) => [row.symbol.trim().toUpperCase(), row])
-    )
+      (existing ?? []).map((row) => [row.symbol.trim().toUpperCase(), row]),
+    );
 
     // Separate into inserts and updates
-    const toInsert: Array<{ symbol: string; name: string | null; exchange_mic: string | null }> = []
-    const toUpdate: Array<{ id: string; name: string }> = []
+    const toInsert: Array<{
+      symbol: string;
+      name: string | null;
+      exchange_mic: string | null;
+    }> = [];
+    const toUpdate: Array<{ id: string; name: string }> = [];
 
     for (const stock of unique) {
-      const key = stock.symbol.trim().toUpperCase()
-      const row = existingMap.get(key)
+      const key = stock.symbol.trim().toUpperCase();
+      const row = existingMap.get(key);
 
       if (!row) {
         // New stock — insert
@@ -63,10 +63,10 @@ export async function upsertStocks(stocks: StockInput[]): Promise<void> {
           symbol: stock.symbol.trim().toUpperCase(),
           name: stock.name?.trim() || null,
           exchange_mic: stock.exchangeMic?.trim() || null,
-        })
+        });
       } else if (!row.name && stock.name?.trim()) {
         // Existing stock missing a name — update it
-        toUpdate.push({ id: row.id, name: stock.name.trim() })
+        toUpdate.push({ id: row.id, name: stock.name.trim() });
       }
     }
 
@@ -74,10 +74,10 @@ export async function upsertStocks(stocks: StockInput[]): Promise<void> {
     if (toInsert.length > 0) {
       const { error: insertError } = await supabase
         .from("stocks")
-        .insert(toInsert)
+        .insert(toInsert);
 
       if (insertError) {
-        console.error("[upsertStocks] insert error:", insertError.message)
+        console.error("[upsertStocks] insert error:", insertError.message);
       }
     }
 
@@ -86,16 +86,16 @@ export async function upsertStocks(stocks: StockInput[]): Promise<void> {
       const { error: updateError } = await supabase
         .from("stocks")
         .update({ name: item.name })
-        .eq("id", item.id)
+        .eq("id", item.id);
 
       if (updateError) {
-        console.error("[upsertStocks] update error:", updateError.message)
+        console.error("[upsertStocks] update error:", updateError.message);
       }
     }
   } catch (err) {
     console.error(
       "[upsertStocks] unexpected error:",
-      err instanceof Error ? err.message : err
-    )
+      err instanceof Error ? err.message : err,
+    );
   }
 }

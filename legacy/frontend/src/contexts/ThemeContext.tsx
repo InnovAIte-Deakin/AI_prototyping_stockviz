@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = 'dark' | 'light' | 'system';
+type Theme = "dark" | "light" | "system";
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: 'dark' | 'light';
+  resolvedTheme: "dark" | "light";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -13,7 +13,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };
@@ -26,28 +26,29 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  defaultTheme = 'system',
-  storageKey = 'stockviz-theme',
+  defaultTheme = "system",
+  storageKey = "stockviz-theme",
 }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
     }
     return defaultTheme;
   });
 
-  const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>('light');
+  const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("light");
 
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
 
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
-      
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
+
       root.classList.add(systemTheme);
       setResolvedTheme(systemTheme);
       return;
@@ -67,8 +68,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   };
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };

@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { AlertCircle } from "lucide-react"
+import Link from "next/link";
+import { AlertCircle } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useFinnhubPeers } from "@/hooks/use-finnhub-stock-data"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useFinnhubPeers } from "@/hooks/use-finnhub-stock-data";
+import { cn } from "@/lib/utils";
 
 type PeersWidgetProps = {
-  symbol: string
-  className?: string
-}
+  symbol: string;
+  className?: string;
+};
 
 export const PeersWidget = ({ symbol, className }: PeersWidgetProps) => {
-  const { data, error, isLoading } = useFinnhubPeers(symbol)
+  const { data, error, isLoading } = useFinnhubPeers(symbol);
 
-  const peers = data ?? []
+  const peers = data ?? [];
 
   return (
     <Card className={cn(className)}>
@@ -56,7 +56,9 @@ export const PeersWidget = ({ symbol, className }: PeersWidgetProps) => {
             {peers.map((peer) => (
               <li key={peer}>
                 <Badge asChild variant="outline" className="font-mono text-xs">
-                  <Link href={`/stock/${encodeURIComponent(peer)}`}>{peer}</Link>
+                  <Link href={`/stock/${encodeURIComponent(peer)}`}>
+                    {peer}
+                  </Link>
                 </Badge>
               </li>
             ))}
@@ -68,5 +70,5 @@ export const PeersWidget = ({ symbol, className }: PeersWidgetProps) => {
         ) : null}
       </CardContent>
     </Card>
-  )
-}
+  );
+};

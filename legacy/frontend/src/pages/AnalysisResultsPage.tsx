@@ -1,22 +1,27 @@
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useAnalysis } from '../lib/queries';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import ScoreBadge from '../components/ScoreBadge';
-import RecommendationChip from '../components/RecommendationChip';
-import AISummary from '../components/AISummary';
-import { decodeState } from '../lib/urlState';
+import { useParams, useSearchParams } from "react-router-dom";
+import { useAnalysis } from "../lib/queries";
+import LoadingSpinner from "../components/LoadingSpinner";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import ScoreBadge from "../components/ScoreBadge";
+import RecommendationChip from "../components/RecommendationChip";
+import AISummary from "../components/AISummary";
+import { decodeState } from "../lib/urlState";
 
 // This component fetches and displays the analysis results.
 export default function AnalysisResultsPage() {
-  const { symbol = '' } = useParams();
+  const { symbol = "" } = useParams();
   const [sp] = useSearchParams();
 
   // Extract parameters from the URL
-  const mode = sp.get('mode') || 'normal';
-  const timeframe = sp.get('tf');
-  const weightsStr = sp.get('w'); // The parameter from the config page is 'w'
-  const indicatorsStr = sp.get('ind');
+  const mode = sp.get("mode") || "normal";
+  const timeframe = sp.get("tf");
+  const weightsStr = sp.get("w"); // The parameter from the config page is 'w'
+  const indicatorsStr = sp.get("ind");
 
   // --- FIX: Use decodeState for weights and indicators ---
   const weights = weightsStr ? decodeState(weightsStr) : undefined;
@@ -24,7 +29,7 @@ export default function AnalysisResultsPage() {
 
   const { data, isFetching, error } = useAnalysis({
     symbol,
-    mode: mode as 'normal' | 'advanced',
+    mode: mode as "normal" | "advanced",
     timeframe: timeframe ?? undefined,
     weights,
     indicators,
@@ -34,7 +39,9 @@ export default function AnalysisResultsPage() {
     return (
       <div className="container mx-auto p-4 flex justify-center items-center h-96">
         <LoadingSpinner />
-        <span className="ml-4 text-lg font-semibold">Running Hybrid Analysis for {symbol.toUpperCase()}...</span>
+        <span className="ml-4 text-lg font-semibold">
+          Running Hybrid Analysis for {symbol.toUpperCase()}...
+        </span>
       </div>
     );
   }
@@ -44,7 +51,8 @@ export default function AnalysisResultsPage() {
       <div className="container mx-auto p-4 text-red-500 text-center">
         <h2 className="text-2xl font-bold mb-4">Analysis Failed</h2>
         <p className="bg-red-100 dark:bg-red-900 p-4 rounded-md">
-          {error.message || 'An unknown error occurred while fetching the analysis.'}
+          {error.message ||
+            "An unknown error occurred while fetching the analysis."}
         </p>
       </div>
     );
@@ -53,7 +61,11 @@ export default function AnalysisResultsPage() {
   const analysisData = data?.analysis;
 
   if (!analysisData) {
-    return <div className="text-center p-8">No analysis data was returned. Please try again.</div>;
+    return (
+      <div className="text-center p-8">
+        No analysis data was returned. Please try again.
+      </div>
+    );
   }
 
   return (
@@ -86,10 +98,13 @@ export default function AnalysisResultsPage() {
           </CardHeader>
           <CardContent>
             <div className="mb-2">
-              <RecommendationChip rec={analysisData.fundamental?.recommendation} />
+              <RecommendationChip
+                rec={analysisData.fundamental?.recommendation}
+              />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {analysisData.fundamental?.analysis || 'No detailed analysis available.'}
+              {analysisData.fundamental?.analysis ||
+                "No detailed analysis available."}
             </p>
           </CardContent>
         </Card>
@@ -104,10 +119,13 @@ export default function AnalysisResultsPage() {
           </CardHeader>
           <CardContent>
             <div className="mb-2">
-              <RecommendationChip rec={analysisData.technical?.recommendation} />
+              <RecommendationChip
+                rec={analysisData.technical?.recommendation}
+              />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {analysisData.technical?.analysis || 'No detailed analysis available.'}
+              {analysisData.technical?.analysis ||
+                "No detailed analysis available."}
             </p>
           </CardContent>
         </Card>
@@ -122,10 +140,13 @@ export default function AnalysisResultsPage() {
           </CardHeader>
           <CardContent>
             <div className="mb-2">
-              <RecommendationChip rec={analysisData.sentiment?.recommendation} />
+              <RecommendationChip
+                rec={analysisData.sentiment?.recommendation}
+              />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {analysisData.sentiment?.analysis || 'No detailed analysis available.'}
+              {analysisData.sentiment?.analysis ||
+                "No detailed analysis available."}
             </p>
           </CardContent>
         </Card>

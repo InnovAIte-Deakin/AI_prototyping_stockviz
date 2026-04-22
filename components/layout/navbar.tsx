@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useTheme } from 'next-themes'
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import {
   ArrowRight,
   BarChart3,
@@ -12,16 +12,16 @@ import {
   Monitor,
   Moon,
   Sun,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { signOut } from '@/app/auth/actions'
-import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
+import { signOut } from "@/app/auth/actions";
+import { StockSymbolSearch } from "@/components/layout/stock-symbol-search";
 import {
   isNavItemActive,
   primaryNavItems,
-} from '@/components/layout/shell-navigation'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+} from "@/components/layout/shell-navigation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +29,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -38,46 +38,46 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
-  const pathname = usePathname()
-  const { theme, setTheme } = useTheme()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
+      setIsScrolled(window.scrollY > 10);
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const getThemeIcon = () => {
     switch (theme) {
-      case 'light':
-        return <Sun className="h-4 w-4" />
-      case 'dark':
-        return <Moon className="h-4 w-4" />
+      case "light":
+        return <Sun className="h-4 w-4" />;
+      case "dark":
+        return <Moon className="h-4 w-4" />;
       default:
-        return <Monitor className="h-4 w-4" />
+        return <Monitor className="h-4 w-4" />;
     }
-  }
+  };
 
   const themeLabel =
-    theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'
+    theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System";
 
   return (
     <nav
       id="main-navbar"
       className={cn(
-        'sticky top-0 z-50 w-full transition-all duration-300',
+        "sticky top-0 z-50 w-full transition-all duration-300",
         isScrolled
-          ? 'border-b border-[#ddd6d0] bg-[#f9f9f8]/95 shadow-[0_14px_34px_rgba(55,49,45,0.08)] backdrop-blur-md'
-          : 'bg-[#f9f9f8]/88 backdrop-blur-sm'
+          ? "border-b border-[#ddd6d0] bg-[#f9f9f8]/95 shadow-[0_14px_34px_rgba(55,49,45,0.08)] backdrop-blur-md"
+          : "bg-[#f9f9f8]/88 backdrop-blur-sm",
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -104,12 +104,12 @@ export default function Navbar() {
 
             <div className="hidden xl:flex items-center gap-1">
               {primaryNavItems.map((item) => {
-                const Icon = item.icon
-                const active = isNavItemActive(pathname, item)
+                const Icon = item.icon;
+                const active = isNavItemActive(pathname, item);
                 const statusTone =
-                  item.status === 'live'
-                    ? 'border-[#d4ddd8] bg-[#edf4f0] text-[#2f6b43]'
-                    : 'border-[#ddd6d0] bg-[#f5f1ee] text-[#7b7f7f]'
+                  item.status === "live"
+                    ? "border-[#d4ddd8] bg-[#edf4f0] text-[#2f6b43]"
+                    : "border-[#ddd6d0] bg-[#f5f1ee] text-[#7b7f7f]";
 
                 if (!item.href) {
                   return (
@@ -122,12 +122,15 @@ export default function Navbar() {
                       <span>{item.label}</span>
                       <Badge
                         variant="outline"
-                        className={cn('rounded-full px-2 text-[11px]', statusTone)}
+                        className={cn(
+                          "rounded-full px-2 text-[11px]",
+                          statusTone,
+                        )}
                       >
                         Planned
                       </Badge>
                     </div>
-                  )
+                  );
                 }
 
                 return (
@@ -135,10 +138,10 @@ export default function Navbar() {
                     key={item.label}
                     href={item.href}
                     className={cn(
-                      'group flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-all duration-200',
+                      "group flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-all duration-200",
                       active
-                        ? 'border-[#5f5e5e] bg-[#5f5e5e] text-white shadow-[0_10px_24px_rgba(55,49,45,0.12)]'
-                        : 'border-transparent text-[#5a6060] hover:border-[#ddd6d0] hover:bg-white hover:text-[#2d3433]'
+                        ? "border-[#5f5e5e] bg-[#5f5e5e] text-white shadow-[0_10px_24px_rgba(55,49,45,0.12)]"
+                        : "border-transparent text-[#5a6060] hover:border-[#ddd6d0] hover:bg-white hover:text-[#2d3433]",
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -146,16 +149,16 @@ export default function Navbar() {
                     <Badge
                       variant="outline"
                       className={cn(
-                        'rounded-full px-2 text-[11px]',
+                        "rounded-full px-2 text-[11px]",
                         active
-                          ? 'border-white/25 bg-white/10 text-white'
-                          : statusTone
+                          ? "border-white/25 bg-white/10 text-white"
+                          : statusTone,
                       )}
                     >
                       Live
                     </Badge>
                   </Link>
-                )
+                );
               })}
             </div>
           </div>
@@ -185,21 +188,21 @@ export default function Navbar() {
                 <DropdownMenuLabel>Theme</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => setTheme('light')}
+                  onClick={() => setTheme("light")}
                   className="cursor-pointer"
                 >
                   <Sun className="mr-2 h-4 w-4" />
                   <span>Light</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setTheme('dark')}
+                  onClick={() => setTheme("dark")}
                   className="cursor-pointer"
                 >
                   <Moon className="mr-2 h-4 w-4" />
                   <span>Dark</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setTheme('system')}
+                  onClick={() => setTheme("system")}
                   className="cursor-pointer"
                 >
                   <Monitor className="mr-2 h-4 w-4" />
@@ -254,14 +257,14 @@ export default function Navbar() {
 
                   <div className="space-y-2">
                     {primaryNavItems.map((item) => {
-                      const Icon = item.icon
+                      const Icon = item.icon;
                       const statusText =
-                        item.status === 'live' ? 'Live now' : 'Planned'
+                        item.status === "live" ? "Live now" : "Planned";
                       const statusTone =
-                        item.status === 'live'
-                          ? 'border-[#d7dfdb] bg-[#eef4f1] text-[#2f6b43]'
-                          : 'border-[#ddd6d0] bg-[#f5f1ee] text-[#7b7f7f]'
-                      const active = isNavItemActive(pathname, item)
+                        item.status === "live"
+                          ? "border-[#d7dfdb] bg-[#eef4f1] text-[#2f6b43]"
+                          : "border-[#ddd6d0] bg-[#f5f1ee] text-[#7b7f7f]";
+                      const active = isNavItemActive(pathname, item);
 
                       if (!item.href) {
                         return (
@@ -281,8 +284,8 @@ export default function Navbar() {
                                   <Badge
                                     variant="outline"
                                     className={cn(
-                                      'rounded-full px-2 text-[11px]',
-                                      statusTone
+                                      "rounded-full px-2 text-[11px]",
+                                      statusTone,
                                     )}
                                   >
                                     {statusText}
@@ -294,7 +297,7 @@ export default function Navbar() {
                               </div>
                             </div>
                           </div>
-                        )
+                        );
                       }
 
                       return (
@@ -303,19 +306,19 @@ export default function Navbar() {
                           href={item.href}
                           onClick={() => setIsMobileMenuOpen(false)}
                           className={cn(
-                            'block rounded-[20px] border px-4 py-3 transition-colors',
+                            "block rounded-[20px] border px-4 py-3 transition-colors",
                             active
-                              ? 'border-[#5f5e5e] bg-[#5f5e5e] text-white'
-                              : 'border-[#e2dbd4] bg-white hover:bg-[#f6f3f0]'
+                              ? "border-[#5f5e5e] bg-[#5f5e5e] text-white"
+                              : "border-[#e2dbd4] bg-white hover:bg-[#f6f3f0]",
                           )}
                         >
                           <div className="flex items-start gap-3">
                             <div
                               className={cn(
-                                'mt-0.5 rounded-2xl p-2',
+                                "mt-0.5 rounded-2xl p-2",
                                 active
-                                  ? 'bg-white/10 text-white'
-                                  : 'bg-[#f3eeea] text-[#5f5e5e]'
+                                  ? "bg-white/10 text-white"
+                                  : "bg-[#f3eeea] text-[#5f5e5e]",
                               )}
                             >
                               <Icon className="h-4 w-4" />
@@ -326,10 +329,10 @@ export default function Navbar() {
                                 <Badge
                                   variant="outline"
                                   className={cn(
-                                    'rounded-full px-2 text-[11px]',
+                                    "rounded-full px-2 text-[11px]",
                                     active
-                                      ? 'border-white/20 bg-white/10 text-white'
-                                      : statusTone
+                                      ? "border-white/20 bg-white/10 text-white"
+                                      : statusTone,
                                   )}
                                 >
                                   {statusText}
@@ -337,8 +340,8 @@ export default function Navbar() {
                               </div>
                               <p
                                 className={cn(
-                                  'mt-1 text-sm leading-6',
-                                  active ? 'text-white/80' : 'text-[#6a706f]'
+                                  "mt-1 text-sm leading-6",
+                                  active ? "text-white/80" : "text-[#6a706f]",
                                 )}
                               >
                                 {item.description}
@@ -346,7 +349,7 @@ export default function Navbar() {
                             </div>
                           </div>
                         </Link>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -377,5 +380,5 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-  )
+  );
 }

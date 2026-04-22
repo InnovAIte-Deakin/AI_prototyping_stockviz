@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface User {
   id: string;
@@ -22,7 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -37,12 +37,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Simulate loading and check for stored user session
-    const storedUser = localStorage.getItem('stockviz_user');
+    const storedUser = localStorage.getItem("stockviz_user");
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        localStorage.removeItem('stockviz_user');
+        localStorage.removeItem("stockviz_user");
       }
     }
     setLoading(false);
@@ -50,35 +50,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async (): Promise<void> => {
     setUser(null);
-    localStorage.removeItem('stockviz_user');
+    localStorage.removeItem("stockviz_user");
   };
 
   const signIn = async (email: string, password: string): Promise<void> => {
     // Simulate sign in - in real app this would call your auth API
     const mockUser: User = {
-      id: '1',
+      id: "1",
       email,
       user_metadata: {
-        full_name: 'Demo User',
-        avatar_url: undefined
-      }
+        full_name: "Demo User",
+        avatar_url: undefined,
+      },
     };
     setUser(mockUser);
-    localStorage.setItem('stockviz_user', JSON.stringify(mockUser));
+    localStorage.setItem("stockviz_user", JSON.stringify(mockUser));
   };
 
   const signUp = async (email: string, password: string): Promise<void> => {
     // Simulate sign up - in real app this would call your auth API
     const mockUser: User = {
-      id: '1',
+      id: "1",
       email,
       user_metadata: {
-        full_name: 'New User',
-        avatar_url: undefined
-      }
+        full_name: "New User",
+        avatar_url: undefined,
+      },
     };
     setUser(mockUser);
-    localStorage.setItem('stockviz_user', JSON.stringify(mockUser));
+    localStorage.setItem("stockviz_user", JSON.stringify(mockUser));
   };
 
   const value: AuthContextType = {

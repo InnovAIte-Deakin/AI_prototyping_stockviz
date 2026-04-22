@@ -1,4 +1,6 @@
-const { createAnalysisService } = require("../../lib/analysis/analysis-service");
+const {
+  createAnalysisService,
+} = require("../../lib/analysis/analysis-service");
 const geminiService = require("./geminiService");
 const weightService = require("./weightService");
 const technicalAnalysisService = require("./technicalAnalysisService");

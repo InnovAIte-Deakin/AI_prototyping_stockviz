@@ -1,25 +1,45 @@
-import { useWeightDefaults } from '../lib/queries'
-import EnhancedWeightsPanel from '../components/EnhancedWeightsPanel'
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { TrendingUp, Activity, MessageSquare, Lightbulb, BarChart3, Sliders } from 'lucide-react'
+import { useWeightDefaults } from "../lib/queries";
+import EnhancedWeightsPanel from "../components/EnhancedWeightsPanel";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  TrendingUp,
+  Activity,
+  MessageSquare,
+  Lightbulb,
+  BarChart3,
+  Sliders,
+} from "lucide-react";
 
 export default function Weights() {
-  const { data } = useWeightDefaults()
-  const [weights, setWeights] = useState({ fundamental: 40, technical: 35, sentiment: 25 })
-  const presets = data?.examples ?? []
-  
+  const { data } = useWeightDefaults();
+  const [weights, setWeights] = useState({
+    fundamental: 40,
+    technical: 35,
+    sentiment: 25,
+  });
+  const presets = data?.examples ?? [];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Analysis Weights</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Analysis Weights
+            </h1>
             <p className="text-muted-foreground mt-2">
-              Customize the importance of different analysis factors for your investment strategy
+              Customize the importance of different analysis factors for your
+              investment strategy
             </p>
           </div>
           <Badge variant="secondary" className="text-sm">
@@ -33,12 +53,9 @@ export default function Weights() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Weights Panel - Takes up 2 columns on XL screens */}
         <div className="xl:col-span-2">
-          <EnhancedWeightsPanel 
-            initial={weights}
-            onChange={setWeights} 
-          />
+          <EnhancedWeightsPanel initial={weights} onChange={setWeights} />
         </div>
-        
+
         {/* Info Sidebar */}
         <div className="space-y-6">
           {/* Analysis Components Overview */}
@@ -57,13 +74,16 @@ export default function Weights() {
                 <div className="flex items-start space-x-3">
                   <TrendingUp className="h-5 w-5 mt-1 text-blue-500" />
                   <div>
-                    <h4 className="font-medium text-sm">Fundamental Analysis</h4>
+                    <h4 className="font-medium text-sm">
+                      Fundamental Analysis
+                    </h4>
                     <p className="text-xs text-muted-foreground">
-                      Company financials, ratios, valuation metrics, and intrinsic value
+                      Company financials, ratios, valuation metrics, and
+                      intrinsic value
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <Activity className="h-5 w-5 mt-1 text-purple-500" />
                   <div>
@@ -73,7 +93,7 @@ export default function Weights() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <MessageSquare className="h-5 w-5 mt-1 text-green-500" />
                   <div>
@@ -107,7 +127,13 @@ export default function Weights() {
                       variant="outline"
                       size="sm"
                       className="w-full justify-start h-auto p-3"
-                      onClick={() => setWeights({ fundamental: p.fundamental, technical: p.technical, sentiment: p.sentiment })}
+                      onClick={() =>
+                        setWeights({
+                          fundamental: p.fundamental,
+                          technical: p.technical,
+                          sentiment: p.sentiment,
+                        })
+                      }
                     >
                       <div className="text-left">
                         <div className="font-medium text-sm">{p.name}</div>
@@ -135,13 +161,15 @@ export default function Weights() {
                 <div>
                   <h4 className="font-medium">Conservative Value</h4>
                   <p className="text-xs text-muted-foreground">
-                    High fundamental weight for long-term investors prioritizing financial health
+                    High fundamental weight for long-term investors prioritizing
+                    financial health
                   </p>
                 </div>
                 <div>
                   <h4 className="font-medium">Technical Trading</h4>
                   <p className="text-xs text-muted-foreground">
-                    High technical weight for active traders using chart patterns
+                    High technical weight for active traders using chart
+                    patterns
                   </p>
                 </div>
                 <div>
@@ -162,5 +190,5 @@ export default function Weights() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useSearch } from '../lib/queries'
-import LoadingSpinner from './LoadingSpinner'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSearch } from "../lib/queries";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function SearchBox() {
-  const [q, setQ] = useState('')
-  const [debounced, setDebounced] = useState('')
+  const [q, setQ] = useState("");
+  const [debounced, setDebounced] = useState("");
   useEffect(() => {
-    const t = setTimeout(() => setDebounced(q.trim()), 300)
-    return () => clearTimeout(t)
-  }, [q])
-  const { data, isLoading } = useSearch(debounced)
-  const navigate = useNavigate()
+    const t = setTimeout(() => setDebounced(q.trim()), 300);
+    return () => clearTimeout(t);
+  }, [q]);
+  const { data, isLoading } = useSearch(debounced);
+  const navigate = useNavigate();
 
   return (
     <div className="w-full max-w-xl mx-auto">
@@ -40,14 +40,18 @@ export default function SearchBox() {
               <button
                 key={r.symbol}
                 onClick={() => {
-                  navigate(`/symbol/${encodeURIComponent(r.symbol)}`)
-                  setQ('')
+                  navigate(`/symbol/${encodeURIComponent(r.symbol)}`);
+                  setQ("");
                 }}
                 className="w-full text-left px-3 py-2 hover:bg-slate-50 transition-colors border-b last:border-b-0"
               >
                 <div className="font-medium">{r.symbol}</div>
-                <div className="text-xs text-slate-500 truncate">{r.name ?? r.type ?? ''}</div>
-                {r.region && <div className="text-xs text-slate-400">{r.region}</div>}
+                <div className="text-xs text-slate-500 truncate">
+                  {r.name ?? r.type ?? ""}
+                </div>
+                {r.region && (
+                  <div className="text-xs text-slate-400">{r.region}</div>
+                )}
               </button>
             ))
           ) : (
@@ -58,5 +62,5 @@ export default function SearchBox() {
         </div>
       )}
     </div>
-  )
+  );
 }

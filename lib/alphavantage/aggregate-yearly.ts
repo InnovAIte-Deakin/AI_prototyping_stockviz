@@ -1,67 +1,67 @@
-import type { AlphaVantageOhlcPoint } from "@/lib/alphavantage/parse-time-series"
+import type { AlphaVantageOhlcPoint } from "@/lib/alphavantage/parse-time-series";
 
 /** Calendar-year OHLCV aggregated from monthly bars (sorted ascending by year). */
 export type YearlyOhlcPoint = {
-  year: string
-  open: number
-  high: number
-  low: number
-  close: number
-  volume: number
-}
+  year: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+};
 
 const yearFromDate = (date: string): string => {
-  const y = date.slice(0, 4)
-  return y.length === 4 ? y : date
-}
+  const y = date.slice(0, 4);
+  return y.length === 4 ? y : date;
+};
 
 /**
  * Groups monthly points by calendar year: open = first month open, high/low = extrema,
  * close = last month close, volume summed.
  */
 export const aggregateMonthlyToYearly = (
-  monthly: AlphaVantageOhlcPoint[]
+  monthly: AlphaVantageOhlcPoint[],
 ): YearlyOhlcPoint[] => {
   if (monthly.length === 0) {
-    return []
+    return [];
   }
 
-  const byYear = new Map<string, AlphaVantageOhlcPoint[]>()
+  const byYear = new Map<string, AlphaVantageOhlcPoint[]>();
 
   for (const m of monthly) {
-    const y = yearFromDate(m.date)
-    const list = byYear.get(y)
+    const y = yearFromDate(m.date);
+    const list = byYear.get(y);
     if (list) {
-      list.push(m)
+      list.push(m);
     } else {
-      byYear.set(y, [m])
+      byYear.set(y, [m]);
     }
   }
 
-  const years = [...byYear.keys()].sort((a, b) => a.localeCompare(b))
-  const result: YearlyOhlcPoint[] = []
+  const years = [...byYear.keys()].sort((a, b) => a.localeCompare(b));
+  const result: YearlyOhlcPoint[] = [];
 
   for (const year of years) {
-    const months = byYear.get(year)
+    const months = byYear.get(year);
     if (!months || months.length === 0) {
-      continue
+      continue;
     }
-    months.sort((a, b) => a.date.localeCompare(b.date))
+    months.sort((a, b) => a.date.localeCompare(b.date));
 
-    const open = months[0].open
-    const close = months[months.length - 1].close
-    let high = -Infinity
-    let low = Infinity
-    let volume = 0
+    const open = months[0].open;
+    const close = months[months.length - 1].close;
+    let high = -Infinity;
+    let low = Infinity;
+    let volume = 0;
 
     for (const m of months) {
-      high = Math.max(high, m.high)
-      low = Math.min(low, m.low)
-      volume += m.volume
+      high = Math.max(high, m.high);
+      low = Math.min(low, m.low);
+      volume += m.volume;
     }
 
     if (!Number.isFinite(high) || !Number.isFinite(low)) {
-      continue
+      continue;
     }
 
     result.push({
@@ -71,8 +71,8 @@ export const aggregateMonthlyToYearly = (
       low,
       close,
       volume,
-    })
+    });
   }
 
-  return result
-}
+  return result;
+};

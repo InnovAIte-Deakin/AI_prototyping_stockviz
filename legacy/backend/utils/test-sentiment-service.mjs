@@ -26,18 +26,27 @@ if (data?.Note || data?.Information) {
 
 const feed = Array.isArray(data.feed) ? data.feed : [];
 const avg = feed.length
-  ? feed.reduce((a, it) => a + (Number(it.overall_sentiment_score) || 0), 0) / feed.length
+  ? feed.reduce((a, it) => a + (Number(it.overall_sentiment_score) || 0), 0) /
+    feed.length
   : 0;
 
 // Map -1..+1 to 0..100
 const score = Math.round((avg + 1) * 50);
 
-console.log(JSON.stringify({
-  symbol,
-  articles: feed.length,
-  avgScoreRaw: Number(avg.toFixed(3)),   // -1..+1
-  sentimentScore: score,                  // 0..100
-  sample: feed.slice(0, 5).map(x => ({
-    title: x.title, src: x.source, score: x.overall_sentiment_score
-  })),
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      symbol,
+      articles: feed.length,
+      avgScoreRaw: Number(avg.toFixed(3)), // -1..+1
+      sentimentScore: score, // 0..100
+      sample: feed.slice(0, 5).map((x) => ({
+        title: x.title,
+        src: x.source,
+        score: x.overall_sentiment_score,
+      })),
+    },
+    null,
+    2,
+  ),
+);

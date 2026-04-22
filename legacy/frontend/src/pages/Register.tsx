@@ -1,11 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff, LayoutDashboard } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { Label } from '../components/ui/label';
-import { Checkbox } from '../components/ui/checkbox';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Eye, EyeOff, LayoutDashboard } from "lucide-react";
+import { motion } from "framer-motion";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
+import { Checkbox } from "../components/ui/checkbox";
 
 export default function Register() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -14,16 +14,26 @@ export default function Register() {
     <div className="min-h-[calc(100vh-80px)] bg-[#f9f9f8] flex flex-col">
       {/* Header */}
       <header className="w-full h-16 px-8 flex items-center justify-between max-w-7xl mx-auto">
-        <Link to="/" className="text-xl font-bold tracking-tighter text-[#2d3433]">
+        <Link
+          to="/"
+          className="text-xl font-bold tracking-tighter text-[#2d3433]"
+        >
           StockViz
         </Link>
         <div className="hidden md:flex gap-8 items-center">
-          {['Markets', 'News', 'Analysis'].map((item) => (
-            <a key={item} href="#" className="text-sm font-medium text-[#5a6060] hover:text-[#2d3433] transition-colors">
+          {["Markets", "News", "Analysis"].map((item) => (
+            <a
+              key={item}
+              href="#"
+              className="text-sm font-medium text-[#5a6060] hover:text-[#2d3433] transition-colors"
+            >
               {item}
             </a>
           ))}
-          <Link to="/login" className="text-xs font-bold uppercase tracking-widest text-[#2d3433] ml-4">
+          <Link
+            to="/login"
+            className="text-xs font-bold uppercase tracking-widest text-[#2d3433] ml-4"
+          >
             Log In
           </Link>
         </div>
@@ -50,7 +60,10 @@ export default function Register() {
 
           <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
             <div className="space-y-1.5">
-              <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="name">
+              <Label
+                className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]"
+                htmlFor="name"
+              >
                 Full Name
               </Label>
               <Input
@@ -62,7 +75,10 @@ export default function Register() {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="email">
+              <Label
+                className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]"
+                htmlFor="email"
+              >
                 Email Address
               </Label>
               <Input
@@ -74,7 +90,10 @@ export default function Register() {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="password">
+              <Label
+                className="block text-[10px] font-bold uppercase tracking-widest text-[#5a6060]"
+                htmlFor="password"
+              >
                 Password
               </Label>
               <div className="relative">
@@ -99,8 +118,25 @@ export default function Register() {
                 id="terms"
                 className="mt-1 h-4 w-4 rounded border-[#adb3b2]/30 text-[#5f5e5e] focus-visible:ring-0 cursor-pointer"
               />
-              <Label htmlFor="terms" className="text-xs leading-relaxed text-[#5a6060] font-normal normal-case tracking-normal">
-                I agree to the <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Terms of Service</a> and <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Privacy Policy</a>.
+              <Label
+                htmlFor="terms"
+                className="text-xs leading-relaxed text-[#5a6060] font-normal normal-case tracking-normal"
+              >
+                I agree to the{" "}
+                <a
+                  href="#"
+                  className="text-[#5f5e5e] hover:underline underline-offset-4"
+                >
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a
+                  href="#"
+                  className="text-[#5f5e5e] hover:underline underline-offset-4"
+                >
+                  Privacy Policy
+                </a>
+                .
               </Label>
             </div>
 
@@ -115,7 +151,10 @@ export default function Register() {
           <div className="mt-10 text-center">
             <p className="text-sm text-[#5a6060]">
               Already have an account?
-              <Link to="/login" className="text-[#2d3433] font-semibold hover:underline underline-offset-4 ml-1">
+              <Link
+                to="/login"
+                className="text-[#2d3433] font-semibold hover:underline underline-offset-4 ml-1"
+              >
                 Log in
               </Link>
             </p>
@@ -130,11 +169,17 @@ export default function Register() {
             © 2024 STOCKVIZ EDITORIAL. ALL RIGHTS RESERVED.
           </span>
           <div className="flex gap-8">
-            {['Privacy Policy', 'Terms of Service', 'Legal Disclosures'].map((link) => (
-              <a key={link} href="#" className="text-[10px] font-medium tracking-widest uppercase text-[#5a6060] hover:text-[#5f5e5e] transition-colors">
-                {link}
-              </a>
-            ))}
+            {["Privacy Policy", "Terms of Service", "Legal Disclosures"].map(
+              (link) => (
+                <a
+                  key={link}
+                  href="#"
+                  className="text-[10px] font-medium tracking-widest uppercase text-[#5a6060] hover:text-[#5f5e5e] transition-colors"
+                >
+                  {link}
+                </a>
+              ),
+            )}
           </div>
         </div>
       </footer>

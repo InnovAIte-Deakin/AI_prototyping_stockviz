@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import type { ReactNode } from 'react'
-import { usePathname } from 'next/navigation'
+import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
-import Footer from '@/components/layout/footer'
-import Navbar from '@/components/layout/navbar'
+import Footer from "@/components/layout/footer";
+import Navbar from "@/components/layout/navbar";
 
 const SHELLLESS_ROUTES = new Set([
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
-])
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+]);
 
 export default function ShellFrame({ children }: { children: ReactNode }) {
-  const pathname = usePathname()
-  const hideShell = pathname ? SHELLLESS_ROUTES.has(pathname) : false
+  const pathname = usePathname();
+  const hideShell = pathname ? SHELLLESS_ROUTES.has(pathname) : false;
 
   if (hideShell) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   return (
@@ -27,5 +27,5 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
       <Footer />
     </>
-  )
+  );
 }

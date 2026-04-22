@@ -43,7 +43,10 @@ export default function ForgotPassword() {
       <div className="flex-grow flex flex-col items-center justify-center p-6 md:p-12">
         {/* Brand Header */}
         <header className="mb-8 text-center shrink-0">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-[#5f5e5e]">
+          <Link
+            href="/"
+            className="text-xl font-bold tracking-tighter text-[#5f5e5e]"
+          >
             StockViz
           </Link>
         </header>
@@ -60,13 +63,24 @@ export default function ForgotPassword() {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 15,
+                    delay: 0.1,
+                  }}
                 >
-                  <CheckCircle2 className="h-16 w-16 text-[#5f5e5e]" strokeWidth={1.5} />
+                  <CheckCircle2
+                    className="h-16 w-16 text-[#5f5e5e]"
+                    strokeWidth={1.5}
+                  />
                 </motion.div>
-                <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e]">Check your email</h2>
+                <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e]">
+                  Check your email
+                </h2>
                 <p className="text-[#5a6060] text-base leading-relaxed max-w-sm">
-                  We sent a password reset link to your email. Click the link to set a new password.
+                  We sent a password reset link to your email. Click the link to
+                  set a new password.
                 </p>
                 <Link
                   href="/login"
@@ -80,7 +94,9 @@ export default function ForgotPassword() {
               /* ── Form State ── */
               <>
                 <div className="text-center">
-                  <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">Forgot password?</h2>
+                  <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">
+                    Forgot password?
+                  </h2>
                   <p className="text-[#5a6060] text-base leading-relaxed">
                     Enter your email and we&apos;ll send you a reset link.
                   </p>
@@ -104,7 +120,9 @@ export default function ForgotPassword() {
                       Email Address
                     </Label>
                     <motion.div
-                      animate={fieldErrors.email ? { x: [-4, 4, -4, 4, 0] } : {}}
+                      animate={
+                        fieldErrors.email ? { x: [-4, 4, -4, 4, 0] } : {}
+                      }
                       transition={{ duration: 0.4 }}
                       className="relative"
                     >
@@ -150,9 +168,15 @@ export default function ForgotPassword() {
             <span>© 2024 StockViz Editorial. All rights reserved.</span>
           </div>
           <nav className="flex gap-8">
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Legal Disclosures</a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">
+              Privacy Policy
+            </a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">
+              Terms of Service
+            </a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">
+              Legal Disclosures
+            </a>
           </nav>
         </div>
       </footer>

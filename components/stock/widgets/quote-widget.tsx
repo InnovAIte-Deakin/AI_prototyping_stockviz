@@ -1,59 +1,62 @@
-"use client"
+"use client";
 
-import { AlertCircle } from "lucide-react"
+import { AlertCircle } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useFinnhubQuote } from "@/hooks/use-finnhub-stock-data"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useFinnhubQuote } from "@/hooks/use-finnhub-stock-data";
+import { cn } from "@/lib/utils";
 
 type QuoteWidgetProps = {
-  symbol: string
-  className?: string
-}
+  symbol: string;
+  className?: string;
+};
 
 const formatPrice = (n: number | undefined): string => {
   if (n === undefined || !Number.isFinite(n)) {
-    return "—"
+    return "—";
   }
   return new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(n)
-}
+  }).format(n);
+};
 
 const formatTime = (t: number | undefined): string => {
   if (t === undefined || !Number.isFinite(t)) {
-    return "—"
+    return "—";
   }
   return new Date(t * 1000).toLocaleString(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
-  })
-}
+  });
+};
 
 export const QuoteWidget = ({ symbol, className }: QuoteWidgetProps) => {
-  const { data, error, isLoading } = useFinnhubQuote(symbol)
+  const { data, error, isLoading } = useFinnhubQuote(symbol);
 
-  const c = data?.c
-  const pc = data?.pc
+  const c = data?.c;
+  const pc = data?.pc;
   const change =
-    c !== undefined && pc !== undefined && Number.isFinite(c) && Number.isFinite(pc)
+    c !== undefined &&
+    pc !== undefined &&
+    Number.isFinite(c) &&
+    Number.isFinite(pc)
       ? c - pc
-      : undefined
+      : undefined;
   const pctChange =
     change !== undefined && pc !== undefined && pc !== 0
       ? (change / pc) * 100
-      : undefined
+      : undefined;
 
   return (
     <Card className={cn(className)}>
@@ -97,7 +100,9 @@ export const QuoteWidget = ({ symbol, className }: QuoteWidgetProps) => {
                 <p
                   className={cn(
                     "text-sm font-medium tabular-nums",
-                    change >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                    change >= 0
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
                   )}
                 >
                   {change >= 0 ? "+" : ""}
@@ -115,19 +120,27 @@ export const QuoteWidget = ({ symbol, className }: QuoteWidgetProps) => {
             <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
                 <dt className="text-muted-foreground text-xs">Open</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.o)}</dd>
+                <dd className="font-medium tabular-nums">
+                  {formatPrice(data.o)}
+                </dd>
               </div>
               <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
                 <dt className="text-muted-foreground text-xs">High</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.h)}</dd>
+                <dd className="font-medium tabular-nums">
+                  {formatPrice(data.h)}
+                </dd>
               </div>
               <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
                 <dt className="text-muted-foreground text-xs">Low</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.l)}</dd>
+                <dd className="font-medium tabular-nums">
+                  {formatPrice(data.l)}
+                </dd>
               </div>
               <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
                 <dt className="text-muted-foreground text-xs">Prev close</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.pc)}</dd>
+                <dd className="font-medium tabular-nums">
+                  {formatPrice(data.pc)}
+                </dd>
               </div>
             </dl>
           </div>
@@ -138,5 +151,5 @@ export const QuoteWidget = ({ symbol, className }: QuoteWidgetProps) => {
         ) : null}
       </CardContent>
     </Card>
-  )
-}
+  );
+};

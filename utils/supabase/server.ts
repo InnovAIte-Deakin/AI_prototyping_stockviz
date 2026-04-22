@@ -11,7 +11,9 @@ const getSupabaseEnv = () => {
   return requireSupabasePublicEnv();
 };
 
-export const createProxySupabaseClient = (request: NextRequest): ProxySupabaseClient => {
+export const createProxySupabaseClient = (
+  request: NextRequest,
+): ProxySupabaseClient => {
   const { supabaseUrl, supabasePublishableKey } = getSupabaseEnv();
   let response = NextResponse.next({
     request,
@@ -23,14 +25,16 @@ export const createProxySupabaseClient = (request: NextRequest): ProxySupabaseCl
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+        cookiesToSet.forEach(({ name, value }) =>
+          request.cookies.set(name, value),
+        );
 
         response = NextResponse.next({
           request,
         });
 
         cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options)
+          response.cookies.set(name, value, options),
         );
       },
     },

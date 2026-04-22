@@ -15,5 +15,5 @@ export const NYSE_COMPANIES: Company[] = [
   { name: "Verizon Communications Inc.", symbol: "VZ", exchange: "NYSE" },
   { name: "AT&T Inc.", symbol: "T", exchange: "NYSE" },
   { name: "Exxon Mobil Corporation", symbol: "XOM", exchange: "NYSE" },
-  { name: "Chevron Corporation", symbol: "CVX", exchange: "NYSE" }
-]; 
+  { name: "Chevron Corporation", symbol: "CVX", exchange: "NYSE" },
+];

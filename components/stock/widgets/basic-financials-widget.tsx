@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { AlertCircle } from "lucide-react"
+import { AlertCircle } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -18,37 +18,37 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useFinnhubMetric } from "@/hooks/use-finnhub-stock-data"
-import { formatMetricValue, labelForMetricKey } from "@/lib/metric-display"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/table";
+import { useFinnhubMetric } from "@/hooks/use-finnhub-stock-data";
+import { formatMetricValue, labelForMetricKey } from "@/lib/metric-display";
+import { cn } from "@/lib/utils";
 
 type BasicFinancialsWidgetProps = {
-  symbol: string
-  className?: string
-}
+  symbol: string;
+  className?: string;
+};
 
-const SKIP_KEYS = new Set(["_symbol", "period"])
+const SKIP_KEYS = new Set(["_symbol", "period"]);
 
 export const BasicFinancialsWidget = ({
   symbol,
   className,
 }: BasicFinancialsWidgetProps) => {
-  const { data, error, isLoading } = useFinnhubMetric(symbol)
+  const { data, error, isLoading } = useFinnhubMetric(symbol);
 
   const entries = Object.entries(data?.metric ?? {}).filter(([k, v]) => {
     if (SKIP_KEYS.has(k)) {
-      return false
+      return false;
     }
     if (v === null || v === undefined || v === "") {
-      return false
+      return false;
     }
     if (typeof v === "object") {
-      return false
+      return false;
     }
-    return true
-  })
-  entries.sort(([a], [b]) => a.localeCompare(b))
+    return true;
+  });
+  entries.sort(([a], [b]) => a.localeCompare(b));
 
   return (
     <Card className={cn(className)}>
@@ -103,5 +103,5 @@ export const BasicFinancialsWidget = ({
         ) : null}
       </CardContent>
     </Card>
-  )
-}
+  );
+};

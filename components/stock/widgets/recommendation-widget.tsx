@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { AlertCircle } from "lucide-react"
+import { AlertCircle } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -18,29 +18,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useFinnhubRecommendation } from "@/hooks/use-finnhub-stock-data"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/table";
+import { useFinnhubRecommendation } from "@/hooks/use-finnhub-stock-data";
+import { cn } from "@/lib/utils";
 
 type RecommendationWidgetProps = {
-  symbol: string
-  className?: string
-}
+  symbol: string;
+  className?: string;
+};
 
 const num = (v: number | undefined): string => {
   if (v === undefined || !Number.isFinite(v)) {
-    return "—"
+    return "—";
   }
-  return String(v)
-}
+  return String(v);
+};
 
 export const RecommendationWidget = ({
   symbol,
   className,
 }: RecommendationWidgetProps) => {
-  const { data, error, isLoading } = useFinnhubRecommendation(symbol)
+  const { data, error, isLoading } = useFinnhubRecommendation(symbol);
 
-  const rows = data ?? []
+  const rows = data ?? [];
 
   return (
     <Card className={cn(className)}>
@@ -113,5 +113,5 @@ export const RecommendationWidget = ({
         ) : null}
       </CardContent>
     </Card>
-  )
-}
+  );
+};

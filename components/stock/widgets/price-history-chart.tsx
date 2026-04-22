@@ -1,55 +1,50 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-import { AlertCircle } from "lucide-react"
+import * as React from "react";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { AlertCircle } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import type { ChartConfig } from "@/components/ui/chart"
+} from "@/components/ui/card";
+import type { ChartConfig } from "@/components/ui/chart";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+} from "@/components/ui/chart";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   type PriceHistoryTab,
   useAlphaVantageSeries,
-} from "@/hooks/use-alpha-vantage-series"
-import { cn } from "@/lib/utils"
+} from "@/hooks/use-alpha-vantage-series";
+import { cn } from "@/lib/utils";
 
 type PriceHistoryChartProps = {
-  symbol: string
-  className?: string
-}
+  symbol: string;
+  className?: string;
+};
 
 type ChartRow = {
-  period: string
-  open: number
-  high: number
-  low: number
-  close: number
-}
+  period: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+};
 
 const chartConfig = {
   close: {
     label: "Close",
     color: "var(--chart-1)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 const formatUsd = (n: number): string =>
   new Intl.NumberFormat(undefined, {
@@ -57,16 +52,16 @@ const formatUsd = (n: number): string =>
     currency: "USD",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(n)
+  }).format(n);
 
 const toRowsFromDailyMonthly = (
   points: Array<{
-    date: string
-    open: number
-    high: number
-    low: number
-    close: number
-  }>
+    date: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+  }>,
 ): ChartRow[] =>
   points.map((p) => ({
     period: p.date,
@@ -74,16 +69,16 @@ const toRowsFromDailyMonthly = (
     high: p.high,
     low: p.low,
     close: p.close,
-  }))
+  }));
 
 const toRowsFromYearly = (
   points: Array<{
-    year: string
-    open: number
-    high: number
-    low: number
-    close: number
-  }>
+    year: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+  }>,
 ): ChartRow[] =>
   points.map((p) => ({
     period: p.year,
@@ -91,37 +86,37 @@ const toRowsFromYearly = (
     high: p.high,
     low: p.low,
     close: p.close,
-  }))
+  }));
 
 const formatPeriodLabel = (tab: PriceHistoryTab, period: string): string => {
   if (tab === "yearly") {
-    return period
+    return period;
   }
   if (tab === "monthly") {
-    const d = new Date(`${period}T12:00:00Z`)
+    const d = new Date(`${period}T12:00:00Z`);
     if (!Number.isNaN(d.getTime())) {
       return d.toLocaleDateString(undefined, {
         year: "numeric",
         month: "short",
-      })
+      });
     }
   }
-  const d = new Date(`${period}T12:00:00Z`)
+  const d = new Date(`${period}T12:00:00Z`);
   if (!Number.isNaN(d.getTime())) {
     return d.toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
       year: "numeric",
-    })
+    });
   }
-  return period
-}
+  return period;
+};
 
 export const PriceHistoryChart = ({
   symbol,
   className,
 }: PriceHistoryChartProps) => {
-  const [tab, setTab] = React.useState<PriceHistoryTab>("daily")
+  const [tab, setTab] = React.useState<PriceHistoryTab>("daily");
   const {
     daily,
     monthly,
@@ -130,26 +125,26 @@ export const PriceHistoryChart = ({
     errorMonthly,
     isLoadingDaily,
     isLoadingMonthly,
-  } = useAlphaVantageSeries(symbol, tab)
+  } = useAlphaVantageSeries(symbol, tab);
 
   const handleTabChange = (value: string) => {
     if (value === "daily" || value === "monthly" || value === "yearly") {
-      setTab(value)
+      setTab(value);
     }
-  }
+  };
 
   const dailyRows = React.useMemo(
     () => (daily ? toRowsFromDailyMonthly(daily) : []),
-    [daily]
-  )
+    [daily],
+  );
   const monthlyRows = React.useMemo(
     () => (monthly ? toRowsFromDailyMonthly(monthly) : []),
-    [monthly]
-  )
+    [monthly],
+  );
   const yearlyRows = React.useMemo(
     () => (yearly.length > 0 ? toRowsFromYearly(yearly) : []),
-    [yearly]
-  )
+    [yearly],
+  );
 
   return (
     <Card className={cn(className)}>
@@ -198,8 +193,8 @@ export const PriceHistoryChart = ({
         </Tabs>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 const renderChartBody = ({
   tab,
@@ -208,21 +203,20 @@ const renderChartBody = ({
   errorMessage,
   chartRows,
 }: {
-  tab: PriceHistoryTab
-  showLoading: boolean
-  showError: boolean
-  errorMessage: string | null
-  chartRows: ChartRow[]
+  tab: PriceHistoryTab;
+  showLoading: boolean;
+  showError: boolean;
+  errorMessage: string | null;
+  chartRows: ChartRow[];
 }) => {
-  const showEmpty =
-    !showLoading && !showError && chartRows.length === 0
+  const showEmpty = !showLoading && !showError && chartRows.length === 0;
 
   if (showLoading) {
     return (
       <div className="space-y-3 pt-2">
         <Skeleton className="h-[280px] w-full rounded-lg" />
       </div>
-    )
+    );
   }
 
   if (showError && errorMessage) {
@@ -232,13 +226,15 @@ const renderChartBody = ({
         <AlertTitle>Could not load price history</AlertTitle>
         <AlertDescription>{errorMessage}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   if (showEmpty) {
     return (
-      <p className="text-muted-foreground text-sm">No price data for this range.</p>
-    )
+      <p className="text-muted-foreground text-sm">
+        No price data for this range.
+      </p>
+    );
   }
 
   return (
@@ -276,9 +272,9 @@ const renderChartBody = ({
           content={
             <ChartTooltipContent
               labelFormatter={(_, payload) => {
-                const p = payload?.[0]?.payload as ChartRow | undefined
-                const raw = p?.period ?? ""
-                return formatPeriodLabel(tab, raw)
+                const p = payload?.[0]?.payload as ChartRow | undefined;
+                const raw = p?.period ?? "";
+                return formatPeriodLabel(tab, raw);
               }}
               formatter={(value) =>
                 typeof value === "number" ? formatUsd(value) : String(value)
@@ -296,5 +292,5 @@ const renderChartBody = ({
         />
       </LineChart>
     </ChartContainer>
-  )
-}
+  );
+};

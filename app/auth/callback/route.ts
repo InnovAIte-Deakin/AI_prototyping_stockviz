@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
 
-  console.log(`[Auth Callback] Code: ${code ? "PRESENT" : "MISSING"}, Origin: ${origin}, Next: ${next}`);
+  console.log(
+    `[Auth Callback] Code: ${code ? "PRESENT" : "MISSING"}, Origin: ${origin}, Next: ${next}`,
+  );
 
   if (code) {
     const redirectUrl = new URL(next, origin);
@@ -39,7 +41,7 @@ export async function GET(request: NextRequest) {
             });
           },
         },
-      }
+      },
     );
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
