@@ -6,6 +6,8 @@ import {
   PortfolioAuthError,
   getPortfolioSnapshotForCurrentUser,
 } from "@/lib/portfolio/holdings-service";
+import { UserFeatureAuthError } from "@/lib/user/session";
+import { getUserFeatureSnapshotForCurrentUser } from "@/lib/user/user-feature-service";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -15,9 +17,17 @@ export const metadata: Metadata = {
 
 async function loadPortfolioSnapshot() {
   try {
-    return await getPortfolioSnapshotForCurrentUser();
+    const [portfolio, userFeatures] = await Promise.all([
+      getPortfolioSnapshotForCurrentUser(),
+      getUserFeatureSnapshotForCurrentUser(),
+    ]);
+
+    return { portfolio, userFeatures };
   } catch (error) {
-    if (error instanceof PortfolioAuthError) {
+    if (
+      error instanceof PortfolioAuthError ||
+      error instanceof UserFeatureAuthError
+    ) {
       redirect("/login");
     }
 
@@ -26,7 +36,13 @@ async function loadPortfolioSnapshot() {
 }
 
 export default async function PortfolioPage() {
-  const snapshot = await loadPortfolioSnapshot();
+  const { portfolio, userFeatures } = await loadPortfolioSnapshot();
 
-  return <PortfolioView holdings={snapshot.holdings} summary={snapshot.summary} />;
+  return (
+    <PortfolioView
+      holdings={portfolio.holdings}
+      personalization={userFeatures}
+      summary={portfolio.summary}
+    />
+  );
 }

@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     "Browse the live US market session, recent news, and curated symbols from the migrated StockViz workspace.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function MarketPage() {
   return <MarketOverview />;
 }

@@ -83,12 +83,14 @@ export const liveRouteShortcuts = [
   {
     label: "Market",
     href: "/market",
-    description: "Browse live session status, news, and curated stock discovery.",
+    description:
+      "Browse live session status, news, and curated stock discovery.",
   },
   {
     label: "Portfolio",
     href: "/portfolio",
-    description: "View, add, edit, and delete persisted holdings for the signed-in user.",
+    description:
+      "View, add, edit, and delete persisted holdings for the signed-in user.",
   },
   {
     label: "Sample analysis",

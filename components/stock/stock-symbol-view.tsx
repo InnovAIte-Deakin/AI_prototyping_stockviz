@@ -5,14 +5,18 @@ import { PeersWidget } from "@/components/stock/widgets/peers-widget";
 import { PriceHistoryChart } from "@/components/stock/widgets/price-history-chart";
 import { QuoteWidget } from "@/components/stock/widgets/quote-widget";
 import { RecommendationWidget } from "@/components/stock/widgets/recommendation-widget";
+import { WishlistButton } from "@/components/user/wishlist-button";
 import { cn } from "@/lib/utils";
+import type { WishlistItemSummary } from "@/lib/user/wishlist-service";
 
 type StockSymbolViewProps = {
   symbol: string;
   className?: string;
+  initialWishlistItem?: WishlistItemSummary | null;
 };
 
 export const StockSymbolView = ({
+  initialWishlistItem,
   symbol,
   className,
 }: StockSymbolViewProps) => {
@@ -23,14 +27,21 @@ export const StockSymbolView = ({
         className,
       )}
     >
-      <header className="space-y-1">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight md:text-3xl">
-          {symbol}
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          Quote, metrics, peers, and analyst data via Finnhub; historical prices
-          via Alpha Vantage.
-        </p>
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="font-heading text-2xl font-semibold tracking-tight md:text-3xl">
+            {symbol}
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Quote, metrics, peers, and analyst data via Finnhub; historical
+            prices via Alpha Vantage.
+          </p>
+        </div>
+        <WishlistButton
+          compact
+          initialWishlistItem={initialWishlistItem}
+          symbol={symbol}
+        />
       </header>
 
       <QuoteWidget symbol={symbol} />

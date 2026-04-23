@@ -14,6 +14,12 @@ import { SymbolSearch } from "@/components/search/symbol-search";
 import { PriceHistoryChart } from "@/components/analysis/price-history-chart";
 import { SentimentHeadlines } from "@/components/analysis/sentiment-headlines";
 import { Button } from "@/components/ui/button";
+import { WishlistButton } from "@/components/user/wishlist-button";
+import { UserFeatureAuthError } from "@/lib/user/session";
+import {
+  getWishlistItemForCurrentUserBySymbol,
+  toWishlistItemSummary,
+} from "@/lib/user/wishlist-service";
 import {
   buildAnalysisSearchParams,
   decodeIndicatorConfig,
@@ -79,6 +85,15 @@ export default async function AnalysisPage({ params, searchParams }) {
     defaultIndicatorConfig,
     availableIndicators,
   );
+  let wishlistItem = null;
+  try {
+    const item = await getWishlistItemForCurrentUserBySymbol(normalizedSymbol);
+    wishlistItem = item ? toWishlistItemSummary(item) : null;
+  } catch (error) {
+    if (!(error instanceof UserFeatureAuthError)) {
+      throw error;
+    }
+  }
   const { analysis, stockData, weights } = await analyzeSymbol(
     normalizedSymbol,
     {
@@ -194,6 +209,11 @@ export default async function AnalysisPage({ params, searchParams }) {
                   </Button>
                 ))}
               </div>
+              <WishlistButton
+                compact
+                initialWishlistItem={wishlistItem}
+                symbol={normalizedSymbol}
+              />
             </div>
 
             <div className="rounded-[24px] border border-[#ece6e1] bg-[#fbf8f6] p-5">

@@ -8,6 +8,7 @@ import { TrendingTabs } from "@/components/market/trending-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getWishlistItemsForCurrentUserBySymbols } from "@/lib/user/wishlist-service";
 
 const marketSignals = [
   {
@@ -30,7 +31,25 @@ const marketSignals = [
   },
 ];
 
-export function MarketOverview() {
+const curatedMarketSymbols = [
+  "NVDA",
+  "MSFT",
+  "GOOGL",
+  "META",
+  "AAPL",
+  "AMZN",
+  "SPY",
+  "QQQ",
+  "JPM",
+  "GS",
+  "XOM",
+  "CAT",
+];
+
+export async function MarketOverview() {
+  const initialWishlistItemsBySymbol =
+    await getWishlistItemsForCurrentUserBySymbols(curatedMarketSymbols);
+
   return (
     <div className="min-h-screen bg-[#f9f9f8] px-6 py-10 text-[#2d3433] md:px-10">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -139,7 +158,9 @@ export function MarketOverview() {
             </p>
           </div>
 
-          <TrendingTabs />
+          <TrendingTabs
+            initialWishlistItemsBySymbol={initialWishlistItemsBySymbol}
+          />
         </section>
       </div>
     </div>

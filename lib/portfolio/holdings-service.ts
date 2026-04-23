@@ -24,12 +24,10 @@ type PortfolioSummary = {
   totalCostBasis: number;
   totalShares: number;
   latestAcquiredAt: string | null;
-  largestPosition:
-    | {
-        symbol: string;
-        costBasis: number;
-      }
-    | null;
+  largestPosition: {
+    symbol: string;
+    costBasis: number;
+  } | null;
 };
 
 type PortfolioSnapshot = {
@@ -107,7 +105,9 @@ export async function getPortfolioSnapshotForCurrentUser(): Promise<PortfolioSna
   };
 }
 
-export async function listHoldingsForCurrentUser(): Promise<PortfolioHolding[]> {
+export async function listHoldingsForCurrentUser(): Promise<
+  PortfolioHolding[]
+> {
   const { supabase, user } = await requirePortfolioContext();
 
   const { data, error } = await supabase

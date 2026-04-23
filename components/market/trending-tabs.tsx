@@ -15,7 +15,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WishlistButton } from "@/components/user/wishlist-button";
 import { cn } from "@/lib/utils";
+import type { WishlistItemSummary } from "@/lib/user/wishlist-service";
 
 const curatedBuckets = [
   {
@@ -43,7 +45,8 @@ const curatedBuckets = [
         symbol: "GOOGL",
         name: "Alphabet",
         thesis: "Advertising, cloud, and AI product cycles in one benchmark.",
-        catalyst: "Good read-through for search monetization and model rollout.",
+        catalyst:
+          "Good read-through for search monetization and model rollout.",
         tags: ["Ads", "Cloud", "AI"],
       },
       {
@@ -65,8 +68,10 @@ const curatedBuckets = [
       {
         symbol: "AAPL",
         name: "Apple",
-        thesis: "Consumer hardware and services heavyweight with broad index influence.",
-        catalyst: "Useful for checking whether mega-cap demand is defensive or growth-led.",
+        thesis:
+          "Consumer hardware and services heavyweight with broad index influence.",
+        catalyst:
+          "Useful for checking whether mega-cap demand is defensive or growth-led.",
         tags: ["Consumer", "Mega-cap", "Index"],
       },
       {
@@ -80,14 +85,16 @@ const curatedBuckets = [
         symbol: "SPY",
         name: "SPDR S&P 500 ETF",
         thesis: "Fast proxy for the broader US equity tape.",
-        catalyst: "Handy when you want market context before drilling into a single name.",
+        catalyst:
+          "Handy when you want market context before drilling into a single name.",
         tags: ["ETF", "Index", "Macro"],
       },
       {
         symbol: "QQQ",
         name: "Invesco QQQ Trust",
         thesis: "Quick read on the Nasdaq growth complex.",
-        catalyst: "Pairs well with AI leaders when growth sentiment is moving fast.",
+        catalyst:
+          "Pairs well with AI leaders when growth sentiment is moving fast.",
         tags: ["ETF", "Growth", "Nasdaq"],
       },
     ],
@@ -102,7 +109,8 @@ const curatedBuckets = [
       {
         symbol: "JPM",
         name: "JPMorgan Chase",
-        thesis: "Large-bank read on credit, deposits, and capital markets tone.",
+        thesis:
+          "Large-bank read on credit, deposits, and capital markets tone.",
         catalyst: "Watch when rates and macro risk are driving the tape.",
         tags: ["Banking", "Rates", "Macro"],
       },
@@ -124,7 +132,8 @@ const curatedBuckets = [
         symbol: "CAT",
         name: "Caterpillar",
         thesis: "Industrial demand and infrastructure-sensitive cyclicals.",
-        catalyst: "Often useful when the market is rotating away from pure tech leadership.",
+        catalyst:
+          "Often useful when the market is rotating away from pure tech leadership.",
         tags: ["Industrials", "Cyclicals", "Macro"],
       },
     ],
@@ -133,7 +142,13 @@ const curatedBuckets = [
 
 type BucketId = (typeof curatedBuckets)[number]["id"];
 
-export function TrendingTabs() {
+type TrendingTabsProps = {
+  initialWishlistItemsBySymbol?: Record<string, WishlistItemSummary>;
+};
+
+export function TrendingTabs({
+  initialWishlistItemsBySymbol = {},
+}: TrendingTabsProps) {
   const [activeBucketId, setActiveBucketId] = React.useState<BucketId>(
     curatedBuckets[0].id,
   );
@@ -154,7 +169,10 @@ export function TrendingTabs() {
       </CardHeader>
 
       <CardContent>
-        <Tabs value={activeBucketId} onValueChange={(value) => setActiveBucketId(value as BucketId)}>
+        <Tabs
+          value={activeBucketId}
+          onValueChange={(value) => setActiveBucketId(value as BucketId)}
+        >
           <TabsList
             variant="line"
             className="mb-6 flex h-auto w-full flex-wrap justify-start gap-2 rounded-none p-0"
@@ -290,6 +308,15 @@ export function TrendingTabs() {
                         </p>
 
                         <div className="flex flex-wrap gap-3">
+                          <WishlistButton
+                            compact
+                            initialWishlistItem={
+                              initialWishlistItemsBySymbol[spotlight.symbol] ??
+                              null
+                            }
+                            name={spotlight.name}
+                            symbol={spotlight.symbol}
+                          />
                           <Button
                             asChild
                             className="h-10 rounded-xl bg-[#5f5e5e] px-4 text-white hover:bg-[#4f4e4e]"

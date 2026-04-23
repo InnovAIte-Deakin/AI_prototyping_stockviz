@@ -16,23 +16,24 @@ import { HoldingsTable } from "@/components/portfolio/holdings-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { UserPersonalizationPanel } from "@/components/user/user-personalization-panel";
 import type { Tables } from "@/lib/database.types";
+import type { UserFeatureSnapshot } from "@/lib/user/user-feature-service";
 
 type PortfolioHolding = Tables<"portfolio_holdings">;
 
 type PortfolioViewProps = {
   holdings: PortfolioHolding[];
+  personalization: UserFeatureSnapshot;
   summary: {
     holdingCount: number;
     totalCostBasis: number;
     totalShares: number;
     latestAcquiredAt: string | null;
-    largestPosition:
-      | {
-          symbol: string;
-          costBasis: number;
-        }
-      | null;
+    largestPosition: {
+      symbol: string;
+      costBasis: number;
+    } | null;
   };
 };
 
@@ -48,7 +49,8 @@ const quantityFormatter = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 4,
 });
 
-const formatCurrency = (value: number): string => currencyFormatter.format(value);
+const formatCurrency = (value: number): string =>
+  currencyFormatter.format(value);
 
 const formatShares = (value: number): string => quantityFormatter.format(value);
 
@@ -88,7 +90,11 @@ const portfolioSignals = [
   },
 ] as const;
 
-export function PortfolioView({ holdings, summary }: PortfolioViewProps) {
+export function PortfolioView({
+  holdings,
+  personalization,
+  summary,
+}: PortfolioViewProps) {
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
   const [editingHolding, setEditingHolding] =
     React.useState<PortfolioHolding | null>(null);
@@ -147,9 +153,7 @@ export function PortfolioView({ holdings, summary }: PortfolioViewProps) {
               </div>
 
               <div className="rounded-[24px] border border-[#ece6e1] bg-[#fbf8f6] p-5">
-                <p className="text-sm font-medium text-[#4f4e4e]">
-                  MVP scope
-                </p>
+                <p className="text-sm font-medium text-[#4f4e4e]">MVP scope</p>
                 <p className="mt-2 text-sm leading-6 text-[#6a706f]">
                   This slice focuses on durable position storage: symbol,
                   shares, average cost, optional acquisition date, and notes.
@@ -259,6 +263,11 @@ export function PortfolioView({ holdings, summary }: PortfolioViewProps) {
             </div>
           </section>
         )}
+
+        <UserPersonalizationPanel
+          preferences={personalization.preferences}
+          wishlist={personalization.wishlist}
+        />
       </div>
 
       <HoldingForm

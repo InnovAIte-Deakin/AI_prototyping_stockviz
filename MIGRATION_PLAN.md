@@ -123,7 +123,7 @@ Exit criteria:
 | E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                       |
 | E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `done`        | Sprint 4   | Configurable analysis controls work                                                                                         |
 | E8      | Market Pages                  | `P2`     | `Frontend`   | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                     |
-| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `in_progress` | Sprint 5   | Auth, password recovery, and portfolio persistence are live; wishlist/preferences are still pending                         |
+| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `done`        | Sprint 5   | Auth, password recovery, portfolio persistence, wishlist, and preferences are live                                          |
 | E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                       |
 | E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `not_started` | Sprint 6   | Parity verified and legacy removable                                                                                        |
 
@@ -200,11 +200,11 @@ Exit criteria:
 
 ### E9: Auth And User Features
 
-| Story ID | Story                                        | Priority | Owner       | Status        | Sprint   | Checkpoint                                                |
-| -------- | -------------------------------------------- | -------- | ----------- | ------------- | -------- | --------------------------------------------------------- |
-| E9-S1    | Replace auth context with Supabase auth      | `P2`     | `Fullstack` | `done`        | Sprint 5 | Session, sign-in, sign-up, and password reset flows work  |
-| E9-S2    | Migrate portfolio persistence                | `P2`     | `Fullstack` | `done`        | Sprint 5 | Authenticated users can save, update, and remove holdings |
-| E9-S3    | Migrate watchlists, preferences, and presets | `P2`     | `Fullstack` | `not_started` | Sprint 5 | User customization is persistent                          |
+| Story ID | Story                                        | Priority | Owner       | Status | Sprint   | Checkpoint                                                |
+| -------- | -------------------------------------------- | -------- | ----------- | ------ | -------- | --------------------------------------------------------- |
+| E9-S1    | Replace auth context with Supabase auth      | `P2`     | `Fullstack` | `done` | Sprint 5 | Session, sign-in, sign-up, and password reset flows work  |
+| E9-S2    | Migrate portfolio persistence                | `P2`     | `Fullstack` | `done` | Sprint 5 | Authenticated users can save, update, and remove holdings |
+| E9-S3    | Migrate watchlists, preferences, and presets | `P2`     | `Fullstack` | `done` | Sprint 5 | Wishlist and preference customization are persistent      |
 
 ### E10: Learn/Admin/Secondary Screens
 
@@ -381,11 +381,12 @@ These files need redesign rather than direct migration:
 | ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------- |
 | 1     | Finish the shared shell strategy so the lightweight header either reaches parity or is replaced by the final navbar/footer experience | `Frontend`  | `done`                                          |
 | 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `done`                                          |
-| 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `in_progress`                                   |
-| 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `not_started`                                   |
-| 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `not_started`                                   |
+| 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `done`                                          |
+| 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `done`                                          |
+| 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `done`                                          |
 | 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `partial` — cache/tracking done, Gemini pending |
 | 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `not_started`                                   |
+| 8     | Decide whether `/learn` and `/admin` should be migrated or formally dropped                                                           | `Product`   | `not_started`                                   |
 
 ## Near-Term Implementation Board (2026-04-22)
 
@@ -489,7 +490,38 @@ Implementation notes (2026-04-22):
 - Added `components/portfolio/portfolio-view.tsx`, `holding-form.tsx`, and `holdings-table.tsx` for the MVP UX
 - Flipped the shell navigation metadata so `/portfolio` is marked live
 
-### Track 4: Test Harness And Parity Prep (`E11-S1`, `E11-S2`, `E11-S3`)
+### Track 4: Wishlist And Preferences (`E9-S3`)
+
+Goal:
+
+- close the remaining authenticated user-feature gap using the existing `wishlist` table and `profiles.preferences` JSON column
+
+Primary file targets:
+
+- `lib/user/wishlist-service.ts` (new data-access boundary over `wishlist` and `stocks`)
+- `lib/user/preferences-service.ts` (new profile preference normalization and persistence boundary)
+- `app/user/actions.ts` (new server actions for wishlist and preference mutations)
+- `components/user/wishlist-button.tsx` (new reusable save/remove affordance)
+- `components/user/user-personalization-panel.tsx` (new portfolio-surface wishlist and preferences management UI)
+- `components/stock/stock-symbol-view.tsx`, `app/analysis/[symbol]/page.jsx`, and `components/market/trending-tabs.tsx` (surface save/remove actions)
+- `app/portfolio/page.tsx` and `components/portfolio/portfolio-view.tsx` (compose wishlist/preferences with the portfolio surface)
+
+Acceptance criteria:
+
+- authenticated users can save and remove symbols through the migrated stock, analysis, and market surfaces
+- saved symbols persist through `wishlist` and remain user-scoped by existing RLS policies
+- users can update lightweight wishlist notes from the portfolio surface
+- users can persist default timeframe, currency, risk profile, and default analysis weights through `profiles.preferences`
+- wishlist and preferences rendering stays behind root services and server actions, not direct client Supabase calls
+
+Implementation notes (2026-04-23):
+
+- Added root `lib/user/` service boundaries for session context, wishlist persistence, profile preferences, and combined user-feature snapshots
+- Added `app/user/actions.ts` server actions with validation and `revalidatePath` coverage for portfolio, market, stock detail, and analysis views
+- Added reusable wishlist controls to stock detail, analysis, and curated market tabs
+- Added a portfolio personalization panel for saved symbols, notes, and persisted analysis preferences
+
+### Track 5: Test Harness And Parity Prep (`E11-S1`, `E11-S2`, `E11-S3`)
 
 Goal:
 
@@ -520,6 +552,14 @@ Acceptance criteria:
 - There is currently no `test` script or test runner in `package.json`, so test tooling setup is part of the next implementation phase rather than a follow-up cleanup.
 
 ## Progress Log
+
+### Wishlist And Preferences - Completed (2026-04-23)
+
+- Added `lib/user/session.ts`, `lib/user/wishlist-service.ts`, `lib/user/preferences-service.ts`, and `lib/user/user-feature-service.ts` so wishlist and preference logic stays behind root service boundaries
+- Added `app/user/actions.ts` server actions for saving/removing wishlist symbols, editing wishlist notes, and updating `profiles.preferences`
+- Added `components/user/wishlist-button.tsx` and surfaced it from stock detail, analysis, and curated market tabs
+- Added `components/user/user-personalization-panel.tsx` to the portfolio route so users can manage saved symbols, notes, default timeframe, currency, risk profile, and default analysis weights
+- Reconciled the near-term board so market, portfolio, and user personalization are marked complete; next implementation focus moves to tests, Gemini provider isolation, and learn/admin decisions
 
 ### Configurable Analysis Controls - Completed (2026-04-22)
 

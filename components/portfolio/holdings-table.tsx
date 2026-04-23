@@ -39,7 +39,8 @@ const currencyFormatter = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 2,
 });
 
-const formatCurrency = (value: number): string => currencyFormatter.format(value);
+const formatCurrency = (value: number): string =>
+  currencyFormatter.format(value);
 
 const formatShares = (value: number): string => quantityFormatter.format(value);
 
@@ -58,10 +59,7 @@ const formatDate = (value: string | null): string => {
   });
 };
 
-export function HoldingsTable({
-  holdings,
-  onEditHolding,
-}: HoldingsTableProps) {
+export function HoldingsTable({ holdings, onEditHolding }: HoldingsTableProps) {
   return (
     <div className="rounded-[26px] border border-[#e6e0db] bg-white shadow-[0_18px_48px_rgba(55,49,45,0.05)]">
       <div className="border-b border-[#ece6e1] px-6 py-5">
