@@ -3,3 +3,5 @@ docs/API Documentation _ Alpha Vantage.html
 docs/Finnhub_Documentation.html
 docs/Finnhub_Documentation_files/
 docs/Finnhub_Swagger.json
+playwright-report/
+test-results/

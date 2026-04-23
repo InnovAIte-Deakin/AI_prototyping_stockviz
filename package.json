@@ -10,6 +10,11 @@
     "prepare": "husky",
     "lint:staged": "lint-staged --config lint-staged.config.mjs",
     "typecheck": "tsc --noEmit --project tsconfig.check.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "playwright test",
     "supabase:gen-types": "supabase gen types typescript --local --schema public > lib/database.types.ts",
     "format:check": "prettier --check .",
     "commitlint": "commitlint --edit",
@@ -44,6 +49,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -55,6 +61,7 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.5"
   }
 }

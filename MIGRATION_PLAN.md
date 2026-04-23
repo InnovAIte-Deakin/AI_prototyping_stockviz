@@ -218,9 +218,9 @@ Exit criteria:
 
 | Story ID | Story                                                   | Priority | Owner       | Status        | Sprint   | Checkpoint                                                              |
 | -------- | ------------------------------------------------------- | -------- | ----------- | ------------- | -------- | ----------------------------------------------------------------------- |
-| E11-S1   | Add unit tests for analysis logic                       | `P0`     | `Backend`   | `not_started` | Sprint 6 | Core logic has deterministic coverage                                   |
-| E11-S2   | Add integration tests for root services and data access | `P0`     | `Fullstack` | `not_started` | Sprint 6 | Service-level behavior is verified                                      |
-| E11-S3   | Add end-to-end tests for search and analysis            | `P0`     | `Frontend`  | `not_started` | Sprint 6 | Primary user flow is covered                                            |
+| E11-S1   | Add unit tests for analysis logic                       | `P0`     | `Backend`   | `in_progress` | Sprint 6 | Initial URL-state and weighting coverage landed                         |
+| E11-S2   | Add integration tests for root services and data access | `P0`     | `Fullstack` | `in_progress` | Sprint 6 | Initial mocked Supabase service coverage landed                         |
+| E11-S3   | Add end-to-end tests for search and analysis            | `P0`     | `Frontend`  | `in_progress` | Sprint 6 | Initial anonymous auth-gate smoke coverage landed                       |
 | E11-S4   | Run parity checks against legacy outputs                | `P0`     | `Fullstack` | `not_started` | Sprint 6 | Selected symbols match expected output ranges                           |
 | E11-S5   | Remove legacy runtime dependencies                      | `P0`     | `Fullstack` | `not_started` | Sprint 6 | App no longer depends on `legacy/frontend/` or `legacy/backend/` to run |
 
@@ -377,16 +377,16 @@ These files need redesign rather than direct migration:
 
 ## Immediate Next Actions
 
-| Order | Action                                                                                                                                | Owner       | Status                                          |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------- |
-| 1     | Finish the shared shell strategy so the lightweight header either reaches parity or is replaced by the final navbar/footer experience | `Frontend`  | `done`                                          |
-| 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `done`                                          |
-| 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `done`                                          |
-| 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `done`                                          |
-| 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `done`                                          |
-| 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `partial` — cache/tracking done, Gemini pending |
-| 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `not_started`                                   |
-| 8     | Decide whether `/learn` and `/admin` should be migrated or formally dropped                                                           | `Product`   | `not_started`                                   |
+| Order | Action                                                                                                                                | Owner       | Status                                                    |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------- |
+| 1     | Finish the shared shell strategy so the lightweight header either reaches parity or is replaced by the final navbar/footer experience | `Frontend`  | `done`                                                    |
+| 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `done`                                                    |
+| 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `done`                                                    |
+| 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `done`                                                    |
+| 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `done`                                                    |
+| 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `partial` — cache/tracking done, Gemini pending           |
+| 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `in_progress` - initial harness and smoke coverage landed |
+| 8     | Decide whether `/learn` and `/admin` should be migrated or formally dropped                                                           | `Product`   | `not_started`                                             |
 
 ## Near-Term Implementation Board (2026-04-22)
 
@@ -545,13 +545,28 @@ Acceptance criteria:
 - integration coverage exists for root service behavior that touches Supabase-backed persistence
 - end-to-end coverage exists for search -> analysis and for each newly landed `/market` and `/portfolio` route
 
+Implementation notes (2026-04-23):
+
+- Added Vitest and Playwright test tooling with repeatable `npm run test`, `npm run test:unit`, `npm run test:integration`, and `npm run test:e2e` scripts
+- Added unit coverage for analysis URL-state normalization and the migrated analysis weight service
+- Added mocked Supabase-backed integration coverage for profile preferences and portfolio holding persistence
+- Added Playwright smoke coverage for the public login flow plus anonymous auth-gate behavior on analysis, market, and portfolio routes
+- Verification: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, and `npm run build` pass; build requires normal network access for `next/font/google`
+
 ### Planning Notes
 
 - `runtime.analyzeSymbol()` already accepts `weights` and `indicatorsConfig`, so the analysis-controls work should wire into existing runtime seams instead of introducing a second analysis path.
 - The live schema and generated types currently use `wishlist`, not `watchlist_items`. Keep the naming aligned in docs and code unless the team explicitly chooses to add a migration rename.
-- There is currently no `test` script or test runner in `package.json`, so test tooling setup is part of the next implementation phase rather than a follow-up cleanup.
+- The initial test runner is now in place; next coverage should exercise authenticated search-to-analysis behavior, stock detail rendering, and parity fixtures.
 
 ## Progress Log
+
+### Test Harness And Parity Prep - Started (2026-04-23)
+
+- Added Vitest config and scripts for unit and integration test execution
+- Added Playwright config and smoke tests for the migrated auth-gated route surfaces
+- Covered analysis parameter normalization, weighting behavior, profile preferences, and portfolio persistence with initial automated tests
+- Remaining testing work: authenticated e2e search-to-analysis coverage, stock-detail service coverage, legacy parity fixtures, and cutover dependency checks
 
 ### Wishlist And Preferences - Completed (2026-04-23)
 
