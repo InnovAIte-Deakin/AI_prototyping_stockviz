@@ -150,13 +150,13 @@ Exit criteria:
 
 ### E3: Legacy Backend Extraction
 
-| Story ID | Story                              | Priority | Owner     | Status        | Sprint   | Checkpoint                                                                 |
-| -------- | ---------------------------------- | -------- | --------- | ------------- | -------- | -------------------------------------------------------------------------- |
-| E3-S1    | Extract market data provider layer | `P0`     | `Backend` | `done`        | Sprint 2 | Stock data functions run from root `lib/market/`                           |
-| E3-S2    | Extract analysis engine            | `P0`     | `Backend` | `done`        | Sprint 2 | Fundamental, technical, sentiment, and scoring run without Express         |
-| E3-S3    | Extract AI summary service         | `P1`     | `Backend` | `in_progress` | Sprint 2 | AI generation is isolated behind one interface; fallback adapter in use    |
-| E3-S4    | Replace cache strategy             | `P1`     | `Backend` | `done`        | Sprint 2 | Database-backed cache in `lib/cache/` using `analysis_cache` table         |
-| E3-S5    | Replace API tracking or remove it  | `P2`     | `Backend` | `done`        | Sprint 2 | Database-backed tracker in `lib/observability/` using `api_call_log` table |
+| Story ID | Story                              | Priority | Owner     | Status | Sprint   | Checkpoint                                                                              |
+| -------- | ---------------------------------- | -------- | --------- | ------ | -------- | --------------------------------------------------------------------------------------- |
+| E3-S1    | Extract market data provider layer | `P0`     | `Backend` | `done` | Sprint 2 | Stock data functions run from root `lib/market/`                                        |
+| E3-S2    | Extract analysis engine            | `P0`     | `Backend` | `done` | Sprint 2 | Fundamental, technical, sentiment, and scoring run without Express                      |
+| E3-S3    | Extract AI summary service         | `P1`     | `Backend` | `done` | Sprint 2 | Root `lib/ai/` now isolates Gemini and fallback summary generation behind one interface |
+| E3-S4    | Replace cache strategy             | `P1`     | `Backend` | `done` | Sprint 2 | Database-backed cache in `lib/cache/` using `analysis_cache` table                      |
+| E3-S5    | Replace API tracking or remove it  | `P2`     | `Backend` | `done` | Sprint 2 | Database-backed tracker in `lib/observability/` using `api_call_log` table              |
 
 ### E4: App Shell Migration
 
@@ -335,7 +335,7 @@ Current state:
 - **cache redesign complete**: `lib/cache/database-cache.ts` with Supabase `analysis_cache` table
 - **API tracking redesign complete**: `lib/observability/database-api-tracker.ts` with `api_call_log` table
 - cleanup script added: `npm run cache:cleanup`
-- Gemini is still a transitional dependency rather than a clean isolated provider boundary
+- **AI summary provider isolation complete**: root `lib/ai/` now selects Gemini when configured and falls back cleanly when it is not
 
 ### Checkpoint C: First Vertical Slice Delivered
 
@@ -384,7 +384,7 @@ These files need redesign rather than direct migration:
 | 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `done`                                                    |
 | 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `done`                                                    |
 | 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `done`                                                    |
-| 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `partial` — cache/tracking done, Gemini pending           |
+| 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `done`                                                    |
 | 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `in_progress` - initial harness and smoke coverage landed |
 | 8     | Decide whether `/learn` and `/admin` should be migrated or formally dropped                                                           | `Product`   | `not_started`                                             |
 
@@ -560,6 +560,13 @@ Implementation notes (2026-04-23):
 - The initial test runner is now in place; next coverage should exercise authenticated search-to-analysis behavior, stock detail rendering, and parity fixtures.
 
 ## Progress Log
+
+### AI Summary Provider Isolation - Completed (2026-04-24)
+
+- Added root `lib/ai/fallback-summary-service.js`, `lib/ai/gemini-summary-service.js`, and `lib/ai/index.js` so analysis summaries are selected through a single root provider boundary
+- Updated `lib/analysis/runtime.js` and `lib/analysis/analysis-service.js` so the root runtime injects `summaryService` rather than hard-coding an inline fallback adapter
+- Added Gemini boundary tests covering fallback mode, successful Gemini generation, and Gemini failure fallback behavior
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, and `npm run build` all pass (build still requires normal network access for `next/font/google`)
 
 ### Test Harness And Parity Prep - Started (2026-04-23)
 
@@ -744,7 +751,7 @@ Implementation notes (2026-04-23):
 
 ### Remaining Backend Gaps
 
-- Gemini provider migration is still incomplete; the root runtime currently uses a fallback summary adapter instead of the legacy Gemini service
+- ~~Gemini provider migration is still incomplete; the root runtime currently uses a fallback summary adapter instead of the legacy Gemini service~~ - **Done**: root `lib/ai/` now handles Gemini plus fallback summary generation
 - ~~The root cache and API tracking adapters are still in-memory~~ — **Done**: now database-backed using Supabase
 - Search, analysis, stock detail, market overview, portfolio, market status/news, and password recovery are live, but dedicated learn and admin routes still need migrated implementations
 - The shared app shell now mounts the rebuilt navbar/footer experience with global symbol search; remaining surface work is now focused on the pending feature routes
