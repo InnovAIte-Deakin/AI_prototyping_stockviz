@@ -116,8 +116,8 @@ Exit criteria:
 | Epic ID | Epic                          | Priority | Owner        | Status        | Sprint     | Checkpoint                                                                                                                  |
 | ------- | ----------------------------- | -------- | ------------ | ------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------- |
 | E1      | Platform Foundation           | `P0`     | `Fullstack`  | `done`        | Sprint 1   | Root app is active and auth entry flow is live                                                                              |
-| E2      | Supabase Core                 | `P0`     | `Data`       | `done`        | Sprint 1–2 | Schema, migrations, seed, and RLS all in place                                                                              |
-| E3      | Legacy Backend Extraction     | `P0`     | `Backend`    | `in_progress` | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                                                               |
+| E2      | Supabase Core                 | `P0`     | `Data`       | `in_progress` | Sprint 1–2 | Schema, migrations, and RLS are in place; restore `supabase/seed.sql` for seeded resets                                     |
+| E3      | Legacy Backend Extraction     | `P0`     | `Backend`    | `done`        | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                                                               |
 | E4      | App Shell Migration           | `P1`     | `Frontend`   | `done`        | Sprint 1   | Shared shell now mounts the migrated navbar/footer experience with global symbol search and route-aware planned/live states |
 | E5      | Search And Symbol Routing     | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Search to analysis route works                                                                                              |
 | E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                       |
@@ -125,7 +125,7 @@ Exit criteria:
 | E8      | Market Pages                  | `P2`     | `Frontend`   | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                     |
 | E9      | Auth And User Features        | `P2`     | `Fullstack`  | `done`        | Sprint 5   | Auth, password recovery, portfolio persistence, wishlist, and preferences are live                                          |
 | E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                       |
-| E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `not_started` | Sprint 6   | Parity verified and legacy removable                                                                                        |
+| E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `in_progress` | Sprint 6   | Test harness is live; parity verification and legacy removal remain                                                         |
 
 ## Story Board
 
@@ -141,12 +141,12 @@ Exit criteria:
 
 ### E2: Supabase Core
 
-| Story ID | Story                                     | Priority | Owner       | Status | Sprint   | Checkpoint                                        |
-| -------- | ----------------------------------------- | -------- | ----------- | ------ | -------- | ------------------------------------------------- |
-| E2-S1    | Create Supabase client and server helpers | `P0`     | `Fullstack` | `done` | Sprint 1 | Root app can access Supabase on server and client |
-| E2-S2    | Design first-pass schema                  | `P0`     | `Data`      | `done` | Sprint 2 | Core tables are defined                           |
-| E2-S3    | Add migrations and seed workflow          | `P0`     | `Data`      | `done` | Sprint 2 | Local DB can be recreated                         |
-| E2-S4    | Add row-level security policies           | `P0`     | `Data`      | `done` | Sprint 2 | User-owned data is protected                      |
+| Story ID | Story                                     | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                    |
+| -------- | ----------------------------------------- | -------- | ----------- | ------------- | -------- | ----------------------------------------------------------------------------- |
+| E2-S1    | Create Supabase client and server helpers | `P0`     | `Fullstack` | `done`        | Sprint 1 | Root app can access Supabase on server and client                             |
+| E2-S2    | Design first-pass schema                  | `P0`     | `Data`      | `done`        | Sprint 2 | Core tables are defined                                                       |
+| E2-S3    | Add migrations and seed workflow          | `P0`     | `Data`      | `in_progress` | Sprint 2 | Seed config is wired; restore `supabase/seed.sql` for reproducible `db reset` |
+| E2-S4    | Add row-level security policies           | `P0`     | `Data`      | `done`        | Sprint 2 | User-owned data is protected                                                  |
 
 ### E3: Legacy Backend Extraction
 
@@ -300,7 +300,7 @@ This maps legacy files to likely destinations in the new root app.
 | `legacy/backend/services/enhancedTrendingService.js`    | `lib/market/trending.ts`                                                                                                                                                                                                                                                      | migrate                                                                                                                | `P1`     | `Backend` | Sprint 2 | `not_started` |
 | `legacy/backend/services/dataService.js`                | `lib/market/data-service.js`                                                                                                                                                                                                                                                  | migrated into the root market layer                                                                                    | `P0`     | `Backend` | Sprint 2 | `done`        |
 | `legacy/backend/services/dataSourceManager.js`          | `lib/market/data-source-manager.js`                                                                                                                                                                                                                                           | migrated into the root market layer                                                                                    | `P1`     | `Backend` | Sprint 2 | `done`        |
-| `legacy/backend/services/geminiService.js`              | `lib/ai/gemini.ts` or provider-agnostic summary interface                                                                                                                                                                                                                     | still used through adapter injection; full isolation not finished                                                      | `P1`     | `Backend` | Sprint 2 | `in_progress` |
+| `legacy/backend/services/geminiService.js`              | `lib/ai/gemini-summary-service.js`; `lib/ai/index.js`                                                                                                                                                                                                                         | migrated into the root AI layer with centralized provider selection and fallback wiring                                | `P1`     | `Backend` | Sprint 2 | `done`        |
 | `legacy/backend/services/cacheService.js`               | `lib/cache/database-cache.ts`                                                                                                                                                                                                                                                 | redesign complete; hybrid wrapper provides backward-compatible interface                                               | `P1`     | `Backend` | Sprint 2 | `done`        |
 | `legacy/backend/services/apiTrackingService.js`         | `lib/observability/database-api-tracker.ts`                                                                                                                                                                                                                                   | redesign complete; hybrid wrapper provides backward-compatible interface                                               | `P2`     | `Backend` | Sprint 2 | `done`        |
 | `legacy/backend/utils/testConnections.js`               | `scripts/test-provider-connections.ts`                                                                                                                                                                                                                                        | convert to developer verification script                                                                               | `P2`     | `Backend` | Sprint 2 | `not_started` |
@@ -355,7 +355,7 @@ Current state:
 
 - user can sign in and recover access via password reset
 - user-owned data is stored in Supabase
-- portfolio and watchlist persistence surfaces are still pending
+- portfolio, wishlist, and preference persistence are live in the root app
 
 ### Checkpoint F: Cutover Ready
 
@@ -387,6 +387,7 @@ These files need redesign rather than direct migration:
 | 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `done`                                                    |
 | 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `in_progress` - initial harness and smoke coverage landed |
 | 8     | Decide whether `/learn` and `/admin` should be migrated or formally dropped                                                           | `Product`   | `not_started`                                             |
+| 9     | Restore `supabase/seed.sql` or update Supabase seed config so local seeded resets are reproducible                                    | `Data`      | `not_started`                                             |
 
 ## Near-Term Implementation Board (2026-04-22)
 
@@ -667,7 +668,7 @@ Implementation notes (2026-04-23):
 - `analysis_cache` — replaces legacy in-memory `CacheService` (Map with TTL) — uses `expires_at` for cleanup
 - `api_call_log` — replaces legacy in-memory `APITrackingService` (capped array) — indexed for admin queries
 - RLS enabled on all tables: user-owned tables scoped to `auth.uid()`, service tables scoped to `service_role`
-- Seed file created at `supabase/seed.sql` with sample cache and API log entries
+- Supabase seed configuration targets `supabase/seed.sql`, but the file is currently missing and should be restored for seeded resets
 - Design decision: no `symbols` table — search uses upstream market API (option B) for live data
 - Design decision: single lot per symbol in portfolio — multi-lot can be added later
 
