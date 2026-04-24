@@ -29,6 +29,23 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## Local Supabase Reset
+
+To rebuild the local database with the committed schema and seed data:
+
+```bash
+supabase start
+supabase db reset
+```
+
+Docker Desktop needs to be running before you use the local Supabase CLI.
+Copy `.env.local.example` to `.env.local` and fill in the local Supabase URL and publishable key before testing authenticated flows.
+
+Seeded local accounts:
+
+- `demo@stockviz.local` / `StockVizDemo123!`
+- `analyst@stockviz.local` / `StockVizAnalyst123!`
+
 ## Useful Commands
 
 ```bash

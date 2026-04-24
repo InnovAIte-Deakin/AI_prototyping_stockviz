@@ -3,8 +3,7 @@
  * Replaces the in-memory ApiTracker for production readiness.
  */
 
-import { createClient as createServerClient } from "@/lib/supabase/server";
-import { requireSupabasePublicEnv } from "@/lib/supabase/env";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface ApiCallEntry {
@@ -48,9 +47,7 @@ export class DatabaseApiTracker {
 
   private async getSupabaseClient() {
     if (!this.supabaseClient) {
-      requireSupabasePublicEnv();
-
-      this.supabaseClient = await createServerClient();
+      this.supabaseClient = createAdminClient();
     }
     return this.supabaseClient;
   }

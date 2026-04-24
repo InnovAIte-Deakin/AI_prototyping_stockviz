@@ -113,19 +113,19 @@ Exit criteria:
 
 ## Epic Tracker
 
-| Epic ID | Epic                          | Priority | Owner        | Status        | Sprint     | Checkpoint                                                                                                                  |
-| ------- | ----------------------------- | -------- | ------------ | ------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------- |
-| E1      | Platform Foundation           | `P0`     | `Fullstack`  | `done`        | Sprint 1   | Root app is active and auth entry flow is live                                                                              |
-| E2      | Supabase Core                 | `P0`     | `Data`       | `in_progress` | Sprint 1–2 | Schema, migrations, and RLS are in place; restore `supabase/seed.sql` for seeded resets                                     |
-| E3      | Legacy Backend Extraction     | `P0`     | `Backend`    | `done`        | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                                                               |
-| E4      | App Shell Migration           | `P1`     | `Frontend`   | `done`        | Sprint 1   | Shared shell now mounts the migrated navbar/footer experience with global symbol search and route-aware planned/live states |
-| E5      | Search And Symbol Routing     | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Search to analysis route works                                                                                              |
-| E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                       |
-| E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `done`        | Sprint 4   | Configurable analysis controls work                                                                                         |
-| E8      | Market Pages                  | `P2`     | `Frontend`   | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                     |
-| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `done`        | Sprint 5   | Auth, password recovery, portfolio persistence, wishlist, and preferences are live                                          |
-| E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                       |
-| E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `in_progress` | Sprint 6   | Test harness is live; parity verification and legacy removal remain                                                         |
+| Epic ID | Epic                          | Priority | Owner        | Status        | Sprint     | Checkpoint                                                                                                                       |
+| ------- | ----------------------------- | -------- | ------------ | ------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| E1      | Platform Foundation           | `P0`     | `Fullstack`  | `done`        | Sprint 1   | Root app is active and auth entry flow is live                                                                                   |
+| E2      | Supabase Core                 | `P0`     | `Data`       | `done`        | Sprint 1–2 | Schema, migrations, RLS, and seeded local resets are in place                                                                    |
+| E3      | Legacy Backend Extraction     | `P0`     | `Backend`    | `done`        | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                                                                    |
+| E4      | App Shell Migration           | `P1`     | `Frontend`   | `done`        | Sprint 1   | Shared shell now mounts the migrated navbar/footer experience with global symbol search and route-aware planned/live states      |
+| E5      | Search And Symbol Routing     | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Search to analysis route works                                                                                                   |
+| E6      | Core Analysis Experience      | `P1`     | `Fullstack`  | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                            |
+| E7      | Indicators And Weighting      | `P1`     | `Frontend`   | `done`        | Sprint 4   | Configurable analysis controls work                                                                                              |
+| E8      | Market Pages                  | `P2`     | `Frontend`   | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                          |
+| E9      | Auth And User Features        | `P2`     | `Fullstack`  | `done`        | Sprint 5   | Auth, password recovery, portfolio persistence, wishlist, and preferences are live                                               |
+| E10     | Learn/Admin/Secondary Screens | `P3`     | `Unassigned` | `not_started` | Sprint 5   | Secondary screens migrated or dropped                                                                                            |
+| E11     | Testing And Cutover           | `P0`     | `Fullstack`  | `in_progress` | Sprint 6   | Test harness is live; authenticated search-to-analysis coverage is in place, while parity verification and legacy removal remain |
 
 ## Story Board
 
@@ -141,12 +141,12 @@ Exit criteria:
 
 ### E2: Supabase Core
 
-| Story ID | Story                                     | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                    |
-| -------- | ----------------------------------------- | -------- | ----------- | ------------- | -------- | ----------------------------------------------------------------------------- |
-| E2-S1    | Create Supabase client and server helpers | `P0`     | `Fullstack` | `done`        | Sprint 1 | Root app can access Supabase on server and client                             |
-| E2-S2    | Design first-pass schema                  | `P0`     | `Data`      | `done`        | Sprint 2 | Core tables are defined                                                       |
-| E2-S3    | Add migrations and seed workflow          | `P0`     | `Data`      | `in_progress` | Sprint 2 | Seed config is wired; restore `supabase/seed.sql` for reproducible `db reset` |
-| E2-S4    | Add row-level security policies           | `P0`     | `Data`      | `done`        | Sprint 2 | User-owned data is protected                                                  |
+| Story ID | Story                                     | Priority | Owner       | Status | Sprint   | Checkpoint                                                                        |
+| -------- | ----------------------------------------- | -------- | ----------- | ------ | -------- | --------------------------------------------------------------------------------- |
+| E2-S1    | Create Supabase client and server helpers | `P0`     | `Fullstack` | `done` | Sprint 1 | Root app can access Supabase on server and client                                 |
+| E2-S2    | Design first-pass schema                  | `P0`     | `Data`      | `done` | Sprint 2 | Core tables are defined                                                           |
+| E2-S3    | Add migrations and seed workflow          | `P0`     | `Data`      | `done` | Sprint 2 | Seed config is wired and `supabase/seed.sql` now supports reproducible `db reset` |
+| E2-S4    | Add row-level security policies           | `P0`     | `Data`      | `done` | Sprint 2 | User-owned data is protected                                                      |
 
 ### E3: Legacy Backend Extraction
 
@@ -216,13 +216,13 @@ Exit criteria:
 
 ### E11: Testing And Cutover
 
-| Story ID | Story                                                   | Priority | Owner       | Status        | Sprint   | Checkpoint                                                              |
-| -------- | ------------------------------------------------------- | -------- | ----------- | ------------- | -------- | ----------------------------------------------------------------------- |
-| E11-S1   | Add unit tests for analysis logic                       | `P0`     | `Backend`   | `in_progress` | Sprint 6 | Initial URL-state and weighting coverage landed                         |
-| E11-S2   | Add integration tests for root services and data access | `P0`     | `Fullstack` | `in_progress` | Sprint 6 | Initial mocked Supabase service coverage landed                         |
-| E11-S3   | Add end-to-end tests for search and analysis            | `P0`     | `Frontend`  | `in_progress` | Sprint 6 | Initial anonymous auth-gate smoke coverage landed                       |
-| E11-S4   | Run parity checks against legacy outputs                | `P0`     | `Fullstack` | `not_started` | Sprint 6 | Selected symbols match expected output ranges                           |
-| E11-S5   | Remove legacy runtime dependencies                      | `P0`     | `Fullstack` | `not_started` | Sprint 6 | App no longer depends on `legacy/frontend/` or `legacy/backend/` to run |
+| Story ID | Story                                                   | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                                         |
+| -------- | ------------------------------------------------------- | -------- | ----------- | ------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| E11-S1   | Add unit tests for analysis logic                       | `P0`     | `Backend`   | `in_progress` | Sprint 6 | Initial URL-state and weighting coverage landed                                                    |
+| E11-S2   | Add integration tests for root services and data access | `P0`     | `Fullstack` | `in_progress` | Sprint 6 | Initial mocked Supabase service coverage landed                                                    |
+| E11-S3   | Add end-to-end tests for search and analysis            | `P0`     | `Frontend`  | `in_progress` | Sprint 6 | Anonymous auth-gate smoke coverage plus seeded authenticated dashboard-to-analysis coverage landed |
+| E11-S4   | Run parity checks against legacy outputs                | `P0`     | `Fullstack` | `not_started` | Sprint 6 | Selected symbols match expected output ranges                                                      |
+| E11-S5   | Remove legacy runtime dependencies                      | `P0`     | `Fullstack` | `not_started` | Sprint 6 | App no longer depends on `legacy/frontend/` or `legacy/backend/` to run                            |
 
 ## File-By-File Migration Map
 
@@ -377,17 +377,17 @@ These files need redesign rather than direct migration:
 
 ## Immediate Next Actions
 
-| Order | Action                                                                                                                                | Owner       | Status                                                    |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------- |
-| 1     | Finish the shared shell strategy so the lightweight header either reaches parity or is replaced by the final navbar/footer experience | `Frontend`  | `done`                                                    |
-| 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `done`                                                    |
-| 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `done`                                                    |
-| 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `done`                                                    |
-| 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `done`                                                    |
-| 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `done`                                                    |
-| 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `in_progress` - initial harness and smoke coverage landed |
-| 8     | Decide whether `/learn` and `/admin` should be migrated or formally dropped                                                           | `Product`   | `not_started`                                             |
-| 9     | Restore `supabase/seed.sql` or update Supabase seed config so local seeded resets are reproducible                                    | `Data`      | `not_started`                                             |
+| Order | Action                                                                                                                                | Owner       | Status                                                                                                                    |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 1     | Finish the shared shell strategy so the lightweight header either reaches parity or is replaced by the final navbar/footer experience | `Frontend`  | `done`                                                                                                                    |
+| 2     | Migrate indicators and weights controls into the root analysis UX with Next-friendly URL state                                        | `Fullstack` | `done`                                                                                                                    |
+| 3     | Compose a dedicated `/market` page from the new market-status, market-news, and stock-detail primitives                               | `Frontend`  | `done`                                                                                                                    |
+| 4     | Implement authenticated portfolio persistence against `portfolio_holdings`                                                            | `Fullstack` | `done`                                                                                                                    |
+| 5     | Implement wishlist and preferences flows on top of `wishlist` and `profiles.preferences`                                              | `Fullstack` | `done`                                                                                                                    |
+| 6     | Isolate Gemini, cache, and API tracking behind root adapters                                                                          | `Backend`   | `done`                                                                                                                    |
+| 7     | Add automated coverage for search, analysis, stock detail, and Supabase-backed services                                               | `Fullstack` | `in_progress` - seeded authenticated search-to-analysis coverage landed; stock-detail and broader service coverage remain |
+| 8     | Decide whether `/learn` and `/admin` should be migrated or formally dropped                                                           | `Product`   | `not_started`                                                                                                             |
+| 9     | Restore `supabase/seed.sql` or update Supabase seed config so local seeded resets are reproducible                                    | `Data`      | `done`                                                                                                                    |
 
 ## Near-Term Implementation Board (2026-04-22)
 
@@ -552,15 +552,25 @@ Implementation notes (2026-04-23):
 - Added unit coverage for analysis URL-state normalization and the migrated analysis weight service
 - Added mocked Supabase-backed integration coverage for profile preferences and portfolio holding persistence
 - Added Playwright smoke coverage for the public login flow plus anonymous auth-gate behavior on analysis, market, and portfolio routes
+- Added seeded authenticated Playwright coverage for dashboard search -> analysis using the local Supabase demo user flow
 - Verification: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, and `npm run build` pass; build requires normal network access for `next/font/google`
 
 ### Planning Notes
 
 - `runtime.analyzeSymbol()` already accepts `weights` and `indicatorsConfig`, so the analysis-controls work should wire into existing runtime seams instead of introducing a second analysis path.
 - The live schema and generated types currently use `wishlist`, not `watchlist_items`. Keep the naming aligned in docs and code unless the team explicitly chooses to add a migration rename.
-- The initial test runner is now in place; next coverage should exercise authenticated search-to-analysis behavior, stock detail rendering, and parity fixtures.
+- The initial test runner is now in place; next coverage should focus on stock-detail rendering, broader market/search service behavior, and parity fixtures.
 
 ## Progress Log
+
+### Local Supabase Seed Workflow And Auth Coverage - Completed (2026-04-24)
+
+- Added committed `supabase/seed.sql` with deterministic local demo users, seeded preferences, wishlist rows, portfolio holdings, cache entries, and API-log records for repeatable local resets
+- Updated `README.md` with local Supabase reset steps, the Docker prerequisite, and seeded demo credentials for local validation
+- Validated `supabase db reset` against the running local Supabase stack so seeded resets are now reproducible from the repo
+- Expanded `tests/e2e/search-analysis.spec.ts` with a signed-in dashboard search -> analysis flow using the seeded local demo account
+- Added `lib/supabase/admin.ts` and moved `lib/cache/database-cache.ts` plus `lib/observability/database-api-tracker.ts` onto a dedicated service-role client so `analysis_cache` and `api_call_log` writes bypass RLS as intended
+- Verification: `supabase db reset`, `npm run lint`, and `npx playwright test tests/e2e/search-analysis.spec.ts` pass locally when the Supabase env is configured
 
 ### AI Summary Provider Isolation - Completed (2026-04-24)
 
@@ -574,7 +584,7 @@ Implementation notes (2026-04-23):
 - Added Vitest config and scripts for unit and integration test execution
 - Added Playwright config and smoke tests for the migrated auth-gated route surfaces
 - Covered analysis parameter normalization, weighting behavior, profile preferences, and portfolio persistence with initial automated tests
-- Remaining testing work: authenticated e2e search-to-analysis coverage, stock-detail service coverage, legacy parity fixtures, and cutover dependency checks
+- Remaining testing work: stock-detail service coverage, broader market/search service coverage, legacy parity fixtures, and cutover dependency checks
 
 ### Wishlist And Preferences - Completed (2026-04-23)
 
@@ -668,7 +678,7 @@ Implementation notes (2026-04-23):
 - `analysis_cache` — replaces legacy in-memory `CacheService` (Map with TTL) — uses `expires_at` for cleanup
 - `api_call_log` — replaces legacy in-memory `APITrackingService` (capped array) — indexed for admin queries
 - RLS enabled on all tables: user-owned tables scoped to `auth.uid()`, service tables scoped to `service_role`
-- Supabase seed configuration targets `supabase/seed.sql`, but the file is currently missing and should be restored for seeded resets
+- Supabase seed configuration now targets committed `supabase/seed.sql` with deterministic local demo users for reproducible seeded resets
 - Design decision: no `symbols` table — search uses upstream market API (option B) for live data
 - Design decision: single lot per symbol in portfolio — multi-lot can be added later
 
