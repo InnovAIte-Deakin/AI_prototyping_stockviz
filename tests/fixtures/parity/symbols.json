@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "fixtures": [
+    {
+      "symbol": "AAPL",
+      "timeframe": "1M",
+      "mode": "advanced",
+      "weights": {
+        "fundamental": 40,
+        "technical": 35,
+        "sentiment": 25
+      },
+      "indicatorsConfig": {},
+      "tolerances": {
+        "maxScoreDelta": 10,
+        "minDataPoints": 20,
+        "requireSameRecommendation": false
+      },
+      "requiredAnalysisSections": [
+        "overall",
+        "fundamental",
+        "technical",
+        "sentiment",
+        "aiInsights",
+        "meta"
+      ],
+      "acceptedDeltas": [
+        "AI summary wording may differ between Gemini and fallback providers.",
+        "Latest price and news sentiment may move with live market data."
+      ]
+    },
+    {
+      "symbol": "NVDA",
+      "timeframe": "3M",
+      "mode": "advanced",
+      "weights": {
+        "fundamental": 35,
+        "technical": 40,
+        "sentiment": 25
+      },
+      "indicatorsConfig": {
+        "RSI": {
+          "enabled": true,
+          "period": 14
+        },
+        "MACD": {
+          "enabled": true,
+          "fastPeriod": 12,
+          "slowPeriod": 26,
+          "signalPeriod": 9
+        }
+      },
+      "tolerances": {
+        "maxScoreDelta": 10,
+        "minDataPoints": 45,
+        "requireSameRecommendation": false
+      },
+      "requiredAnalysisSections": [
+        "overall",
+        "fundamental",
+        "technical",
+        "sentiment",
+        "aiInsights",
+        "meta"
+      ],
+      "acceptedDeltas": [
+        "Technical indicator values may vary slightly when provider history windows differ.",
+        "Recommendation band may differ near BUY/HOLD thresholds when live data changes."
+      ]
+    },
+    {
+      "symbol": "RIVN",
+      "timeframe": "1M",
+      "mode": "advanced",
+      "weights": {
+        "fundamental": 30,
+        "technical": 45,
+        "sentiment": 25
+      },
+      "indicatorsConfig": {
+        "SMA": {
+          "enabled": true,
+          "period": 20
+        },
+        "BollingerBands": {
+          "enabled": true,
+          "period": 20,
+          "stdDev": 2
+        }
+      },
+      "tolerances": {
+        "maxScoreDelta": 15,
+        "minDataPoints": 15,
+        "requireSameRecommendation": false
+      },
+      "requiredAnalysisSections": [
+        "overall",
+        "fundamental",
+        "technical",
+        "sentiment",
+        "aiInsights",
+        "meta"
+      ],
+      "acceptedDeltas": [
+        "Fundamental data may be thinner for newer companies.",
+        "Fallback sentiment is acceptable when external news providers are not configured."
+      ]
+    }
+  ]
+}

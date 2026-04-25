@@ -42,9 +42,7 @@ export function requireSupabaseServiceEnv() {
   }
 
   if (!supabaseServiceRoleKey) {
-    throw new Error(
-      "Missing SUPABASE_SERVICE_ROLE_KEY environment variable.",
-    );
+    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable.");
   }
 
   return {

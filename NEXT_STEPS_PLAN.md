@@ -5,21 +5,21 @@ This document turns the remaining items in `MIGRATION_PLAN.md` into a short exec
 ## Current Snapshot
 
 - Root app routes are live for dashboard, market, portfolio, analysis, stock detail, auth callback, login/register, and password reset.
-- Core checks are healthy: `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build` pass.
+- Core checks are healthy: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run parity:check`, `npm run parity:live`, and `npm run build` pass in the current local verification set.
 - Local Supabase seeded resets are now reproducible through `supabase db reset`.
-- Seeded authenticated dashboard -> analysis coverage is now in place.
+- Seeded authenticated dashboard -> analysis coverage, stock-detail API backing coverage, and active legacy runtime import auditing are now in place.
+- Initial parity fixtures and live root analysis checks are in place; `parity:live` skips only the legacy HTTP comparison until `LEGACY_API_BASE_URL` points at a running legacy backend.
 - The main unfinished work is concentrated in:
-  - remaining Sprint 6 coverage and parity verification
-  - legacy runtime retirement
+  - full legacy HTTP parity comparison and accepted-delta documentation
+  - broader market/search service coverage
   - product decisions for `/learn` and `/admin`
 
 ## Priority Order
 
-1. Close the highest-value remaining test gaps.
-2. Run parity checks against legacy behavior.
-3. Remove any remaining legacy runtime dependency.
-4. Decide whether `/learn` and `/admin` are migrated or formally dropped.
-5. Reconcile the tracker once the above is complete.
+1. Run full legacy HTTP parity comparison against a running legacy backend.
+2. Close remaining market/search service coverage.
+3. Decide whether `/learn` and `/admin` are migrated or formally dropped.
+4. Reconcile the tracker once the above is complete.
 
 ## Workstream 1: Seed And Reset Reliability
 
@@ -90,26 +90,31 @@ Primary files to extend:
 - [tests/unit/analysis/weight-service.test.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/tests/unit/analysis/weight-service.test.ts)
 - [tests/unit/analysis/summary-service.test.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/tests/unit/analysis/summary-service.test.ts)
 
+Current status:
+
+- Stock-detail backing route coverage exists in `tests/integration/routes/stock-detail-api.test.ts`.
+- Seeded dashboard -> analysis e2e passes when local Supabase Auth is reachable and skips cleanly otherwise.
+
 Additional files likely needed:
 
-- `tests/e2e/stock-detail.spec.ts`
 - `tests/integration/services/market-data-service.test.ts`
 - `tests/integration/services/search-service.test.ts`
+- optional stock-detail UI smoke coverage if the team wants visual widget coverage beyond the backing API route tests
 
 Tasks:
 
 - Expand e2e coverage from anonymous auth-gate smoke tests into authenticated user journeys.
 - Keep the new authenticated search -> analysis path healthy as a baseline seeded flow.
-- Add stock-detail coverage for `/stock/[symbol]`, including quote/metrics/recommendations/peers chart surfaces or their backing service layer.
+- Decide whether the stock-detail API coverage is enough for cutover or add a focused UI smoke for chart/widget rendering.
 - Add service-level tests around the current root market and search boundaries instead of relying only on UI smoke tests.
 - Keep new tests aligned with the current tooling mix: Playwright for flows, Vitest for services and logic.
 
 Definition of done:
 
 - Search -> analysis remains covered for a signed-in user, not just redirect behavior.
-- Stock detail has explicit automated coverage.
+- Stock detail retains explicit automated coverage for backing API behavior and, if needed, a UI smoke path.
 - Root service coverage includes market/search behavior beyond holdings and preferences.
-- Sprint 6 stories `E11-S1`, `E11-S2`, and `E11-S3` can move from `in_progress` to at least `review`.
+- Sprint 6 stories `E11-S1`, `E11-S2`, and `E11-S3` can stay in `review` once the team accepts the current coverage.
 
 Verification:
 
@@ -140,8 +145,15 @@ Primary files to use or extend:
 - [components/stock/stock-symbol-view.tsx](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/components/stock/stock-symbol-view.tsx)
 - [lib/analysis/runtime.js](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/lib/analysis/runtime.js)
 - [lib/market/data-service.js](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/lib/market/data-service.js)
-- `tests/fixtures/parity/`
-- `scripts/parity-check.ts`
+- [tests/fixtures/parity/symbols.json](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/tests/fixtures/parity/symbols.json)
+- [scripts/parity-check.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/scripts/parity-check.ts)
+
+Current status:
+
+- Initial AAPL/NVDA/RIVN fixture set and parity commands are in place.
+- `npm run parity:check` validates fixture contracts and audits active code for legacy runtime imports.
+- `npm run parity:live` validates current root analysis output against fixture tolerances.
+- Full legacy HTTP comparison can be run after starting the legacy backend by setting `LEGACY_API_BASE_URL=http://127.0.0.1:3001` and then running `npm run parity:live`.
 
 Recommended fixture set:
 
@@ -151,8 +163,8 @@ Recommended fixture set:
 
 Tasks:
 
-- Define a small fixed symbol set and record what "good enough parity" means for each.
-- Compare root app outputs to legacy outputs by range and shape, not exact text matching.
+- Keep the fixed symbol set and "good enough parity" tolerances current as providers change.
+- Run the legacy HTTP comparison by range and shape, not exact text matching.
 - Check analysis score ranges, recommendation band, sentiment/headline presence, chart data continuity, and stock detail widget population.
 - Capture any intentional divergence so the final cutover does not treat known improvements as regressions.
 - Add a lightweight scripted or documented parity procedure that can be rerun before deleting legacy dependencies.
@@ -187,7 +199,12 @@ Primary files to inspect:
 
 - [MIGRATION_PLAN.md](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/MIGRATION_PLAN.md)
 - [components/layout/shell-navigation.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/components/layout/shell-navigation.ts)
+- [tests/integration/cutover/legacy-runtime-audit.test.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/tests/integration/cutover/legacy-runtime-audit.test.ts)
 - any remaining imports, docs, scripts, or runtime references under `legacy/`
+
+Current status:
+
+- `tests/integration/cutover/legacy-runtime-audit.test.ts` verifies active runtime paths do not import or reference `legacy/frontend` or `legacy/backend`.
 
 Tasks:
 
@@ -203,7 +220,7 @@ Definition of done:
 
 Verification:
 
-- `rg -n "legacy/" app components lib tests scripts`
+- `npm run parity:check`
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
@@ -260,14 +277,14 @@ Verification:
 
 ### Phase 2: Close the biggest automated coverage gaps
 
-- add stock-detail coverage
-- add market/search service coverage
+- keep stock-detail API coverage green
+- add broader market/search service coverage
 
 ### Phase 3: Prove cutover readiness
 
-- run parity fixtures
+- run legacy HTTP parity fixtures
 - document accepted deltas
-- confirm root app no longer depends on legacy runtime
+- keep the active legacy runtime audit passing
 
 ### Phase 4: Resolve non-blocking surface decisions
 

@@ -18,6 +18,8 @@
     "supabase:gen-types": "supabase gen types typescript --local --schema public > lib/database.types.ts",
     "format:check": "prettier --check .",
     "commitlint": "commitlint --edit",
+    "parity:check": "node --import tsx scripts/parity-check.ts",
+    "parity:live": "node --import tsx scripts/parity-check.ts --live",
     "cache:cleanup": "node --import tsx scripts/cleanup-cache.ts"
   },
   "dependencies": {
