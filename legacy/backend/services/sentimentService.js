@@ -1,6 +1,6 @@
 const {
   createSentimentService,
-} = require("../../lib/analysis/sentiment-service");
+} = require("../../../lib/analysis/sentiment-service");
 const apiTrackingService = require("./apiTrackingService");
 
 const sentimentService = createSentimentService({

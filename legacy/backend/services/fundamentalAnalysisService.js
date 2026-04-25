@@ -1,6 +1,6 @@
 const {
   createFundamentalAnalysisService,
-} = require("../../lib/analysis/fundamental-analysis-service");
+} = require("../../../lib/analysis/fundamental-analysis-service");
 const dataSourceManager = require("./dataSourceManager");
 const cacheService = require("./cacheService");
 const apiTrackingService = require("./apiTrackingService");

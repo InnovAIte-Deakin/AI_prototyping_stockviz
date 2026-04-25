@@ -1,5 +1,5 @@
 const {
-  createTechnicalAnalysisService,
-} = require("../../lib/analysis/technical-analysis-service");
+  createBasicTechnicalAnalysisService,
+} = require("../../../lib/analysis/basic-technical-analysis-service");
 
-module.exports = createTechnicalAnalysisService();
+module.exports = createBasicTechnicalAnalysisService();

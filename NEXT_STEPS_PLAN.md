@@ -7,19 +7,17 @@ This document turns the remaining items in `MIGRATION_PLAN.md` into a short exec
 - Root app routes are live for dashboard, market, portfolio, analysis, stock detail, auth callback, login/register, and password reset.
 - Core checks are healthy: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run parity:check`, `npm run parity:live`, and `npm run build` pass in the current local verification set.
 - Local Supabase seeded resets are now reproducible through `supabase db reset`.
-- Seeded authenticated dashboard -> analysis coverage, stock-detail API backing coverage, and active legacy runtime import auditing are now in place.
-- Initial parity fixtures and live root analysis checks are in place; `parity:live` skips only the legacy HTTP comparison until `LEGACY_API_BASE_URL` points at a running legacy backend.
+- Seeded authenticated dashboard -> analysis coverage, stock-detail API backing coverage, market/search service coverage, and active legacy runtime import auditing are now in place.
+- Parity fixtures, live root analysis checks, and live legacy HTTP comparison have passed for the committed AAPL/NVDA/RIVN fixture set.
 - The main unfinished work is concentrated in:
-  - full legacy HTTP parity comparison and accepted-delta documentation
-  - broader market/search service coverage
   - product decisions for `/learn` and `/admin`
+  - final tracker reconciliation once those product decisions are made
 
 ## Priority Order
 
-1. Run full legacy HTTP parity comparison against a running legacy backend.
-2. Close remaining market/search service coverage.
-3. Decide whether `/learn` and `/admin` are migrated or formally dropped.
-4. Reconcile the tracker once the above is complete.
+1. Decide whether `/learn` and `/admin` are migrated or formally dropped.
+2. Reconcile the tracker once the above is complete.
+3. Keep parity and service coverage green while final cutover decisions are reviewed.
 
 ## Workstream 1: Seed And Reset Reliability
 
@@ -93,20 +91,18 @@ Primary files to extend:
 Current status:
 
 - Stock-detail backing route coverage exists in `tests/integration/routes/stock-detail-api.test.ts`.
+- Market data normalization/fallback coverage exists in `tests/integration/services/market-data-service.test.ts`.
+- Search validation/provider/fallback coverage exists in `tests/integration/services/search-service.test.ts`.
 - Seeded dashboard -> analysis e2e passes when local Supabase Auth is reachable and skips cleanly otherwise.
 
 Additional files likely needed:
 
-- `tests/integration/services/market-data-service.test.ts`
-- `tests/integration/services/search-service.test.ts`
 - optional stock-detail UI smoke coverage if the team wants visual widget coverage beyond the backing API route tests
 
 Tasks:
 
-- Expand e2e coverage from anonymous auth-gate smoke tests into authenticated user journeys.
 - Keep the new authenticated search -> analysis path healthy as a baseline seeded flow.
 - Decide whether the stock-detail API coverage is enough for cutover or add a focused UI smoke for chart/widget rendering.
-- Add service-level tests around the current root market and search boundaries instead of relying only on UI smoke tests.
 - Keep new tests aligned with the current tooling mix: Playwright for flows, Vitest for services and logic.
 
 Definition of done:
@@ -153,7 +149,7 @@ Current status:
 - Initial AAPL/NVDA/RIVN fixture set and parity commands are in place.
 - `npm run parity:check` validates fixture contracts and audits active code for legacy runtime imports.
 - `npm run parity:live` validates current root analysis output against fixture tolerances.
-- Full legacy HTTP comparison can be run after starting the legacy backend by setting `LEGACY_API_BASE_URL=http://127.0.0.1:3001` and then running `npm run parity:live`.
+- Full legacy HTTP comparison passed after starting the legacy backend and running `LEGACY_API_BASE_URL=http://127.0.0.1:3001 npm run parity:live`.
 
 Recommended fixture set:
 
@@ -164,7 +160,7 @@ Recommended fixture set:
 Tasks:
 
 - Keep the fixed symbol set and "good enough parity" tolerances current as providers change.
-- Run the legacy HTTP comparison by range and shape, not exact text matching.
+- Keep the legacy HTTP comparison procedure available for final review reruns.
 - Check analysis score ranges, recommendation band, sentiment/headline presence, chart data continuity, and stock detail widget population.
 - Capture any intentional divergence so the final cutover does not treat known improvements as regressions.
 - Add a lightweight scripted or documented parity procedure that can be rerun before deleting legacy dependencies.
@@ -278,12 +274,12 @@ Verification:
 ### Phase 2: Close the biggest automated coverage gaps
 
 - keep stock-detail API coverage green
-- add broader market/search service coverage
+- keep broader market/search service coverage green
 
 ### Phase 3: Prove cutover readiness
 
-- run legacy HTTP parity fixtures
-- document accepted deltas
+- rerun legacy HTTP parity fixtures for final review if providers or tolerances change
+- keep accepted deltas documented in the fixture file
 - keep the active legacy runtime audit passing
 
 ### Phase 4: Resolve non-blocking surface decisions
