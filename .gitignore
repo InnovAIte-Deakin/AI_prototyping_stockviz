@@ -18,6 +18,7 @@ test-results/
 .idea/
 .vscode/
 .next/
+next-env.d.ts
 
 docs/APIDocumentation_AlphaVantage
 

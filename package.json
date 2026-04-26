@@ -9,7 +9,7 @@
     "lint": "eslint",
     "prepare": "husky",
     "lint:staged": "lint-staged --config lint-staged.config.mjs",
-    "typecheck": "tsc --noEmit --project tsconfig.check.json",
+    "typecheck": "next typegen && tsc --noEmit --project tsconfig.check.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:unit": "vitest run tests/unit",

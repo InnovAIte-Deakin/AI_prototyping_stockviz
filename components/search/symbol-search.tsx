@@ -1,6 +1,12 @@
 "use client";
 
-import { useDeferredValue, useEffect, useState, useTransition } from "react";
+import {
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import { useRouter } from "next/navigation";
 import { Search, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +36,10 @@ export function SymbolSearch({
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const analysisHref = useMemo(() => {
+    const normalized = deferredQuery.toUpperCase();
+    return normalized ? `/analysis/${encodeURIComponent(normalized)}` : null;
+  }, [deferredQuery]);
 
   useEffect(() => {
     if (deferredQuery.length < 1) {
@@ -64,6 +74,14 @@ export function SymbolSearch({
       window.clearTimeout(timeout);
     };
   }, [deferredQuery]);
+
+  useEffect(() => {
+    if (!analysisHref) {
+      return;
+    }
+
+    router.prefetch(analysisHref);
+  }, [analysisHref, router]);
 
   const openAnalysis = (symbol: string) => {
     const normalized = symbol.trim().toUpperCase();
