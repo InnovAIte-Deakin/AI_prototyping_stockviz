@@ -242,8 +242,8 @@ export default function Navbar() {
                 <SheetHeader className="px-0 pt-10">
                   <SheetTitle>Workspace navigation</SheetTitle>
                   <SheetDescription>
-                    Access the live routes now and keep the upcoming migration
-                    surfaces visible without linking to unfinished pages.
+                    Access live routes now and keep folded analysis controls
+                    visible without linking to separate pages.
                   </SheetDescription>
                 </SheetHeader>
 

@@ -2,8 +2,8 @@ import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   BarChart3,
-  BookOpen,
   Globe,
+  ServerCog,
   Sliders,
   TrendingUp,
 } from "lucide-react";
@@ -46,13 +46,13 @@ export const primaryNavItems: ShellNavItem[] = [
     matchPrefixes: ["/portfolio"],
   },
   {
-    label: "Learn",
+    label: "Admin",
     description:
-      "Learning content remains in the legacy surface and still needs a root route.",
-    icon: BookOpen,
-    href: null,
-    status: "planned",
-    matchPrefixes: ["/learn"],
+      "Inspect runtime diagnostics, service readiness, cache state, and API usage.",
+    icon: ServerCog,
+    href: "/admin",
+    status: "live",
+    matchPrefixes: ["/admin"],
   },
   {
     label: "Indicators",
@@ -102,6 +102,12 @@ export const liveRouteShortcuts = [
     label: "Sample stock detail",
     href: "/stock/AAPL",
     description: "Open the stock detail widgets without typing a symbol first.",
+  },
+  {
+    label: "Admin diagnostics",
+    href: "/admin",
+    description:
+      "Inspect service configuration, cache state, and API usage from the root app.",
   },
 ];
 

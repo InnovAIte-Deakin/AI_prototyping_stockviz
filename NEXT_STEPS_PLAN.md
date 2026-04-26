@@ -4,20 +4,21 @@ This document turns the remaining items in `MIGRATION_PLAN.md` into a short exec
 
 ## Current Snapshot
 
-- Root app routes are live for dashboard, market, portfolio, analysis, stock detail, auth callback, login/register, and password reset.
+- Root app routes are live for dashboard, market, portfolio, admin diagnostics, analysis, stock detail, auth callback, login/register, and password reset.
 - Core checks are healthy: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run parity:check`, `npm run parity:live`, and `npm run build` pass in the current local verification set.
 - Local Supabase seeded resets are now reproducible through `supabase db reset`.
 - Seeded authenticated dashboard -> analysis coverage, stock-detail API backing coverage, market/search service coverage, and active legacy runtime import auditing are now in place.
 - Parity fixtures, live root analysis checks, and live legacy HTTP comparison have passed for the committed AAPL/NVDA/RIVN fixture set.
-- The main unfinished work is concentrated in:
-  - product decisions for `/learn` and `/admin`
-  - final tracker reconciliation once those product decisions are made
+- The secondary-route decision is complete:
+  - `/learn` is dropped from MVP scope because education content is not needed for cutover
+  - `/admin` is retained and rebuilt as a root in-app diagnostics console
+- The main remaining work is final cutover review and any decision to keep or delete archived legacy folders.
 
 ## Priority Order
 
-1. Decide whether `/learn` and `/admin` are migrated or formally dropped.
-2. Reconcile the tracker once the above is complete.
-3. Keep parity and service coverage green while final cutover decisions are reviewed.
+1. Keep parity and service coverage green while final cutover decisions are reviewed.
+2. Run the signed-in local Supabase e2e pass before handoff.
+3. Decide whether archived `legacy/` folders stay as reference or are deleted after review.
 
 ## Workstream 1: Seed And Reset Reliability
 
@@ -233,37 +234,38 @@ Story mapping:
 
 Owner:
 
-- `Product` with `Fullstack` input
+- `Product` with `Fullstack` implementation
 
-Why late:
+Status:
 
-- These are lower-priority surface decisions and should not block cutover of the core app.
+- Completed on 2026-04-26.
 
-Current state:
+Completed decision:
 
-- [components/layout/shell-navigation.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/components/layout/shell-navigation.ts) still shows `Learn` as `planned`.
-- There is no root `app/learn/page.tsx`.
-- There is no root `app/admin/page.tsx`.
-- Legacy admin is a diagnostics/cache console in [legacy/frontend/src/pages/Admin.tsx](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/legacy/frontend/src/pages/Admin.tsx), not a core user-facing workflow.
+- `/learn` is not part of the MVP and has been removed from active shell navigation.
+- `/admin` remains in scope as an in-app diagnostics console.
+- UI showcase is dropped from MVP scope.
 
-Decision options:
+Primary files:
 
-- Migrate `/learn` if educational content is part of the MVP release.
-- Drop `/learn` from navigation and archive the legacy page if it is not part of cutover scope.
-- Rebuild `/admin` only if the team still needs an in-app diagnostics surface.
-- Otherwise remove `/admin` from the migration scope and keep diagnostics in scripts, logs, or Supabase/hosting dashboards.
+- [app/admin/page.tsx](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/app/admin/page.tsx)
+- [app/admin/actions.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/app/admin/actions.ts)
+- [lib/admin/diagnostics-service.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/lib/admin/diagnostics-service.ts)
+- [components/layout/shell-navigation.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/components/layout/shell-navigation.ts)
+- [tests/e2e/admin.spec.ts](C:/Users/ben20/Desktop/SIT782%20-%20Team%20Project%20B%20-%20Execution%20and%20Delivery/project_v1/AI_prototyping_stockviz/tests/e2e/admin.spec.ts)
 
-Definition of done:
+Completed outcome:
 
-- Each pending secondary route is either:
-  - implemented in `app/`
-  - explicitly deferred post-cutover
-  - removed from active navigation and marked dropped in the tracker
+- Admin diagnostics show runtime status, service key readiness, Supabase diagnostic table access, analysis cache state, and external API usage.
+- Admin cache maintenance supports clearing all analysis cache entries and deleting expired cache entries through server actions.
+- `STOCKVIZ_ADMIN_EMAILS` can restrict `/admin` to named operator accounts; when unset, authenticated local/dev users can view diagnostics.
+- `/learn` no longer appears as planned navigation and is marked dropped in `MIGRATION_PLAN.md`.
 
 Verification:
 
 - Navigation metadata matches product scope.
 - `MIGRATION_PLAN.md` no longer lists stale "pending route" notes that conflict with the final decision.
+- `npm run test:e2e` includes an anonymous access-gate check for `/admin`.
 
 ## Suggested Sequence
 
@@ -284,9 +286,9 @@ Verification:
 
 ### Phase 4: Resolve non-blocking surface decisions
 
-- decide `/learn`
-- decide `/admin`
-- update navigation and tracker language
+- `/learn` dropped from MVP scope
+- `/admin` retained and rebuilt as diagnostics
+- navigation and tracker language reconciled
 
 ## Exit Criteria
 

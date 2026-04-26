@@ -10,6 +10,7 @@ StockViz is a web application for exploring, filtering, and visualizing stock ma
 
 - `app/` contains the active Next.js 16 App Router routes, layouts, and API endpoints.
 - `components/`, `hooks/`, `lib/`, and `utils/` hold the shared UI, client hooks, and server-side helpers used by the live application.
+- `/admin` provides the retained in-app diagnostics console for service readiness, cache state, and API usage.
 - `supabase/` contains backend configuration and supporting project assets.
 - `legacy/frontend/` and `legacy/backend/` contain the original React and Express prototype and are no longer part of the active runtime.
 
@@ -41,10 +42,29 @@ supabase db reset
 Docker Desktop needs to be running before you use the local Supabase CLI.
 Copy `.env.local.example` to `.env.local` and fill in the local Supabase URL and publishable key before testing authenticated flows.
 
+If login or registration shows `fetch failed`, check that the local Supabase
+stack is running:
+
+```bash
+supabase status
+supabase start
+```
+
+When the CLI reports stale or stopped containers, restart the stack:
+
+```bash
+supabase stop
+supabase start
+```
+
 Seeded local accounts:
 
 - `demo@stockviz.local` / `StockVizDemo123!`
 - `analyst@stockviz.local` / `StockVizAnalyst123!`
+
+Optional admin restriction:
+
+- Set `STOCKVIZ_ADMIN_EMAILS` to a comma-separated list of operator emails before a shared deployment. If unset, authenticated local/dev users can open `/admin`.
 
 ## Useful Commands
 
@@ -84,8 +104,8 @@ stockviz/
 
 - [x] Prototype with standalone React and Express
 - [x] Bootstrap the active Next.js App Router application
-- [ ] Complete the Supabase-backed migration
-- [ ] Finish migrating remaining legacy features
+- [x] Complete the Supabase-backed migration foundations
+- [x] Resolve remaining legacy feature scope
 - [ ] Add real-time data subscriptions where they provide clear user value
 
 _StockViz - Capstone AI Prototyping Project_

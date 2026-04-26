@@ -47,7 +47,7 @@ export default function Footer() {
             <p className="max-w-sm text-sm leading-7 text-[#636968]">
               The lightweight header has been replaced by the routed shell used
               across the protected Next.js workspace. Live routes stay easy to
-              reach, while unfinished surfaces remain visible as planned work.
+              reach, while folded controls remain visible as planned work.
             </p>
             <div className="rounded-[22px] border border-[#e2dbd4] bg-white p-4 shadow-[0_12px_28px_rgba(55,49,45,0.04)]">
               <div className="flex items-start gap-3">
@@ -177,9 +177,8 @@ export default function Footer() {
             expansion continues from the migration plan.
           </p>
           <p className="sm:text-right">
-            Dashboard, market, portfolio, analysis, and stock detail are live.
-            Learn remains staged, while indicators and weights now live inside
-            analysis.
+            Dashboard, market, portfolio, admin diagnostics, analysis, and stock
+            detail are live. Indicators and weights now live inside analysis.
           </p>
         </div>
       </div>
