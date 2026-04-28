@@ -13,6 +13,7 @@ import { AnalysisControls } from "@/components/analysis/analysis-controls";
 import { SymbolSearch } from "@/components/search/symbol-search";
 import { PriceHistoryChart } from "@/components/analysis/price-history-chart";
 import { SentimentHeadlines } from "@/components/analysis/sentiment-headlines";
+import { TradingViewAdvancedChart } from "@/components/stock/widgets/trading-view-advanced-chart";
 import { Button } from "@/components/ui/button";
 import { WishlistButton } from "@/components/user/wishlist-button";
 import { UserFeatureAuthError } from "@/lib/user/session";
@@ -30,6 +31,15 @@ import {
 } from "@/lib/url-state";
 
 const TIMEFRAMES = ["1D", "1W", "1M", "3M", "6M", "1Y", "2Y"];
+const TRADING_VIEW_RANGES = {
+  "1D": "1D",
+  "1W": "5D",
+  "1M": "1M",
+  "3M": "3M",
+  "6M": "6M",
+  "1Y": "12M",
+  "2Y": "24M",
+};
 const { analyzeSymbol } = runtime;
 
 function getTone(score) {
@@ -267,6 +277,11 @@ export default async function AnalysisPage({ params, searchParams }) {
           indicatorConfig={activeIndicatorConfig}
           defaultIndicatorConfig={defaultIndicatorConfig}
           availableIndicators={availableIndicators}
+        />
+
+        <TradingViewAdvancedChart
+          symbol={normalizedSymbol}
+          range={TRADING_VIEW_RANGES[timeframe]}
         />
 
         <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
