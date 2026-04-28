@@ -85,7 +85,7 @@ const portfolioSignals = [
   {
     title: "Next step ready",
     description:
-      "This persistence slice sets up the remaining wishlist and preferences work without sending the team back to legacy routes.",
+      "This persistence slice keeps wishlist and preference work inside the active app.",
     icon: FolderHeart,
   },
 ] as const;

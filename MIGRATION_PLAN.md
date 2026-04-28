@@ -113,19 +113,19 @@ Exit criteria:
 
 ## Epic Tracker
 
-| Epic ID | Epic                          | Priority | Owner       | Status        | Sprint     | Checkpoint                                                                                                                   |
-| ------- | ----------------------------- | -------- | ----------- | ------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| E1      | Platform Foundation           | `P0`     | `Fullstack` | `done`        | Sprint 1   | Root app is active and auth entry flow is live                                                                               |
-| E2      | Supabase Core                 | `P0`     | `Data`      | `done`        | Sprint 1–2 | Schema, migrations, RLS, and seeded local resets are in place                                                                |
-| E3      | Legacy Backend Extraction     | `P0`     | `Backend`   | `done`        | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                                                                |
-| E4      | App Shell Migration           | `P1`     | `Frontend`  | `done`        | Sprint 1   | Shared shell now mounts the migrated navbar/footer experience with global symbol search and route-aware planned/live states  |
-| E5      | Search And Symbol Routing     | `P1`     | `Fullstack` | `done`        | Sprint 3   | Search to analysis route works                                                                                               |
-| E6      | Core Analysis Experience      | `P1`     | `Fullstack` | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                        |
-| E7      | Indicators And Weighting      | `P1`     | `Frontend`  | `done`        | Sprint 4   | Configurable analysis controls work                                                                                          |
-| E8      | Market Pages                  | `P2`     | `Frontend`  | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                      |
-| E9      | Auth And User Features        | `P2`     | `Fullstack` | `done`        | Sprint 5   | Auth, password recovery, portfolio persistence, wishlist, and preferences are live                                           |
-| E10     | Learn/Admin/Secondary Screens | `P3`     | `Fullstack` | `done`        | Sprint 5   | Learn/showcase are dropped from MVP scope and `/admin` diagnostics are live                                                  |
-| E11     | Testing And Cutover           | `P0`     | `Fullstack` | `in_progress` | Sprint 6   | Stock-detail, market/search, seeded e2e, parity, active legacy runtime audit, and final product-scope decisions are in place |
+| Epic ID | Epic                          | Priority | Owner       | Status        | Sprint     | Checkpoint                                                                                                                         |
+| ------- | ----------------------------- | -------- | ----------- | ------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| E1      | Platform Foundation           | `P0`     | `Fullstack` | `done`        | Sprint 1   | Root app is active and auth entry flow is live                                                                                     |
+| E2      | Supabase Core                 | `P0`     | `Data`      | `done`        | Sprint 1–2 | Schema, migrations, RLS, and seeded local resets are in place                                                                      |
+| E3      | Legacy Backend Extraction     | `P0`     | `Backend`   | `done`        | Sprint 2   | Analysis logic runs without Express; cache/tracking DB-backed                                                                      |
+| E4      | App Shell Migration           | `P1`     | `Frontend`  | `done`        | Sprint 1   | Shared shell now mounts the migrated navbar/footer experience with global symbol search and route-aware planned/live states        |
+| E5      | Search And Symbol Routing     | `P1`     | `Fullstack` | `done`        | Sprint 3   | Search to analysis route works                                                                                                     |
+| E6      | Core Analysis Experience      | `P1`     | `Fullstack` | `done`        | Sprint 3   | Analysis route now covers chart, scoring, summary, and sentiment/news                                                              |
+| E7      | Indicators And Weighting      | `P1`     | `Frontend`  | `done`        | Sprint 4   | Configurable analysis controls work                                                                                                |
+| E8      | Market Pages                  | `P2`     | `Frontend`  | `done`        | Sprint 4   | Dedicated `/market` discovery is live with market status, news, and curated symbol tabs                                            |
+| E9      | Auth And User Features        | `P2`     | `Fullstack` | `done`        | Sprint 5   | Auth, password recovery, portfolio persistence, wishlist, and preferences are live                                                 |
+| E10     | Learn/Admin/Secondary Screens | `P3`     | `Fullstack` | `done`        | Sprint 5   | Learn/showcase are dropped from MVP scope and `/admin` diagnostics are live                                                        |
+| E11     | Testing And Cutover           | `P0`     | `Fullstack` | `in_progress` | Sprint 6   | Stock-detail, market/search, seeded e2e, root parity, active archive runtime audit, and final product-scope decisions are in place |
 
 ## Story Board
 
@@ -136,7 +136,7 @@ Exit criteria:
 | E1-S1    | Replace scaffolded homepage and metadata          | `P0`     | `Frontend`  | `done` | Sprint 1 | Starter content is removed and the root entry flow is StockViz-auth aware                                         |
 | E1-S2    | Install dependencies and confirm Next 16 patterns | `P0`     | `Fullstack` | `done` | Sprint 1 | Local dev works and team is using current conventions                                                             |
 | E1-S3    | Establish route structure under `app/`            | `P0`     | `Fullstack` | `done` | Sprint 1 | Auth, password reset, dashboard, analysis, stock detail, market, portfolio, and admin diagnostics routes are live |
-| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done` | Sprint 1 | Root env template matches active services and legacy aliases are tolerated                                        |
+| E1-S4    | Standardize root environment variables            | `P0`     | `DevOps`    | `done` | Sprint 1 | Root env template matches active services and archived aliases are no longer part of the active contract          |
 | E1-S5    | Add validation and service boundaries             | `P1`     | `Backend`   | `done` | Sprint 1 | Domain logic is isolated from page components                                                                     |
 
 ### E2: Supabase Core
@@ -216,13 +216,13 @@ Exit criteria:
 
 ### E11: Testing And Cutover
 
-| Story ID | Story                                                   | Priority | Owner       | Status        | Sprint   | Checkpoint                                                                                           |
-| -------- | ------------------------------------------------------- | -------- | ----------- | ------------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| E11-S1   | Add unit tests for analysis logic                       | `P0`     | `Backend`   | `review`      | Sprint 6 | URL-state, weighting, and summary-provider boundary coverage are in place                            |
-| E11-S2   | Add integration tests for root services and data access | `P0`     | `Fullstack` | `review`      | Sprint 6 | Mocked Supabase, stock-detail API, market data, and search service coverage are in place             |
-| E11-S3   | Add end-to-end tests for search and analysis            | `P0`     | `Frontend`  | `review`      | Sprint 6 | Auth-gate smoke coverage and seeded authenticated dashboard-to-analysis e2e pass with local Supabase |
-| E11-S4   | Run parity checks against legacy outputs                | `P0`     | `Fullstack` | `review`      | Sprint 6 | AAPL/NVDA/RIVN contract, live root, and live legacy HTTP parity checks pass                          |
-| E11-S5   | Remove legacy runtime dependencies                      | `P0`     | `Fullstack` | `in_progress` | Sprint 6 | Active runtime legacy import audit passes; final legacy archive/delete decision remains              |
+| Story ID | Story                                                   | Priority | Owner       | Status   | Sprint   | Checkpoint                                                                                           |
+| -------- | ------------------------------------------------------- | -------- | ----------- | -------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| E11-S1   | Add unit tests for analysis logic                       | `P0`     | `Backend`   | `review` | Sprint 6 | URL-state, weighting, and summary-provider boundary coverage are in place                            |
+| E11-S2   | Add integration tests for root services and data access | `P0`     | `Fullstack` | `review` | Sprint 6 | Mocked Supabase, stock-detail API, market data, and search service coverage are in place             |
+| E11-S3   | Add end-to-end tests for search and analysis            | `P0`     | `Frontend`  | `review` | Sprint 6 | Auth-gate smoke coverage and seeded authenticated dashboard-to-analysis e2e pass with local Supabase |
+| E11-S4   | Run root parity checks against selected outputs         | `P0`     | `Fullstack` | `review` | Sprint 6 | AAPL/NVDA/RIVN contract and live root parity checks pass                                             |
+| E11-S5   | Remove archived runtime dependencies                    | `P0`     | `Fullstack` | `review` | Sprint 6 | Active runtime archive import audit passes; legacy folders remain reference-only                     |
 
 ## File-By-File Migration Map
 
@@ -565,16 +565,16 @@ Implementation notes (2026-04-23 through 2026-04-25):
 - Added seeded authenticated Playwright coverage for dashboard search -> analysis using the local Supabase demo user flow
 - Added stock-detail API route coverage for quote, metrics, peers, recommendation, and Alpha Vantage price-series normalization
 - Hardened seeded authenticated Playwright coverage with a Supabase Auth reachability gate so missing local stacks skip cleanly
-- Added AAPL/NVDA/RIVN parity fixtures plus `npm run parity:check` and `npm run parity:live`; live legacy HTTP comparison passes when `LEGACY_API_BASE_URL` points at the local legacy backend
+- Added AAPL/NVDA/RIVN parity fixtures plus `npm run parity:check` and `npm run parity:live`; archived HTTP comparison has since been retired so parity runs against the active root runtime only
 - Added a cutover audit that fails if active runtime code imports or references `legacy/frontend` or `legacy/backend`
 - Removed tracked TypeScript build-info cache files and redirected/disabled future generation so checks do not leave dirty artifacts
-- Verification: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run parity:check`, `npm run parity:live`, and `npm run build` pass; build requires normal network access for `next/font/google`
+- Verification: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run parity:check`, `npm run parity:live`, and `npm run build` pass; builds now use vendored local font assets
 
 ### Planning Notes
 
 - `runtime.analyzeSymbol()` already accepts `weights` and `indicatorsConfig`, so the analysis-controls work should wire into existing runtime seams instead of introducing a second analysis path.
 - The live schema and generated types currently use `wishlist`, not `watchlist_items`. Keep the naming aligned in docs and code unless the team explicitly chooses to add a migration rename.
-- The test runner, stock-detail API coverage, market/search service coverage, admin auth-gate coverage, parity fixtures, live legacy HTTP comparison, and runtime legacy audit are now in place; next work should focus on final cutover review and any legacy archive/delete decision.
+- The test runner, stock-detail API coverage, market/search service coverage, admin auth-gate coverage, parity fixtures, and runtime archive audit are now in place; legacy folders remain reference-only.
 
 ## Progress Log
 
@@ -593,11 +593,11 @@ Implementation notes (2026-04-23 through 2026-04-25):
 - Added market data service coverage for provider normalization, cache writes, API tracking, and fallback behavior
 - Added search service coverage for blank query validation, Finnhub normalization, cache writes, API tracking, and fallback behavior
 - Hardened seeded authenticated Playwright coverage with a Supabase Auth reachability check so missing local stacks skip cleanly
-- Added `tests/fixtures/parity/symbols.json` and `scripts/parity-check.ts` with contract, live root-runtime, and live legacy HTTP comparison modes
+- Added `tests/fixtures/parity/symbols.json` and `scripts/parity-check.ts` with contract and live root-runtime modes
 - Added active runtime legacy import auditing under `tests/integration/cutover/`
 - Fixed legacy backend wrapper paths needed to boot the archived API for HTTP parity, and aligned the legacy technical-analysis wrapper with the active basic technical-analysis implementation
 - Removed tracked TypeScript build-info caches and redirected/disabled future cache generation to avoid dirty check artifacts
-- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run parity:check`, `npm run parity:live`, and `LEGACY_API_BASE_URL=http://127.0.0.1:3001 npm run parity:live` pass.
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run parity:check`, and `npm run parity:live` pass.
 
 ### Local Supabase Seed Workflow And Auth Coverage - Completed (2026-04-24)
 
@@ -613,7 +613,7 @@ Implementation notes (2026-04-23 through 2026-04-25):
 - Added root `lib/ai/fallback-summary-service.js`, `lib/ai/gemini-summary-service.js`, and `lib/ai/index.js` so analysis summaries are selected through a single root provider boundary
 - Updated `lib/analysis/runtime.js` and `lib/analysis/analysis-service.js` so the root runtime injects `summaryService` rather than hard-coding an inline fallback adapter
 - Added Gemini boundary tests covering fallback mode, successful Gemini generation, and Gemini failure fallback behavior
-- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, and `npm run build` all pass (build still requires normal network access for `next/font/google`)
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, and `npm run build` all pass.
 
 ### Test Harness And Parity Prep - Started (2026-04-23)
 
@@ -636,14 +636,14 @@ Implementation notes (2026-04-23 through 2026-04-25):
 - Added `components/analysis/analysis-controls.tsx`, `components/analysis/weights-panel.tsx`, and `components/analysis/indicators-panel.tsx`
 - Updated `app/analysis/[symbol]/page.jsx` to read URL state on the server, pass `weights` and `indicatorsConfig` into `analyzeSymbol`, and preserve custom state across timeframe changes
 - Updated `lib/analysis/basic-technical-analysis-service.js` so indicator toggles and parameter overrides change the actual technical-analysis result instead of only changing UI state
-- Verification: `npm run lint`, `npm run typecheck`, and `npm run build` all pass (build requires normal network access because `app/layout.tsx` uses `next/font/google`)
+- Verification: `npm run lint`, `npm run typecheck`, and `npm run build` all pass.
 
 ### Shared Shell Parity - Completed (2026-04-15)
 
 - Mounted `components/layout/navbar.tsx` and `components/layout/footer.tsx` from `components/layout/shell-frame.tsx`, replacing the temporary lightweight header on protected routes
 - Added `components/layout/shell-navigation.ts` so the shared shell can distinguish live routes from folded analysis controls without sending users to missing pages
 - Replaced static navbar auth placeholders with protected-shell theme controls plus sign out, while keeping `/login`, `/register`, `/forgot-password`, and `/reset-password` shellless
-- Verification: `npm run lint`, `npm run typecheck`, and `npm run build` all pass (build requires normal network access because `app/layout.tsx` uses `next/font/google`)
+- Verification: `npm run lint`, `npm run typecheck`, and `npm run build` all pass.
 
 ### Cache & API Tracking Redesign — Completed (2026-04-03)
 
@@ -791,7 +791,7 @@ Implementation notes (2026-04-23 through 2026-04-25):
 
 ### Plan Reconciliation (2026-04-13)
 
-- Reconciled the root env contract: examples now use the active Supabase and market-data variable names, and runtime env reads tolerate the previous legacy aliases
+- Reconciled the root env contract: examples and runtime reads now use the active Supabase and market-data variable names only
 - Clarified that the current root entry flow is implemented with proxy-based redirects rather than a public `app/page.tsx` route
 - Updated the file-by-file migration map to reflect migrated navbar/footer/theme/auth/search/analysis items that already exist in the repo
 - Reconciled the story board and checkpoint notes with the merged `main` + `staging` branch state, including stock detail, password recovery, and market-data proxy routes
@@ -801,7 +801,7 @@ Implementation notes (2026-04-23 through 2026-04-25):
 - ~~Gemini provider migration is still incomplete; the root runtime currently uses a fallback summary adapter instead of the legacy Gemini service~~ - **Done**: root `lib/ai/` now handles Gemini plus fallback summary generation
 - ~~The root cache and API tracking adapters are still in-memory~~ — **Done**: now database-backed using Supabase
 - Search, analysis, stock detail, market overview, portfolio, admin diagnostics, market status/news, and password recovery are live; `/learn` has been dropped from MVP scope
-- Cutover gates now include root parity scripts, live legacy HTTP comparison, and an active runtime legacy import audit; remaining cutover work is final review plus any legacy archive/delete decision
+- Cutover gates now include root parity scripts and an active runtime archive import audit; legacy folders remain reference-only
 - The shared app shell now mounts the rebuilt navbar/footer experience with global symbol search and the live admin diagnostics route
 
 ## Notes

@@ -87,7 +87,7 @@ const scanExtensions = new Set([
   ".ts",
   ".tsx",
 ]);
-const legacyRuntimePatterns = [
+const archivedRuntimePatterns = [
   /\blegacy[\\/](backend|frontend)\b/i,
   /from\s+["'][^"']*legacy[\\/]/i,
   /require\(["'][^"']*legacy[\\/]/i,
@@ -118,8 +118,6 @@ const fixturePath = path.resolve(
     defaultFixturePath,
 );
 const runLive = hasArg("--live") || process.env.PARITY_LIVE === "1";
-const legacyBaseUrl =
-  getArgValue("--legacy-base-url") || process.env.LEGACY_API_BASE_URL || "";
 
 const fail = (message: string): never => {
   throw new Error(message);
@@ -242,7 +240,7 @@ const auditLegacyRuntimeReferences = async (): Promise<string[]> => {
     }
 
     const contents = await readFile(filePath, "utf8");
-    if (legacyRuntimePatterns.some((pattern) => pattern.test(contents))) {
+    if (archivedRuntimePatterns.some((pattern) => pattern.test(contents))) {
       violations.push(relativePath);
     }
   }
@@ -320,49 +318,6 @@ const assertRootContract = (
   return issues;
 };
 
-const legacyAnalysisUrl = (baseUrl: string, fixture: ParityFixture): string => {
-  const url = new URL(
-    `/api/stocks/analysis/${encodeURIComponent(fixture.symbol)}`,
-    baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`,
-  );
-  url.searchParams.set("timeframe", fixture.timeframe);
-  url.searchParams.set("mode", fixture.mode);
-  url.searchParams.set("fundamental", String(fixture.weights.fundamental));
-  url.searchParams.set("technical", String(fixture.weights.technical));
-  url.searchParams.set("sentiment", String(fixture.weights.sentiment));
-  url.searchParams.set(
-    "indicators",
-    JSON.stringify(fixture.indicatorsConfig || {}),
-  );
-  return url.toString();
-};
-
-const compareSummaries = (
-  fixture: ParityFixture,
-  rootSummary: AnalysisSummary,
-  legacySummary: AnalysisSummary,
-): string[] => {
-  const issues: string[] = [];
-  const scoreDelta = Math.abs(rootSummary.score - legacySummary.score);
-
-  if (scoreDelta > fixture.tolerances.maxScoreDelta) {
-    issues.push(
-      `score delta ${scoreDelta} exceeds tolerance ${fixture.tolerances.maxScoreDelta}`,
-    );
-  }
-
-  if (
-    fixture.tolerances.requireSameRecommendation &&
-    rootSummary.recommendation !== legacySummary.recommendation
-  ) {
-    issues.push(
-      `recommendation differs: root=${rootSummary.recommendation}, legacy=${legacySummary.recommendation}`,
-    );
-  }
-
-  return issues;
-};
-
 const runLiveRootChecks = async (
   fixtures: ParityFixture[],
 ): Promise<Map<string, AnalysisSummary>> => {
@@ -420,47 +375,13 @@ const runLiveRootChecks = async (
   return summaries;
 };
 
-const runLegacyComparisons = async (
-  fixtures: ParityFixture[],
-  rootSummaries: Map<string, AnalysisSummary>,
-): Promise<void> => {
-  if (!legacyBaseUrl) {
-    console.log(
-      "[parity] LEGACY_API_BASE_URL not set; skipped legacy HTTP comparison.",
-    );
-    return;
-  }
-
-  for (const fixture of fixtures) {
-    const response = await fetch(legacyAnalysisUrl(legacyBaseUrl, fixture));
-    if (!response.ok) {
-      fail(
-        `${fixture.symbol} legacy request failed with ${response.status}: ${await response.text()}`,
-      );
-    }
-
-    const legacySummary = summarizeAnalysis(
-      await response.json(),
-      fixture.symbol,
-    );
-    const rootSummary =
-      rootSummaries.get(fixture.symbol) ??
-      fail(`Missing root summary for ${fixture.symbol}`);
-
-    const issues = compareSummaries(fixture, rootSummary, legacySummary);
-    if (issues.length > 0) {
-      fail(`${fixture.symbol} parity comparison failed: ${issues.join("; ")}`);
-    }
-  }
-};
-
 const main = async (): Promise<void> => {
   const fixtures = await loadFixtures();
   const violations = await auditLegacyRuntimeReferences();
 
   if (violations.length > 0) {
     fail(
-      `Active runtime references legacy paths:\n${violations
+      `Active runtime references archived paths:\n${violations
         .map((filePath) => `- ${filePath}`)
         .join("\n")}`,
     );
@@ -469,7 +390,7 @@ const main = async (): Promise<void> => {
   console.log(
     `[parity] Loaded ${fixtures.length} fixtures from ${fixturePath}`,
   );
-  console.log("[parity] Active runtime legacy import audit passed.");
+  console.log("[parity] Active runtime archive import audit passed.");
 
   if (!runLive) {
     console.log(
@@ -479,8 +400,7 @@ const main = async (): Promise<void> => {
   }
 
   await loadLocalEnv();
-  const rootSummaries = await runLiveRootChecks(fixtures);
-  await runLegacyComparisons(fixtures, rootSummaries);
+  await runLiveRootChecks(fixtures);
   console.log("[parity] Live parity checks passed.");
 };
 

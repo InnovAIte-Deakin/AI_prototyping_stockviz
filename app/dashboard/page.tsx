@@ -25,7 +25,7 @@ const launchCards = [
   {
     title: "Protected flow",
     description:
-      "The new slice runs inside the authenticated Next.js product surface rather than legacy routes.",
+      "The analysis flow runs inside the authenticated Next.js product surface.",
     icon: ShieldCheck,
   },
 ];
@@ -46,8 +46,7 @@ export default function DashboardPage() {
               <p className="max-w-2xl text-base leading-7 text-[#636968]">
                 The dashboard now acts as the authenticated handoff into the new
                 market-data pipeline. Search for a stock, open its analysis
-                page, and validate the root services without going back through
-                the legacy Express app.
+                page, and validate the root services from the active app.
               </p>
             </div>
 

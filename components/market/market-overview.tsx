@@ -26,7 +26,7 @@ const marketSignals = [
   {
     title: "Curated discovery",
     description:
-      "Start from tracked symbol groups, then open full stock detail or analysis without dropping back to legacy routes.",
+      "Start from tracked symbol groups, then open full stock detail or analysis from root routes.",
     icon: TrendingUp,
   },
 ];

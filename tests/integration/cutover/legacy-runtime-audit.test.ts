@@ -14,7 +14,7 @@ const scanExtensions = new Set([
   ".ts",
   ".tsx",
 ]);
-const legacyRuntimePatterns = [
+const archivedRuntimePatterns = [
   /\blegacy[\\/](backend|frontend)\b/i,
   /from\s+["'][^"']*legacy[\\/]/i,
   /require\(["'][^"']*legacy[\\/]/i,
@@ -40,8 +40,8 @@ async function walkFiles(dir: string): Promise<string[]> {
   return files;
 }
 
-describe("legacy runtime cutover audit", () => {
-  it("keeps active app code free of legacy runtime imports", async () => {
+describe("archive runtime cutover audit", () => {
+  it("keeps active app code free of archived runtime imports", async () => {
     const files = (
       await Promise.all(
         activeRoots.map((root) => walkFiles(path.join(repoRoot, root))),
@@ -62,7 +62,7 @@ describe("legacy runtime cutover audit", () => {
       }
 
       const contents = await readFile(filePath, "utf8");
-      if (legacyRuntimePatterns.some((pattern) => pattern.test(contents))) {
+      if (archivedRuntimePatterns.some((pattern) => pattern.test(contents))) {
         violations.push(relativePath);
       }
     }

@@ -83,7 +83,7 @@ npm run format:check
 
 `npm run parity:check` validates the committed parity fixture contract and confirms active runtime code does not import from `legacy/`.
 
-`npm run parity:live` validates the active root analysis runtime against the committed parity symbols. To include a running legacy backend comparison, start the legacy API and set `LEGACY_API_BASE_URL=http://127.0.0.1:3001` before running the command.
+`npm run parity:live` validates the active root analysis runtime against the committed parity symbols.
 
 ## Project Structure
 

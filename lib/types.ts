@@ -2,7 +2,7 @@
  * Shared TypeScript types for the StockViz application.
  *
  * These define the contract between backend analysis services (lib/analysis/)
- * and the frontend UI components. Ported from the legacy frontend/src/lib/types.ts
+ * and the frontend UI components.
  * without the Zod runtime dependency — these are pure TS interfaces.
  */
 

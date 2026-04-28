@@ -39,9 +39,7 @@ const localEnv = readLocalEnv();
 const getSupabasePublicEnv = () => ({
   key:
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-    localEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-    localEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    localEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   url:
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? localEnv.NEXT_PUBLIC_SUPABASE_URL,
 });

@@ -153,9 +153,7 @@ function getProviderDiagnostics(): ProviderDiagnostic[] {
   const supabaseUrl = hasValue(getSupabaseUrl());
   const supabasePublicKey = hasValue(getSupabasePublishableKey());
   const supabaseServiceKey = hasValue(getSupabaseServiceRoleKey());
-  const alphaVantage = hasValue(
-    process.env.ALPHA_VANTAGE_API_KEY || process.env.MARKET_DATA_API_KEY,
-  );
+  const alphaVantage = hasValue(process.env.ALPHA_VANTAGE_API_KEY);
   const finnhub = hasValue(process.env.FINNHUB_API_KEY);
   const twelveData = hasValue(process.env.TWELVE_DATA_API_KEY);
   const gemini = hasValue(process.env.GEMINI_API_KEY);

@@ -3,10 +3,7 @@ export function getSupabaseUrl() {
 }
 
 export function getSupabasePublishableKey() {
-  return (
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  return process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 }
 
 export function getSupabaseServiceRoleKey() {
@@ -23,7 +20,7 @@ export function requireSupabasePublicEnv() {
 
   if (!supabasePublishableKey) {
     throw new Error(
-      "Missing Supabase publishable key. Set NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (preferred) or NEXT_PUBLIC_SUPABASE_ANON_KEY (legacy alias).",
+      "Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY environment variable.",
     );
   }
 
