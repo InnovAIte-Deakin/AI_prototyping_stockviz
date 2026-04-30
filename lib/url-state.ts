@@ -12,6 +12,10 @@ export type AnalysisWeights = {
   sentiment: number;
 };
 
+export type RawAnalysisWeights = Partial<
+  Record<keyof AnalysisWeights, number | string>
+>;
+
 export type SearchParamValue = string | string[] | undefined;
 
 export type IndicatorGroups = Record<string, string[]>;
@@ -42,7 +46,7 @@ export const getSingleSearchParam = (
 };
 
 export const normalizeWeights = (
-  rawWeights?: Partial<AnalysisWeights> | null,
+  rawWeights?: RawAnalysisWeights | null,
   defaults: AnalysisWeights = DEFAULT_ANALYSIS_WEIGHTS,
 ): AnalysisWeights => {
   const fundamental = Number(rawWeights?.fundamental ?? defaults.fundamental);
@@ -262,7 +266,7 @@ export const buildAnalysisSearchParams = ({
   defaultTimeframe = DEFAULT_ANALYSIS_TIMEFRAME,
 }: {
   timeframe?: string;
-  weights?: Partial<AnalysisWeights> | null;
+  weights?: RawAnalysisWeights | null;
   indicatorConfig: IndicatorConfig;
   defaultIndicatorConfig: IndicatorDefaults;
   availableIndicators: IndicatorGroups;

@@ -5,12 +5,16 @@
  * Uses a Promise cache pattern to handle async operations while exposing sync API.
  */
 
-import { createDatabaseCacheService } from "./database-cache";
+import {
+  createDatabaseCacheService,
+  type CacheStats,
+  type DatabaseCacheService,
+} from "./database-cache";
 
 // Singleton instance (lazy initialized)
-let dbCacheInstance = null;
+let dbCacheInstance: DatabaseCacheService | null = null;
 
-function getDbCache() {
+function getDbCache(): DatabaseCacheService {
   if (!dbCacheInstance) {
     dbCacheInstance = createDatabaseCacheService({
       defaultTimeoutMs: 5 * 60 * 1000,
@@ -20,11 +24,17 @@ function getDbCache() {
 }
 
 // Promise cache for in-flight operations
-const pendingGets = new Map();
-const pendingSets = new Map();
+const pendingGets = new Map<string, Promise<unknown | null>>();
+const pendingSets = new Map<string, Promise<void>>();
+
+export type CacheServiceOptions = {
+  defaultTimeout?: number;
+};
 
 class HybridCacheService {
-  constructor({ defaultTimeout = 5 * 60 * 1000 } = {}) {
+  private defaultTimeout: number;
+
+  constructor({ defaultTimeout = 5 * 60 * 1000 }: CacheServiceOptions = {}) {
     this.defaultTimeout = defaultTimeout;
   }
 
@@ -34,7 +44,7 @@ class HybridCacheService {
    * @param {string} key
    * @returns {unknown|null}
    */
-  get(key) {
+  get(key: string): unknown | null {
     const dbCache = getDbCache();
 
     // Start async fetch in background
@@ -61,9 +71,9 @@ class HybridCacheService {
    * @param {string} key
    * @returns {Promise<unknown|null>}
    */
-  async getAsync(key) {
+  async getAsync<T = unknown>(key: string): Promise<T | null> {
     const dbCache = getDbCache();
-    return await dbCache.get(key);
+    return await dbCache.get<T>(key);
   }
 
   /**
@@ -73,7 +83,7 @@ class HybridCacheService {
    * @param {unknown} data
    * @param {number} [ttlMs]
    */
-  set(key, data, ttlMs = this.defaultTimeout) {
+  set(key: string, data: unknown, ttlMs = this.defaultTimeout): void {
     const dbCache = getDbCache();
 
     // Deduplicate pending sets for same key
@@ -97,7 +107,11 @@ class HybridCacheService {
    * @param {number} [ttlMs]
    * @returns {Promise<void>}
    */
-  async setAsync(key, data, ttlMs = this.defaultTimeout) {
+  async setAsync(
+    key: string,
+    data: unknown,
+    ttlMs = this.defaultTimeout,
+  ): Promise<void> {
     const dbCache = getDbCache();
     await dbCache.set(key, data, ttlMs);
   }
@@ -105,7 +119,7 @@ class HybridCacheService {
   /**
    * Clear all cache entries.
    */
-  async clear() {
+  async clear(): Promise<void> {
     const dbCache = getDbCache();
     await dbCache.clear();
   }
@@ -114,13 +128,13 @@ class HybridCacheService {
    * Get cache statistics.
    * @returns {Promise<{total: number, valid: number, expired: number, timeout: number}>}
    */
-  async stats() {
+  async stats(): Promise<CacheStats> {
     const dbCache = getDbCache();
     return await dbCache.stats();
   }
 }
 
-function createCacheService(options) {
+function createCacheService(options?: CacheServiceOptions) {
   return new HybridCacheService(options);
 }
 

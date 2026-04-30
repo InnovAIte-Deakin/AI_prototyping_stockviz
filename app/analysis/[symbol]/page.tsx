@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -15,10 +16,12 @@ import { PriceHistoryChart } from "@/components/analysis/price-history-chart";
 import { SentimentHeadlines } from "@/components/analysis/sentiment-headlines";
 import { Button } from "@/components/ui/button";
 import { WishlistButton } from "@/components/user/wishlist-button";
+import type { AnalysisResult } from "@/lib/types";
 import { UserFeatureAuthError } from "@/lib/user/session";
 import {
   getWishlistItemForCurrentUserBySymbol,
   toWishlistItemSummary,
+  type WishlistItemSummary,
 } from "@/lib/user/wishlist-service";
 import {
   buildAnalysisSearchParams,
@@ -27,24 +30,57 @@ import {
   getSingleSearchParam,
   normalizeIndicatorConfig,
   normalizeWeights,
+  type SearchParamValue,
 } from "@/lib/url-state";
 
-const TIMEFRAMES = ["1D", "1W", "1M", "3M", "6M", "1Y", "2Y"];
+const TIMEFRAMES = ["1D", "1W", "1M", "3M", "6M", "1Y", "2Y"] as const;
 const { analyzeSymbol } = runtime;
 
-function getTone(score) {
-  if (score >= 70) return "bg-[#e7f6ec] text-[#24613d]";
-  if (score >= 50) return "bg-[#f8f1df] text-[#7a5d18]";
-  return "bg-[#fdeceb] text-[#8a2f2d]";
+type Timeframe = (typeof TIMEFRAMES)[number];
+
+type AnalysisPageProps = {
+  params: Promise<{ symbol?: string }>;
+  searchParams: Promise<Record<string, SearchParamValue>>;
+};
+
+type ChartPoint = {
+  close: number;
+  date: string;
+  [key: string]: unknown;
+};
+
+type ScoreCardSource = {
+  recommendation?: string;
+  score?: number;
+  source?: string;
+};
+
+const isChartPoint = (value: unknown): value is ChartPoint => {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const point = value as { close?: unknown; date?: unknown };
+  return typeof point.date === "string" && typeof point.close === "number";
+};
+
+function getTone(score: number): string {
+  if (score >= 70) return "bg-finance-success/10 text-finance-success";
+  if (score >= 50) return "bg-finance-warning/10 text-finance-warning";
+  return "bg-destructive/10 text-destructive";
 }
 
-function normalizeTimeframe(value) {
-  return TIMEFRAMES.includes(value) ? value : "1M";
+function normalizeTimeframe(value: string | undefined): Timeframe {
+  return TIMEFRAMES.includes(value as Timeframe) ? (value as Timeframe) : "1M";
 }
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ symbol?: string }>;
+}): Promise<Metadata> {
   const { symbol } = await params;
   const normalizedSymbol = String(symbol || "")
     .trim()
@@ -56,7 +92,10 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function AnalysisPage({ params, searchParams }) {
+export default async function AnalysisPage({
+  params,
+  searchParams,
+}: AnalysisPageProps) {
   const { symbol } = await params;
   const resolvedSearchParams = (await searchParams) || {};
   const normalizedSymbol = String(symbol || "")
@@ -85,7 +124,7 @@ export default async function AnalysisPage({ params, searchParams }) {
     defaultIndicatorConfig,
     availableIndicators,
   );
-  let wishlistItem = null;
+  let wishlistItem: WishlistItemSummary | null = null;
   try {
     const item = await getWishlistItemForCurrentUserBySymbol(normalizedSymbol);
     wishlistItem = item ? toWishlistItemSummary(item) : null;
@@ -104,13 +143,16 @@ export default async function AnalysisPage({ params, searchParams }) {
     },
   );
 
+  const analysisResult = analysis?.analysis as Partial<AnalysisResult> | undefined;
   const summary =
-    analysis?.analysis?.aiInsights?.summary || "No summary available.";
-  const overall = analysis?.analysis?.overall || {};
-  const fundamental = analysis?.analysis?.fundamental || {};
-  const technical = analysis?.analysis?.technical || {};
-  const sentiment = analysis?.analysis?.sentiment || {};
-  const chartData = Array.isArray(stockData?.ohlcv) ? stockData.ohlcv : [];
+    analysisResult?.aiInsights?.summary || "No summary available.";
+  const overall: ScoreCardSource = analysisResult?.overall || {};
+  const fundamental: ScoreCardSource = analysisResult?.fundamental || {};
+  const technical: ScoreCardSource = analysisResult?.technical || {};
+  const sentiment: ScoreCardSource = analysisResult?.sentiment || {};
+  const chartData: ChartPoint[] = Array.isArray(stockData?.ohlcv)
+    ? stockData.ohlcv.filter(isChartPoint)
+    : [];
   const latestPoint = chartData.at(-1);
   const activeIndicatorNames = getEnabledIndicatorNames(activeIndicatorConfig);
   const timeframeHrefs = Object.fromEntries(
@@ -128,51 +170,51 @@ export default async function AnalysisPage({ params, searchParams }) {
 
       return [candidate, href];
     }),
-  );
+  ) as Record<Timeframe, string>;
 
   const scoreCards = [
     {
       label: "Overall",
-      score: overall.score ?? 50,
-      note: overall.recommendation || "HOLD",
+      score: Number(overall.score ?? 50),
+      note: String(overall.recommendation || "HOLD"),
       icon: Gauge,
     },
     {
       label: "Fundamental",
-      score: fundamental.score ?? 50,
-      note: fundamental.recommendation || "HOLD",
+      score: Number(fundamental.score ?? 50),
+      note: String(fundamental.recommendation || "HOLD"),
       icon: BarChart3,
     },
     {
       label: "Technical",
-      score: technical.score ?? 50,
-      note: technical.recommendation || "HOLD",
+      score: Number(technical.score ?? 50),
+      note: String(technical.recommendation || "HOLD"),
       icon: ArrowRight,
     },
     {
       label: "Sentiment",
-      score: sentiment.score ?? 50,
-      note: sentiment.source || "News",
+      score: Number(sentiment.score ?? 50),
+      note: String(sentiment.source || "News"),
       icon: Newspaper,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#f9f9f8] px-6 py-8 text-[#2d3433] md:px-10">
+    <div className="min-h-screen bg-surface px-6 py-8 text-on-background md:px-10">
       <div className="mx-auto max-w-6xl space-y-8">
-        <div className="flex flex-col gap-4 rounded-[28px] border border-[#e6e0db] bg-white p-7 shadow-[0_20px_60px_rgba(55,49,45,0.06)]">
+        <div className="flex flex-col gap-4 rounded-[28px] border border-border bg-white p-7 shadow-[0_20px_60px_rgba(55,49,45,0.06)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Button
               asChild
               variant="ghost"
-              className="h-10 rounded-xl px-3 text-[#5f5e5e] hover:bg-[#f5f1ee]"
+              className="h-10 rounded-xl px-3 text-surface-tint hover:bg-muted"
             >
               <Link href="/dashboard">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to dashboard
               </Link>
             </Button>
-            <p className="text-sm text-[#6a706f]">
+            <p className="text-sm text-muted-foreground">
               Source: {stockData?.source || "Unknown data source"}
             </p>
           </div>
@@ -180,13 +222,13 @@ export default async function AnalysisPage({ params, searchParams }) {
           <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7b7f7f]">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
                   Migrated Analysis Route
                 </p>
-                <h1 className="mt-2 text-4xl font-semibold tracking-tight text-[#5f5e5e] md:text-5xl">
+                <h1 className="mt-2 text-4xl font-semibold tracking-tight text-surface-tint md:text-5xl">
                   {normalizedSymbol} analysis
                 </h1>
-                <p className="mt-3 max-w-2xl text-base leading-7 text-[#636968]">
+                <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
                   This screen is powered by the new root market data layer and
                   extracted analysis services. It is the first end-to-end slice
                   back on the App Router.
@@ -199,10 +241,10 @@ export default async function AnalysisPage({ params, searchParams }) {
                     key={candidate}
                     asChild
                     variant="outline"
-                    className={`h-10 rounded-xl border-[#d7d1cc] px-4 ${
+                    className={`h-10 rounded-xl border-border px-4 ${
                       candidate === timeframe
-                        ? "bg-[#5f5e5e] text-white hover:bg-[#4f4e4e]"
-                        : "bg-white text-[#5f5e5e]"
+                        ? "bg-primary text-white hover:bg-primary/90"
+                        : "bg-white text-surface-tint"
                     }`}
                   >
                     <Link href={timeframeHrefs[candidate]}>{candidate}</Link>
@@ -216,8 +258,8 @@ export default async function AnalysisPage({ params, searchParams }) {
               />
             </div>
 
-            <div className="rounded-[24px] border border-[#ece6e1] bg-[#fbf8f6] p-5">
-              <p className="mb-3 text-sm font-medium text-[#6a706f]">
+            <div className="rounded-[24px] border border-border bg-card p-5">
+              <p className="mb-3 text-sm font-medium text-muted-foreground">
                 Search another symbol
               </p>
               <SymbolSearch
@@ -235,18 +277,18 @@ export default async function AnalysisPage({ params, searchParams }) {
             return (
               <div
                 key={card.label}
-                className="rounded-[22px] border border-[#e6e0db] bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]"
+                className="rounded-[22px] border border-border bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="text-sm font-medium text-[#6a706f]">
+                  <span className="text-sm font-medium text-muted-foreground">
                     {card.label}
                   </span>
-                  <div className="rounded-2xl bg-[#f1ece8] p-2 text-[#5f5e5e]">
+                  <div className="rounded-2xl bg-muted p-2 text-surface-tint">
                     <Icon className="h-4 w-4" />
                   </div>
                 </div>
                 <div className="flex items-end gap-3">
-                  <p className="text-4xl font-semibold text-[#4f4e4e]">
+                  <p className="text-4xl font-semibold text-on-surface">
                     {card.score}
                   </p>
                   <span
@@ -270,20 +312,20 @@ export default async function AnalysisPage({ params, searchParams }) {
         />
 
         <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
-          <div className="rounded-[24px] border border-[#e6e0db] bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
+          <div className="rounded-[24px] border border-border bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-[#4f4e4e]">
+                <h2 className="text-xl font-semibold text-on-surface">
                   Price history
                 </h2>
-                <p className="text-sm text-[#6a706f]">
+                <p className="text-sm text-muted-foreground">
                   {chartData.length} points loaded from{" "}
                   {stockData?.source || "the active provider"}.
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-[#6a706f]">Latest close</p>
-                <p className="text-2xl font-semibold text-[#4f4e4e]">
+                <p className="text-sm text-muted-foreground">Latest close</p>
+                <p className="text-2xl font-semibold text-on-surface">
                   {latestPoint?.close
                     ? `$${Number(latestPoint.close).toFixed(2)}`
                     : "Unavailable"}
@@ -294,53 +336,53 @@ export default async function AnalysisPage({ params, searchParams }) {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-[24px] border border-[#e6e0db] bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
+            <div className="rounded-[24px] border border-border bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
               <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-[#f1ece8] p-3 text-[#5f5e5e]">
+                <div className="rounded-2xl bg-muted p-3 text-surface-tint">
                   <MessageSquareText className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-[#4f4e4e]">
+                  <h2 className="text-xl font-semibold text-on-surface">
                     Summary
                   </h2>
-                  <p className="text-sm text-[#6a706f]">
+                  <p className="text-sm text-muted-foreground">
                     Blended output from extracted root analysis services.
                   </p>
                 </div>
               </div>
-              <p className="mt-5 text-sm leading-7 text-[#4b514f]">{summary}</p>
+              <p className="mt-5 text-sm leading-7 text-on-surface">{summary}</p>
 
-              <dl className="mt-6 grid grid-cols-2 gap-4 rounded-[20px] bg-[#fbf8f6] p-4 text-sm">
+              <dl className="mt-6 grid grid-cols-2 gap-4 rounded-[20px] bg-card p-4 text-sm">
                 <div>
-                  <dt className="text-[#7b7f7f]">Timeframe</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                  <dt className="text-muted-foreground">Timeframe</dt>
+                  <dd className="mt-1 font-medium text-on-surface">
                     {timeframe}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[#7b7f7f]">Weights</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                  <dt className="text-muted-foreground">Weights</dt>
+                  <dd className="mt-1 font-medium text-on-surface">
                     F {weights.fundamental}% / T {weights.technical}% / S{" "}
                     {weights.sentiment}%
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[#7b7f7f]">Indicators</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                  <dt className="text-muted-foreground">Indicators</dt>
+                  <dd className="mt-1 font-medium text-on-surface">
                     {activeIndicatorNames.length > 0
                       ? activeIndicatorNames.join(", ")
                       : "None enabled"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[#7b7f7f]">Recommendation</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                  <dt className="text-muted-foreground">Recommendation</dt>
+                  <dd className="mt-1 font-medium text-on-surface">
                     {overall.recommendation || "HOLD"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[#7b7f7f]">Data source</dt>
-                  <dd className="mt-1 font-medium text-[#4f4e4e]">
+                  <dt className="text-muted-foreground">Data source</dt>
+                  <dd className="mt-1 font-medium text-on-surface">
                     {stockData?.source || "Unknown"}
                   </dd>
                 </div>
@@ -357,3 +399,4 @@ export default async function AnalysisPage({ params, searchParams }) {
     </div>
   );
 }
+

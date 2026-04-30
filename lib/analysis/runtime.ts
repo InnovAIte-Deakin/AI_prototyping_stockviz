@@ -4,12 +4,13 @@ import fundamentalAnalysisServiceModule from "./fundamental-analysis-service.js"
 import sentimentServiceModule from "./sentiment-service.js";
 import enhancedScoringServiceModule from "./enhanced-scoring-service.js";
 import basicTechnicalAnalysisServiceModule from "./basic-technical-analysis-service.js";
-import cacheModule from "../cache/index.js";
+import cacheModule from "../cache/index";
 import observabilityModule from "../observability/index.js";
 import dataSourceManagerModule from "../market/data-source-manager.js";
 import dataServiceModule from "../market/data-service.js";
 import searchServiceModule from "../market/search-service.js";
 import aiModule from "../ai/index.js";
+import type { AnalysisWeights, IndicatorConfig } from "@/lib/url-state";
 
 const { createAnalysisService } = analysisServiceModule;
 const { createWeightService } = weightServiceModule;
@@ -23,7 +24,9 @@ const { createApiTracker } = observabilityModule;
 const { createDataSourceManager } = dataSourceManagerModule;
 const { createDataService } = dataServiceModule;
 const { createSearchService } = searchServiceModule;
-const { createSummaryService } = aiModule;
+const { createSummaryService } = aiModule as typeof aiModule & {
+  createSummaryService: (options?: Record<string, unknown>) => unknown;
+};
 
 const cache = createCacheService();
 const apiTracker = createApiTracker();
@@ -49,14 +52,21 @@ const analysisService = createAnalysisService({
   enhancedScoringService,
 });
 
+type AnalyzeSymbolOptions = {
+  timeframe?: string;
+  mode?: "advanced" | "normal";
+  weights?: AnalysisWeights | null;
+  indicatorsConfig?: IndicatorConfig;
+};
+
 async function analyzeSymbol(
-  symbol,
+  symbol: string,
   {
     timeframe = "1M",
     mode = "advanced",
     weights = null,
     indicatorsConfig = {},
-  } = {},
+  }: AnalyzeSymbolOptions = {},
 ) {
   const stockData = await dataService.fetchStockData(symbol, timeframe);
   const normalizedWeights =
