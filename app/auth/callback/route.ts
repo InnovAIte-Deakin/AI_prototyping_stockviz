@@ -19,10 +19,7 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
 
-  console.log(
-    `[Auth Callback] Code: ${code ? "PRESENT" : "MISSING"}, Origin: ${origin}, Next: ${next}`,
-  );
-
+  let exchangeErrorMessage: string | null = null;
   if (code) {
     const redirectUrl = new URL(next, origin);
     const response = NextResponse.redirect(redirectUrl);
@@ -47,9 +44,9 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      console.error(`[Auth Callback] Exchange Error: ${error.message}`);
+      exchangeErrorMessage =
+        "Unable to complete authentication. Please try signing in again.";
     } else {
-      console.log(`[Auth Callback] Success! Redirecting to ${next}`);
       return response;
     }
   }
@@ -58,8 +55,9 @@ export async function GET(request: NextRequest) {
   // page can display a helpful message instead of a silent redirect.
   const errorDescription = searchParams.get("error_description");
   const loginUrl = new URL("/login", origin);
-  if (errorDescription) {
-    loginUrl.searchParams.set("error", errorDescription);
+  const loginError = errorDescription ?? exchangeErrorMessage;
+  if (loginError) {
+    loginUrl.searchParams.set("error", loginError);
   }
   return NextResponse.redirect(loginUrl);
 }

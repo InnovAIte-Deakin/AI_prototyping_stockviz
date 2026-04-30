@@ -5,28 +5,33 @@ const DASHBOARD_PATH = "/dashboard";
 const LOGIN_PATH = "/login";
 const ROOT_PATH = "/";
 
-/**
- * Public pages that unauthenticated users can access.
- * The auth callback route is handled separately below.
- */
-const PUBLIC_PAGES = new Set([
-  LOGIN_PATH,
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-]);
+const AUTH_FLOW_PAGES = new Set(["/auth/callback", "/reset-password"]);
+const PUBLIC_AUTH_PAGES = new Set([LOGIN_PATH, "/register", "/forgot-password"]);
+
+const PUBLIC_PREFIXES = ["/api"];
+
+const PROTECTED_PREFIXES = [
+  "/admin",
+  "/analysis",
+  DASHBOARD_PATH,
+  "/portfolio",
+  "/stock",
+];
+
+const isPathMatch = (pathname: string, prefix: string) =>
+  pathname === prefix || pathname.startsWith(`${prefix}/`);
+
+const isPublicPath = (pathname: string) =>
+  AUTH_FLOW_PAGES.has(pathname) ||
+  PUBLIC_AUTH_PAGES.has(pathname) ||
+  PUBLIC_PREFIXES.some((prefix) => isPathMatch(pathname, prefix));
+
+const isProtectedPath = (pathname: string) =>
+  PROTECTED_PREFIXES.some((prefix) => isPathMatch(pathname, prefix));
 
 export const handleAuthProxy = async (request: NextRequest) => {
   const { supabase, response } = await updateSession(request);
   const pathname = request.nextUrl.pathname;
-
-  // 1. Auth Flow Pages: Always allow these regardless of session.
-  // /auth/callback handles the code exchange.
-  // /reset-password is the landing page for recovery.
-  const AUTH_FLOW_PAGES = new Set(["/auth/callback", "/reset-password"]);
-  if (AUTH_FLOW_PAGES.has(pathname)) {
-    return response;
-  }
 
   // Use getUser() for the most reliable auth state check.
   // This ensures we're not relying on potentially stale or malformed cookies.
@@ -41,12 +46,25 @@ export const handleAuthProxy = async (request: NextRequest) => {
     return NextResponse.redirect(new URL(targetPath, request.url));
   }
 
-  if (user && PUBLIC_PAGES.has(pathname)) {
+  if (AUTH_FLOW_PAGES.has(pathname)) {
+    return response;
+  }
+
+  if (user && PUBLIC_AUTH_PAGES.has(pathname)) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, request.url));
   }
 
-  if (!user && !PUBLIC_PAGES.has(pathname)) {
-    return NextResponse.redirect(new URL(LOGIN_PATH, request.url));
+  if (!user && isProtectedPath(pathname)) {
+    const loginUrl = new URL(LOGIN_PATH, request.url);
+    loginUrl.searchParams.set(
+      "next",
+      `${pathname}${request.nextUrl.search}`,
+    );
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (isPublicPath(pathname) || !isProtectedPath(pathname)) {
+    return response;
   }
 
   return response;
