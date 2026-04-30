@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
+import { expectLoginRedirect } from "./assert-login-redirect";
 
 const readLocalEnv = (): Record<string, string> => {
   if (!fs.existsSync(".env.local")) {
@@ -88,7 +89,7 @@ test("redirects anonymous analysis requests into the auth flow", async ({
 }) => {
   await page.goto("/analysis/AAPL");
 
-  await expect(page).toHaveURL(/\/login$/);
+  await expectLoginRedirect(page, "/analysis/AAPL");
   await expect(
     page.getByRole("heading", { name: /welcome back/i }),
   ).toBeVisible();

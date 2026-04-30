@@ -14,6 +14,7 @@ const PROTECTED_PREFIXES = [
   "/admin",
   "/analysis",
   DASHBOARD_PATH,
+  "/market",
   "/portfolio",
   "/stock",
 ];

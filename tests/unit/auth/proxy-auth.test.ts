@@ -48,6 +48,16 @@ describe("handleAuthProxy", () => {
     );
   });
 
+  it("protects market routes because they read authenticated wishlist data", async () => {
+    mockSession();
+
+    const response = await handleAuthProxy(requestFor("/market"));
+
+    expect(response.headers.get("location")).toBe(
+      "https://stockviz.test/login?next=%2Fmarket",
+    );
+  });
+
   it("redirects authenticated users away from auth pages", async () => {
     mockSession({ id: "user-1" });
 
