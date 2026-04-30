@@ -308,3 +308,12 @@
     transform: translateX(var(--movers-shift, -50%));
   }
 }
+
+/* Inline animation styles caused SSR/client style serialization mismatches; use vars only from React. */
+.movers-marquee-track {
+  animation-name: movers-marquee-x;
+  animation-duration: var(--movers-duration, 160s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: var(--movers-play-state, running);
+}

@@ -4,11 +4,12 @@
  * Environment:
  * - FMP_API_KEY — Financial Modeling Prep API key (server only).
  * - GEMINI_API_KEY — Google AI Studio / Gemini API key (server only).
- * - GEMINI_EXPLAIN_MODEL — Optional model id (default: gemini-2.5-flash). Set to
- *   gemini-3-flash-preview or another preview model when your account supports it.
+ * - GEMINI_EXPLAIN_MODEL — Optional preferred model id. If omitted, we try fast
+ *   flash models in order (2.0 → 2.5) and fall back when Google returns 503
+ *   overload / UNAVAILABLE.
  */
 
-import { GoogleGenAI } from "@google/genai"
+import { ApiError, GoogleGenAI } from "@google/genai"
 import { NextResponse } from "next/server"
 
 import { fetchFmpStockNews } from "@/lib/fmp/stock-news"
@@ -93,6 +94,107 @@ earnings | guidance | analyst_rating | merger_acquisition | product_news | legal
 
 Return JSON only in the exact schema requested.`
 
+/** Fast models, in try order: prefer 2.0 flash first (often less overloaded than 2.5). */
+const FLASH_MODEL_FALLBACKS = ["gemini-2.0-flash", "gemini-2.5-flash"] as const
+
+const resolveModelCandidates = (): string[] => {
+  const preferred = process.env.GEMINI_EXPLAIN_MODEL?.trim()
+  const ordered = preferred
+    ? [preferred, ...FLASH_MODEL_FALLBACKS]
+    : [...FLASH_MODEL_FALLBACKS]
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const id of ordered) {
+    if (!seen.has(id)) {
+      seen.add(id)
+      out.push(id)
+    }
+  }
+  return out
+}
+
+const isRetryableCapacityError = (err: unknown): boolean => {
+  if (!(err instanceof ApiError)) return false
+  const m = (err.message ?? "").toLowerCase()
+  if (err.status === 429) return true
+  if (err.status === 503) return true
+  return (
+    m.includes("unavailable") ||
+    m.includes("high demand") ||
+    m.includes("overloaded") ||
+    m.includes("resource exhausted")
+  )
+}
+
+const isModelNotFoundError = (err: unknown): boolean => {
+  if (!(err instanceof ApiError)) return false
+  const m = (err.message ?? "").toLowerCase()
+  return err.status === 404 || (m.includes("not found") && m.includes("model"))
+}
+
+const geminiFailureResponse = (err: unknown): NextResponse => {
+  if (err instanceof ApiError) {
+    const msg = (err.message ?? "").toLowerCase()
+    if (err.status === 401) {
+      return NextResponse.json(
+        {
+          error:
+            "Gemini rejected the API key (401). Confirm GEMINI_API_KEY in .env.local, then restart `next dev` so the server picks up the new value.",
+        },
+        { status: 401 }
+      )
+    }
+    if (
+      err.status === 403 &&
+      (msg.includes("permission_denied") ||
+        msg.includes("denied access") ||
+        msg.includes("has been denied"))
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Gemini blocked this API key’s project (403 PERMISSION_DENIED). That is enforced by Google, not this app: the key or Cloud project may be restricted, suspended, or mis-issued. Create a fresh key at https://aistudio.google.com/apikey , try another Google account if needed, check Google Cloud billing / API restrictions, or contact Google support.",
+        },
+        { status: 403 }
+      )
+    }
+    if (
+      err.status === 404 ||
+      (msg.includes("not found") && msg.includes("model"))
+    ) {
+      return NextResponse.json(
+        {
+          error: `Gemini model not found for this key. Set GEMINI_EXPLAIN_MODEL in .env.local (e.g. gemini-2.0-flash or gemini-2.5-flash) and restart the dev server.`,
+        },
+        { status: 502 }
+      )
+    }
+    if (err.status === 429) {
+      return NextResponse.json(
+        {
+          error:
+            "Gemini rate limit reached (429). Wait a bit and try again, or check quota in Google AI Studio.",
+        },
+        { status: 429 }
+      )
+    }
+    if (err.status === 503 || msg.includes("high demand") || msg.includes("unavailable")) {
+      return NextResponse.json(
+        {
+          error:
+            "Gemini is temporarily overloaded (503). Wait a minute and retry, or set GEMINI_EXPLAIN_MODEL to another flash model (e.g. gemini-2.0-flash).",
+        },
+        { status: 503 }
+      )
+    }
+  }
+  console.error("[explain-move]", err)
+  return NextResponse.json(
+    { error: "Could not generate explanation right now." },
+    { status: 500 }
+  )
+}
+
 export async function POST(request: Request) {
   const fmpKey = process.env.FMP_API_KEY?.trim()
   const geminiKey = process.env.GEMINI_API_KEY?.trim()
@@ -160,70 +262,93 @@ export async function POST(request: Request) {
     news: newsForModel,
   })
 
-  const model =
-    process.env.GEMINI_EXPLAIN_MODEL?.trim() || "gemini-2.5-flash"
+  const modelCandidates = resolveModelCandidates()
 
   try {
     const ai = new GoogleGenAI({ apiKey: geminiKey })
-    const response = await ai.models.generateContent({
-      model,
-      contents: userPrompt,
-      config: {
-        abortSignal: signal,
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.35,
-        responseMimeType: "application/json",
-        responseJsonSchema: explainMoveGeminiJsonSchema,
+    let lastError: unknown = null
+
+    for (const model of modelCandidates) {
+      if (signal.aborted) {
+        return new NextResponse(null, { status: 408 })
+      }
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: userPrompt,
+          config: {
+            abortSignal: signal,
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.35,
+            responseMimeType: "application/json",
+            responseJsonSchema: explainMoveGeminiJsonSchema,
+          },
+        })
+
+        const rawText = response.text?.trim()
+        if (!rawText) {
+          lastError = new Error("empty response")
+          continue
+        }
+
+        let jsonUnknown: unknown
+        try {
+          jsonUnknown = JSON.parse(rawText)
+        } catch {
+          lastError = new SyntaxError("invalid json")
+          continue
+        }
+
+        const outParsed = explainMoveResponseSchema.safeParse(jsonUnknown)
+        if (!outParsed.success) {
+          lastError = outParsed.error
+          continue
+        }
+
+        const value: ExplainMoveResponse = {
+          ...outParsed.data,
+          symbol: input.symbol.toUpperCase(),
+          companyName: input.companyName,
+          direction: input.direction,
+        }
+
+        serverResultCache.set(cacheKey, {
+          value,
+          expiresAt: Date.now() + SERVER_CACHE_TTL_MS,
+        })
+
+        return NextResponse.json(value)
+      } catch (err) {
+        lastError = err
+        if (signal.aborted) {
+          return new NextResponse(null, { status: 408 })
+        }
+        if (
+          isRetryableCapacityError(err) ||
+          isModelNotFoundError(err)
+        ) {
+          console.warn(
+            `[explain-move] model "${model}" failed, trying next:`,
+            err instanceof ApiError ? err.message : err
+          )
+          continue
+        }
+        return geminiFailureResponse(err)
+      }
+    }
+
+    console.error("[explain-move] all model candidates failed", lastError)
+    return NextResponse.json(
+      {
+        error:
+          "Gemini could not run any configured flash model (overload or validation). Wait a minute and retry, or set GEMINI_EXPLAIN_MODEL explicitly.",
       },
-    })
-
-    const rawText = response.text?.trim()
-    if (!rawText) {
-      return NextResponse.json(
-        { error: "Could not generate explanation right now." },
-        { status: 500 }
-      )
-    }
-
-    let jsonUnknown: unknown
-    try {
-      jsonUnknown = JSON.parse(rawText)
-    } catch {
-      return NextResponse.json(
-        { error: "Could not generate explanation right now." },
-        { status: 500 }
-      )
-    }
-
-    const outParsed = explainMoveResponseSchema.safeParse(jsonUnknown)
-    if (!outParsed.success) {
-      return NextResponse.json(
-        { error: "Could not generate explanation right now." },
-        { status: 500 }
-      )
-    }
-
-    const value: ExplainMoveResponse = {
-      ...outParsed.data,
-      symbol: input.symbol.toUpperCase(),
-      companyName: input.companyName,
-      direction: input.direction,
-    }
-
-    serverResultCache.set(cacheKey, {
-      value,
-      expiresAt: Date.now() + SERVER_CACHE_TTL_MS,
-    })
-
-    return NextResponse.json(value)
+      { status: 503 }
+    )
   } catch (err) {
     if (signal.aborted) {
       return new NextResponse(null, { status: 408 })
     }
-    console.error("[explain-move]", err)
-    return NextResponse.json(
-      { error: "Could not generate explanation right now." },
-      { status: 500 }
-    )
+    return geminiFailureResponse(err)
   }
 }

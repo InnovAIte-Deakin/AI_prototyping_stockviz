@@ -51,21 +51,21 @@ const formatCategoryLabel = (c: string): string =>
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ")
 
-const useFineHover = (): boolean =>
-  React.useSyncExternalStore(
-    (onStoreChange) => {
-      if (typeof window === "undefined") {
-        return () => {}
-      }
-      const mq = window.matchMedia("(hover: hover) and (pointer: fine)")
-      mq.addEventListener("change", onStoreChange)
-      return () => mq.removeEventListener("change", onStoreChange)
-    },
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches,
-    () => true
-  )
+/**
+ * Defer fine-pointer / hover detection until after mount so SSR and the first
+ * client paint match (avoids hydration mismatches from useSyncExternalStore).
+ */
+const useFineHover = (): boolean => {
+  const [fine, setFine] = React.useState(false)
+  React.useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const update = () => setFine(mq.matches)
+    update()
+    mq.addEventListener("change", update)
+    return () => mq.removeEventListener("change", update)
+  }, [])
+  return fine
+}
 
 type MoverCardFaceProps = {
   row: MoverRow
@@ -642,7 +642,9 @@ export const MoversCarousel = ({ gainers, losers }: MoversCarouselProps) => {
     return Math.min(520, Math.max(160, items.length * 18))
   }, [items.length])
 
-  const isCarouselPaused = popoverKey !== null
+  /** True while the pointer is anywhere over the scrolling track (cards, gaps, duplicate strip). */
+  const [isPointerOverTrack, setIsPointerOverTrack] = React.useState(false)
+  const isAnimationPaused = isPointerOverTrack || popoverKey !== null
 
   const shiftVar = stripPx !== null ? `${-stripPx}px` : "-50%"
 
@@ -724,15 +726,14 @@ export const MoversCarousel = ({ gainers, losers }: MoversCarouselProps) => {
       {edgeFade}
       <div
         ref={trackRef}
-        className={cn(
-          "flex w-max shrink-0 gap-3 px-4 py-1 will-change-transform sm:px-6",
-          "hover:[animation-play-state:paused] focus-within:[animation-play-state:paused]",
-          isCarouselPaused && "[animation-play-state:paused]"
-        )}
+        className="movers-marquee-track flex w-max shrink-0 gap-3 px-4 py-1 will-change-transform sm:px-6"
+        onPointerEnter={() => setIsPointerOverTrack(true)}
+        onPointerLeave={() => setIsPointerOverTrack(false)}
         style={
           {
             "--movers-shift": shiftVar,
-            animation: `movers-marquee-x ${durationSec}s linear infinite`,
+            "--movers-duration": `${durationSec}s`,
+            "--movers-play-state": isAnimationPaused ? "paused" : "running",
           } as React.CSSProperties
         }
       >
