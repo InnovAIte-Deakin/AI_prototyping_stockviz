@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { upsertStocks } from "@/lib/stocks/upsert-stock";
 
 const FINNHUB_API = "https://finnhub.io/api/v1/search";
 
 /** Proxies Finnhub symbol lookup (`/search`). */
 export async function GET(request: Request) {
+  const limited = enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   const token = process.env.FINNHUB_API_KEY;
   if (!token) {
     return NextResponse.json(

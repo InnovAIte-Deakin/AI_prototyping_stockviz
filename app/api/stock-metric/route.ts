@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { enforceRateLimit } from "@/lib/rate-limit";
+
 const FINNHUB_API = "https://finnhub.io/api/v1/stock/metric";
 
 const validateSymbol = (raw: string | null): string | null => {
@@ -15,6 +17,11 @@ const validateSymbol = (raw: string | null): string | null => {
 
 /** Proxies Finnhub `GET /stock/metric` (basic financials). */
 export async function GET(request: Request) {
+  const limited = enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   const token = process.env.FINNHUB_API_KEY;
   if (!token) {
     return NextResponse.json(

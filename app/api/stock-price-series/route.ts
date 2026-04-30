@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { parseAlphaVantageTimeSeries } from "@/lib/alphavantage/parse-time-series";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 const ALPHA_VANTAGE_QUERY = "https://www.alphavantage.co/query";
 
@@ -25,6 +26,11 @@ const validateInterval = (raw: string | null): "daily" | "monthly" | null => {
 
 /** Proxies Alpha Vantage `TIME_SERIES_DAILY` (compact) or `TIME_SERIES_MONTHLY`. */
 export async function GET(request: Request) {
+  const limited = enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   const apiKey = process.env.ALPHA_VANTAGE_API_KEY;
   if (!apiKey) {
     return NextResponse.json(

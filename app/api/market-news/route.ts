@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { enforceRateLimit } from "@/lib/rate-limit";
 import type { FinnhubMarketNewsCategory } from "@/lib/types";
 
 const FINNHUB_API = "https://finnhub.io/api/v1/news";
@@ -13,6 +14,11 @@ const CATEGORIES = new Set<FinnhubMarketNewsCategory>([
 
 /** Proxies Finnhub market news; optional `limit` trims the newest N items. */
 export async function GET(request: Request) {
+  const limited = enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   const token = process.env.FINNHUB_API_KEY;
   if (!token) {
     return NextResponse.json(
