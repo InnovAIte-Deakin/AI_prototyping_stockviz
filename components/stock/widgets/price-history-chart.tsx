@@ -395,6 +395,9 @@ const SelectableChartSection = ({
   )
   const abortRef = React.useRef<AbortController | null>(null)
 
+  const [mobileFrom, setMobileFrom] = React.useState("")
+  const [mobileTo, setMobileTo] = React.useState("")
+
   const isYearlyTab = tab === "yearly"
 
   React.useEffect(() => {
@@ -421,14 +424,6 @@ const SelectableChartSection = ({
   React.useEffect(() => {
     clearSelection()
   }, [tab, symbol, clearSelection])
-
-  void dragTick
-  const provisionalLoHi: { lo: number; hi: number } | null = isSelecting
-    ? {
-        lo: Math.min(dragRef.current.a, dragRef.current.b),
-        hi: Math.max(dragRef.current.a, dragRef.current.b),
-      }
-    : committed
 
   const runExplainRequest = React.useCallback(
     async (stats: SelectedRangePayload) => {
@@ -588,9 +583,6 @@ const SelectableChartSection = ({
   const showEmpty =
     !showLoading && !showError && chartRows.length === 0
 
-  const [mobileFrom, setMobileFrom] = React.useState("")
-  const [mobileTo, setMobileTo] = React.useState("")
-
   const handleApplyMobileRange = React.useCallback(() => {
     if (!mobileFrom || !mobileTo) {
       return
@@ -629,6 +621,14 @@ const SelectableChartSection = ({
     }
     void runExplainRequest(stats)
   }, [mobileFrom, mobileTo, tab, chartRows, isYearlyTab, symbol, runExplainRequest])
+
+  void dragTick
+  const provisionalLoHi: { lo: number; hi: number } | null = isSelecting
+    ? {
+        lo: Math.min(dragRef.current.a, dragRef.current.b),
+        hi: Math.max(dragRef.current.a, dragRef.current.b),
+      }
+    : committed
 
   if (showLoading) {
     return (
@@ -726,20 +726,32 @@ const SelectableChartSection = ({
         </LineChart>
       </ChartContainer>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <p className="text-muted-foreground text-xs">
           Drag across the chart to explain a move.
         </p>
-        {committed ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={clearSelection}
-          >
-            Clear selection
-          </Button>
-        ) : null}
+        <div className="flex flex-wrap gap-2">
+          {rangeStats && !popoverOpen ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setPopoverOpen(true)}
+            >
+              View explanation
+            </Button>
+          ) : null}
+          {committed ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={clearSelection}
+            >
+              Clear selection
+            </Button>
+          ) : null}
+        </div>
       </div>
 
       <div className="border-border/60 space-y-2 rounded-lg border bg-muted/10 p-3 md:hidden">

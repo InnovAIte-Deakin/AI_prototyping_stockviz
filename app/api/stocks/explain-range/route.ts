@@ -269,7 +269,6 @@ export async function POST(request: Request) {
 
         return NextResponse.json(value)
       } catch (err) {
-        lastError = err
         if (signal.aborted) {
           return new NextResponse(null, { status: 408 })
         }
