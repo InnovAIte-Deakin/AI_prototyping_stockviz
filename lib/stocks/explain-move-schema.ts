@@ -28,16 +28,16 @@ export const explainMoveRequestSchema = z.object({
   price: z.number().finite(),
   change: z.number().finite(),
   changesPercentage: z.number().finite(),
-  exchange: z.string().max(64).optional().nullable(),
+  exchange: z.union([z.string().max(64), z.null()]).optional(),
 })
 
 export type ExplainMoveRequest = z.infer<typeof explainMoveRequestSchema>
 
 const evidenceItemSchema = z.object({
   headline: z.string().min(1),
-  source: z.string().optional().nullable(),
-  url: z.string().optional().nullable(),
-  publishedDate: z.string().optional().nullable(),
+  source: z.string().nullish(),
+  url: z.string().nullish(),
+  publishedDate: z.string().nullish(),
   relevance: z.string().min(1),
 })
 
