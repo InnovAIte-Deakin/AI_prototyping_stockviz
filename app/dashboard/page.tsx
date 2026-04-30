@@ -1,22 +1,42 @@
-import { signOut } from "@/app/auth/actions";
-import { Button } from "@/components/ui/button";
+import { signOut } from "@/app/auth/actions"
+import { MoversCarousel } from "@/components/dashboard/movers-carousel"
+import { Button } from "@/components/ui/button"
+import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
 
-const DashboardPage = () => {
+const DashboardPage = async () => {
+  const { gainers, losers, error } = await fetchBiggestMovers()
+
   return (
-    <div className="min-h-screen bg-[#f9f9f8] flex flex-col items-center justify-center p-6 text-center">
-      <h1 className="text-4xl font-bold text-[#5f5e5e] mb-8">Dashboard</h1>
-      <p className="text-[#5a6060] mb-12">You are currently logged in.</p>
-      
-      <form action={signOut}>
-        <Button 
-          type="submit"
-          className="bg-[#5f5e5e] text-white h-[56px] px-8 rounded-xl font-bold text-base hover:opacity-90 transition-all"
-        >
-          Sign Out
-        </Button>
-      </form>
-    </div>
-  );
-};
+    <div className="min-h-screen bg-black text-zinc-100">
+      <section className="border-b border-zinc-900 bg-black pb-8 pt-6">
+        {error ? (
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <p
+              className="rounded-lg border border-amber-900/50 bg-amber-950/40 px-4 py-3 text-sm text-amber-200"
+              role="alert"
+            >
+              {error}
+            </p>
+          </div>
+        ) : (
+          <MoversCarousel gainers={gainers} losers={losers} />
+        )}
+      </section>
 
-export default DashboardPage;
+      <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+        <p className="mb-10 text-sm text-zinc-500">You are signed in.</p>
+        <form action={signOut}>
+          <Button
+            type="submit"
+            variant="outline"
+            className="h-11 rounded-xl border-zinc-700 bg-zinc-950 px-8 font-semibold text-zinc-100 hover:bg-zinc-900"
+          >
+            Sign out
+          </Button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default DashboardPage

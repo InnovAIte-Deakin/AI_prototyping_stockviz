@@ -200,7 +200,11 @@
 }
 
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 300,
+    "GRAD" 0,
+    "opsz" 20;
   vertical-align: middle;
 }
 
@@ -291,5 +295,16 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+}
+
+/* Dashboard movers: translate by measured first-strip width (CSS var). */
+@keyframes movers-marquee-x {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(var(--movers-shift, -50%));
   }
 }
