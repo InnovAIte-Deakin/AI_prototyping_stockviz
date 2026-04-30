@@ -157,12 +157,12 @@ export function TrendingTabs({
   );
 
   return (
-    <Card className="rounded-[28px] border border-[#e6e0db] bg-white shadow-[0_18px_48px_rgba(55,49,45,0.05)]">
+    <Card className="rounded-[28px] border border-border bg-white shadow-[0_18px_48px_rgba(55,49,45,0.05)]">
       <CardHeader className="space-y-3">
-        <CardTitle className="text-xl text-[#4f4e4e]">
+        <CardTitle className="text-xl text-on-surface">
           Curated market tabs
         </CardTitle>
-        <CardDescription className="text-[#6a706f]">
+        <CardDescription className="text-muted-foreground">
           Use curated symbol sets for now, then branch into the migrated stock
           detail and analysis routes for deeper work.
         </CardDescription>
@@ -184,7 +184,7 @@ export function TrendingTabs({
                 <TabsTrigger
                   key={bucket.id}
                   value={bucket.id}
-                  className="rounded-full border border-[#ddd6d0] bg-white px-4 py-2 text-[#5f5e5e] data-active:border-[#5f5e5e] data-active:bg-[#5f5e5e] data-active:text-white data-active:after:hidden"
+                  className="rounded-full border border-border bg-white px-4 py-2 text-surface-tint data-active:border-primary data-active:bg-primary data-active:text-white data-active:after:hidden"
                 >
                   <Icon className="h-4 w-4" />
                   {bucket.label}
@@ -208,10 +208,10 @@ export function TrendingTabs({
                 <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
                   <div className="space-y-4">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-[#4f4e4e]">
+                      <p className="text-sm font-medium text-on-surface">
                         {bucket.label}
                       </p>
-                      <p className="text-sm leading-6 text-[#6a706f]">
+                      <p className="text-sm leading-6 text-muted-foreground">
                         {bucket.description}
                       </p>
                     </div>
@@ -228,8 +228,8 @@ export function TrendingTabs({
                             className={cn(
                               "rounded-[22px] border px-4 py-4 text-left transition-colors",
                               isSelected
-                                ? "border-[#5f5e5e] bg-[#5f5e5e] text-white shadow-[0_12px_28px_rgba(55,49,45,0.12)]"
-                                : "border-[#ece6e1] bg-[#fbf8f6] text-[#4f4e4e] hover:bg-[#f5f1ee]",
+                                ? "border-primary bg-primary text-white shadow-[0_12px_28px_rgba(55,49,45,0.12)]"
+                                : "border-border bg-card text-on-surface hover:bg-muted",
                             )}
                           >
                             <div className="flex items-start justify-between gap-3">
@@ -243,7 +243,7 @@ export function TrendingTabs({
                                       "text-sm",
                                       isSelected
                                         ? "text-white/75"
-                                        : "text-[#6a706f]",
+                                        : "text-muted-foreground",
                                     )}
                                   >
                                     {item.name}
@@ -254,7 +254,7 @@ export function TrendingTabs({
                                     "mt-2 text-sm leading-6",
                                     isSelected
                                       ? "text-white/85"
-                                      : "text-[#6a706f]",
+                                      : "text-muted-foreground",
                                   )}
                                 >
                                   {item.thesis}
@@ -265,7 +265,7 @@ export function TrendingTabs({
                                   "border px-2",
                                   isSelected
                                     ? "border-white/20 bg-white/10 text-white"
-                                    : "border-[#ddd6d0] bg-white text-[#6a706f]",
+                                    : "border-border bg-white text-muted-foreground",
                                 )}
                               >
                                 Focus
@@ -278,32 +278,32 @@ export function TrendingTabs({
                   </div>
 
                   <div className="space-y-4">
-                    <Card className="rounded-[24px] border border-[#ece6e1] bg-[#fbf8f6] shadow-none">
+                    <Card className="rounded-[24px] border border-border bg-card shadow-none">
                       <CardHeader className="space-y-3">
                         <div className="flex flex-wrap items-center gap-2">
-                          <Badge className="border-[#ddd6d0] bg-white text-[#6a706f]">
+                          <Badge className="border-border bg-white text-muted-foreground">
                             Spotlight
                           </Badge>
                           {spotlight.tags.map((tag) => (
                             <Badge
                               key={`${spotlight.symbol}-${tag}`}
-                              className="border-[#d7dfdb] bg-white text-[#2f6b43]"
+                              className="border-border bg-white text-finance-success"
                             >
                               {tag}
                             </Badge>
                           ))}
                         </div>
                         <div>
-                          <CardTitle className="text-xl text-[#4f4e4e]">
+                          <CardTitle className="text-xl text-on-surface">
                             {spotlight.symbol} - {spotlight.name}
                           </CardTitle>
-                          <CardDescription className="text-[#6a706f]">
+                          <CardDescription className="text-muted-foreground">
                             {spotlight.catalyst}
                           </CardDescription>
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <p className="text-sm leading-7 text-[#636968]">
+                        <p className="text-sm leading-7 text-muted-foreground">
                           {spotlight.thesis}
                         </p>
 
@@ -319,7 +319,7 @@ export function TrendingTabs({
                           />
                           <Button
                             asChild
-                            className="h-10 rounded-xl bg-[#5f5e5e] px-4 text-white hover:bg-[#4f4e4e]"
+                            className="h-10 rounded-xl bg-primary px-4 text-white hover:bg-primary/90"
                           >
                             <Link
                               href={`/stock/${encodeURIComponent(spotlight.symbol)}`}
@@ -331,7 +331,7 @@ export function TrendingTabs({
                           <Button
                             asChild
                             variant="outline"
-                            className="h-10 rounded-xl border-[#d6d0cb] bg-white px-4 text-[#5f5e5e] hover:bg-[#f2efec]"
+                            className="h-10 rounded-xl border-border bg-white px-4 text-surface-tint hover:bg-muted"
                           >
                             <Link
                               href={`/analysis/${encodeURIComponent(spotlight.symbol)}`}
@@ -355,3 +355,4 @@ export function TrendingTabs({
     </Card>
   );
 }
+

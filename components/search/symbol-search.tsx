@@ -100,46 +100,46 @@ export function SymbolSearch({
         className={`flex ${compact ? "flex-col gap-2 sm:flex-row" : "flex-col gap-3 sm:flex-row"}`}
       >
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8b908f]" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={placeholder}
-            className="h-12 rounded-xl border-[#d8d4d0] bg-white pl-11 text-base shadow-sm focus-visible:border-[#5f5e5e] focus-visible:ring-0"
+            className="h-12 rounded-xl border-border bg-white pl-11 text-base shadow-sm focus-visible:border-primary focus-visible:ring-0"
           />
         </div>
         <Button
           type="button"
           disabled={!canSubmit || isPending}
           onClick={() => openAnalysis(query)}
-          className="h-12 rounded-xl bg-[#5f5e5e] px-5 text-white hover:bg-[#4f4e4e]"
+          className="h-12 rounded-xl bg-primary px-5 text-white hover:bg-primary/90"
         >
           {isPending ? "Opening..." : submitLabel}
         </Button>
       </div>
 
       {deferredQuery.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-[#e4e0dc] bg-white shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
           {isLoading ? (
-            <div className="px-4 py-4 text-sm text-[#6a706f]">Searching...</div>
+            <div className="px-4 py-4 text-sm text-muted-foreground">Searching...</div>
           ) : results.length > 0 ? (
-            <ul className="divide-y divide-[#efeae6]">
+            <ul className="divide-y divide-border">
               {results.map((result) => (
                 <li key={`${result.symbol}-${result.name || ""}`}>
                   <button
                     type="button"
                     onClick={() => openAnalysis(result.symbol)}
-                    className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-[#f6f3f0]"
+                    className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted"
                   >
                     <div>
-                      <p className="font-semibold text-[#2d3433]">
+                      <p className="font-semibold text-on-background">
                         {result.symbol}
                       </p>
-                      <p className="text-sm text-[#6a706f]">
+                      <p className="text-sm text-muted-foreground">
                         {result.name || "Unnamed listing"}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-[#6a706f]">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{result.region || result.type || "Market"}</span>
                       <ArrowRight className="h-4 w-4" />
                     </div>
@@ -148,7 +148,7 @@ export function SymbolSearch({
               ))}
             </ul>
           ) : (
-            <div className="px-4 py-4 text-sm text-[#6a706f]">
+            <div className="px-4 py-4 text-sm text-muted-foreground">
               No matches found. You can still open analysis for{" "}
               <span className="font-medium">
                 &quot;{deferredQuery.toUpperCase()}&quot;
@@ -161,3 +161,4 @@ export function SymbolSearch({
     </div>
   );
 }
+

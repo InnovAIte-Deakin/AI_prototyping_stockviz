@@ -46,18 +46,18 @@ export function MarketStatusCard() {
 
   const statusLabel = data?.isOpen ? "Open" : "Closed";
   const statusTone = data?.isOpen
-    ? "border-[#d7dfdb] bg-[#eef4f1] text-[#2f6b43]"
-    : "border-[#e6d8d5] bg-[#f8efed] text-[#9a4d43]";
+    ? "border-border bg-finance-success/10 text-finance-success"
+    : "border-border bg-destructive/10 text-destructive";
 
   return (
-    <Card className="rounded-[28px] border border-[#e6e0db] bg-white shadow-[0_18px_48px_rgba(55,49,45,0.05)]">
+    <Card className="rounded-[28px] border border-border bg-white shadow-[0_18px_48px_rgba(55,49,45,0.05)]">
       <CardHeader className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle className="text-xl text-[#4f4e4e]">
+            <CardTitle className="text-xl text-on-surface">
               US market status
             </CardTitle>
-            <CardDescription className="text-[#6a706f]">
+            <CardDescription className="text-muted-foreground">
               Live session information from the current root Finnhub proxy.
             </CardDescription>
           </div>
@@ -66,7 +66,7 @@ export function MarketStatusCard() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-[#ddd6d0] bg-[#f9f9f8] text-[#5f5e5e] hover:bg-[#f2efec]"
+            className="border-border bg-surface text-surface-tint hover:bg-muted"
             onClick={() => {
               void refetch();
             }}
@@ -100,18 +100,18 @@ export function MarketStatusCard() {
 
         {!isLoading && !error ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-[24px] border border-[#ece6e1] bg-[#fbf8f6] p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-[24px] border border-border bg-card p-5">
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#7b7f7f]">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   Current session
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge className={statusTone}>{statusLabel}</Badge>
-                  <Badge className="border-[#ddd6d0] bg-white text-[#6a706f]">
+                  <Badge className="border-border bg-white text-muted-foreground">
                     {formatSession(data?.session)}
                   </Badge>
                 </div>
-                <p className="text-sm leading-6 text-[#6a706f]">
+                <p className="text-sm leading-6 text-muted-foreground">
                   {data?.holiday
                     ? `Holiday: ${data.holiday}`
                     : "No market holiday reported for the current snapshot."}
@@ -119,48 +119,48 @@ export function MarketStatusCard() {
               </div>
 
               <div className="flex items-center gap-3 rounded-[20px] bg-white px-4 py-3 shadow-[0_10px_24px_rgba(55,49,45,0.04)]">
-                <div className="rounded-2xl bg-[#f3eeea] p-2 text-[#5f5e5e]">
+                <div className="rounded-2xl bg-muted p-2 text-surface-tint">
                   <Activity className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#4f4e4e]">
+                  <p className="text-sm font-medium text-on-surface">
                     Auto-refresh
                   </p>
-                  <p className="text-xs text-[#6a706f]">Every 30 seconds</p>
+                  <p className="text-xs text-muted-foreground">Every 30 seconds</p>
                 </div>
               </div>
             </div>
 
             <dl className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-[22px] border border-[#ece6e1] bg-white px-4 py-4">
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7b7f7f]">
+              <div className="rounded-[22px] border border-border bg-white px-4 py-4">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                   Exchange
                 </dt>
-                <dd className="mt-2 text-base font-semibold text-[#4f4e4e]">
+                <dd className="mt-2 text-base font-semibold text-on-surface">
                   {data?.exchange || "US"}
                 </dd>
               </div>
-              <div className="rounded-[22px] border border-[#ece6e1] bg-white px-4 py-4">
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7b7f7f]">
+              <div className="rounded-[22px] border border-border bg-white px-4 py-4">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                   Timezone
                 </dt>
-                <dd className="mt-2 text-base font-semibold text-[#4f4e4e]">
+                <dd className="mt-2 text-base font-semibold text-on-surface">
                   {data?.timezone || "Unknown"}
                 </dd>
               </div>
-              <div className="rounded-[22px] border border-[#ece6e1] bg-white px-4 py-4">
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7b7f7f]">
+              <div className="rounded-[22px] border border-border bg-white px-4 py-4">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                   Holiday
                 </dt>
-                <dd className="mt-2 text-base font-semibold text-[#4f4e4e]">
+                <dd className="mt-2 text-base font-semibold text-on-surface">
                   {data?.holiday || "None"}
                 </dd>
               </div>
-              <div className="rounded-[22px] border border-[#ece6e1] bg-white px-4 py-4">
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7b7f7f]">
+              <div className="rounded-[22px] border border-border bg-white px-4 py-4">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                   Snapshot
                 </dt>
-                <dd className="mt-2 text-base font-semibold text-[#4f4e4e]">
+                <dd className="mt-2 text-base font-semibold text-on-surface">
                   {formatSnapshot(data?.t)}
                 </dd>
               </div>
@@ -171,3 +171,4 @@ export function MarketStatusCard() {
     </Card>
   );
 }
+

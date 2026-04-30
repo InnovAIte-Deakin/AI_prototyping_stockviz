@@ -46,14 +46,14 @@ export function MarketNewsFeed() {
   });
 
   return (
-    <Card className="rounded-[28px] border border-[#e6e0db] bg-white shadow-[0_18px_48px_rgba(55,49,45,0.05)]">
+    <Card className="rounded-[28px] border border-border bg-white shadow-[0_18px_48px_rgba(55,49,45,0.05)]">
       <CardHeader className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle className="text-xl text-[#4f4e4e]">
+            <CardTitle className="text-xl text-on-surface">
               Market news feed
             </CardTitle>
-            <CardDescription className="text-[#6a706f]">
+            <CardDescription className="text-muted-foreground">
               Fresh general headlines from the root Finnhub news proxy.
             </CardDescription>
           </div>
@@ -62,7 +62,7 @@ export function MarketNewsFeed() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-[#ddd6d0] bg-[#f9f9f8] text-[#5f5e5e] hover:bg-[#f2efec]"
+            className="border-border bg-surface text-surface-tint hover:bg-muted"
             onClick={() => {
               void refetch();
             }}
@@ -91,7 +91,7 @@ export function MarketNewsFeed() {
         ) : null}
 
         {!isLoading && !error && items.length === 0 ? (
-          <p className="text-sm text-[#6a706f]">
+          <p className="text-sm text-muted-foreground">
             No recent market headlines are available right now.
           </p>
         ) : null}
@@ -107,22 +107,22 @@ export function MarketNewsFeed() {
                   href={item.url || "#"}
                   target="_blank"
                   rel="noreferrer"
-                  className="block rounded-[22px] border border-[#ece6e1] bg-[#fbf8f6] px-4 py-4 transition-colors hover:bg-[#f6f2ef]"
+                  className="block rounded-[22px] border border-border bg-card px-4 py-4 transition-colors hover:bg-muted"
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge className="border-[#ddd6d0] bg-white text-[#6a706f]">
+                    <Badge className="border-border bg-white text-muted-foreground">
                       {item.source || "Unknown source"}
                     </Badge>
-                    <span className="text-xs text-[#7b7f7f]">
+                    <span className="text-xs text-muted-foreground">
                       {formatPublished(item.datetime)}
                     </span>
                   </div>
 
-                  <h3 className="mt-3 text-base font-semibold leading-6 text-[#4f4e4e]">
+                  <h3 className="mt-3 text-base font-semibold leading-6 text-on-surface">
                     {item.headline || "Untitled market update"}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-[#6a706f]">
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     {item.summary
                       ? item.summary.slice(0, 220)
                       : "Open the article to review the full market context."}
@@ -134,7 +134,7 @@ export function MarketNewsFeed() {
                       {relatedSymbols.map((symbol) => (
                         <Badge
                           key={`${item.id}-${symbol}`}
-                          className="border-[#d7dfdb] bg-white text-[#2f6b43]"
+                          className="border-border bg-white text-finance-success"
                         >
                           {symbol}
                         </Badge>
@@ -150,3 +150,4 @@ export function MarketNewsFeed() {
     </Card>
   );
 }
+
