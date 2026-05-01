@@ -179,11 +179,17 @@ function getProviderDiagnostics(): ProviderDiagnostic[] {
           : "Missing Supabase URL or service-role key.",
     },
     {
+      name: "Yahoo Finance",
+      status: "ok",
+      detail:
+        "Primary stock data, fundamentals, stock-detail history, and search provider. No API key is required.",
+    },
+    {
       name: "Alpha Vantage",
       status: alphaVantage ? "ok" : "warning",
       detail: alphaVantage
-        ? "Primary analysis market-data key is configured."
-        : "Primary analysis provider key is not configured.",
+        ? "Sentiment provider and fallback market-data key is configured."
+        : "Sentiment provider and fallback market-data key is not configured.",
     },
     {
       name: "Finnhub",
