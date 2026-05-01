@@ -14,6 +14,19 @@ StockViz is a web application for exploring, filtering, and visualizing stock ma
 - `supabase/` contains backend configuration and supporting project assets.
 - `legacy/frontend/` and `legacy/backend/` contain the original React and Express prototype and are no longer part of the active runtime.
 
+## Yahoo Fundamental Branch
+
+This branch explores a new market data direction for StockViz by making Yahoo Finance the primary source for price series, fundamentals, and symbol search. It was created separately from the local migration branch so the existing migration workflow can remain stable while the Yahoo-based provider path is evaluated.
+
+Changes from the original migrated project:
+
+- Added a Yahoo Finance market data adapter for chart data, quote summary fundamentals, and symbol search normalization.
+- Updated the market data manager so Yahoo Finance is tried first for stock data, fundamentals, and search, while the existing providers remain available as fallbacks.
+- Updated the stock price series API to serve Yahoo Finance chart data through the existing `{ series }` response contract used by the application.
+- Renamed the active client-side price series hook and yearly aggregation utility to provider-neutral modules, while keeping Alpha Vantage compatibility re-exports for existing imports.
+- Updated dashboard/detail copy and admin diagnostics so the active provider status reflects Yahoo Finance as the primary source and Alpha Vantage as a fallback or sentiment provider.
+- Added tests for the Yahoo Finance normalizers, provider fallback behavior, and the updated price series route.
+
 ## Getting Started
 
 Install dependencies:
