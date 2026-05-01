@@ -61,6 +61,7 @@ describe("search service", () => {
       env: { FINNHUB_API_KEY: "finnhub-test-key" },
       fetchImpl,
     });
+    manager.priorityOrder.search = ["finnhub"];
     const service = createSearchService({ dataSourceManager: manager });
 
     await expect(service.searchSymbols(" apple ")).resolves.toEqual({
@@ -98,6 +99,85 @@ describe("search service", () => {
       true,
       expect.any(Number),
     );
+  });
+
+  it("uses Yahoo Finance as the primary symbol search provider", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi.fn<FetchMock>(async () =>
+      Response.json({
+        quotes: [
+          {
+            exchDisp: "NASDAQ",
+            longname: "Apple Inc.",
+            quoteType: "EQUITY",
+            symbol: "AAPL",
+          },
+        ],
+      }),
+    );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: {},
+      fetchImpl,
+    });
+    const service = createSearchService({ dataSourceManager: manager });
+
+    await expect(service.searchSymbols(" apple ")).resolves.toEqual({
+      query: "apple",
+      results: [
+        {
+          name: "Apple Inc.",
+          region: "NASDAQ",
+          symbol: "AAPL",
+          type: "EQUITY",
+        },
+      ],
+      source: "Yahoo Finance",
+      status: "success",
+    });
+
+    expect(String(fetchImpl.mock.calls[0][0])).toContain(
+      "https://query2.finance.yahoo.com/v1/finance/search",
+    );
+  });
+
+  it("falls through to Finnhub when Yahoo search fails and Finnhub is configured", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi
+      .fn<FetchMock>()
+      .mockRejectedValueOnce(new Error("Yahoo unavailable"))
+      .mockResolvedValueOnce(
+        Response.json({
+          result: [
+            {
+              description: "Apple Inc",
+              symbol: "AAPL",
+              type: "Common Stock",
+            },
+          ],
+        }),
+      );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: { FINNHUB_API_KEY: "finnhub-test-key" },
+      fetchImpl,
+    });
+    const service = createSearchService({ dataSourceManager: manager });
+
+    await expect(service.searchSymbols("apple")).resolves.toMatchObject({
+      source: "Finnhub",
+      status: "success",
+    });
+
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(String(fetchImpl.mock.calls[0][0])).toContain(
+      "query2.finance.yahoo.com",
+    );
+    expect(String(fetchImpl.mock.calls[1][0])).toContain("finnhub.io");
   });
 
   it("falls back to curated symbols when provider search fails", async () => {

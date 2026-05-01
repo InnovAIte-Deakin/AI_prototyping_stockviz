@@ -58,6 +58,7 @@ describe("market data service", () => {
       env: { TWELVE_DATA_API_KEY: "twelve-test-key" },
       fetchImpl,
     });
+    manager.priorityOrder.stockData = ["twelveData"];
 
     await expect(manager.fetchStockData(" aapl ", "1M")).resolves.toEqual({
       ohlcv: [
@@ -103,6 +104,157 @@ describe("market data service", () => {
       "1M",
       true,
       expect.any(Number),
+    );
+  });
+
+  it("uses Yahoo Finance as the primary stock data provider when no keyed providers are configured", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi.fn<FetchMock>(async () =>
+      Response.json({
+        chart: {
+          result: [
+            {
+              timestamp: [1776988800],
+              indicators: {
+                quote: [
+                  {
+                    close: [104.25],
+                    high: [105],
+                    low: [99.5],
+                    open: [100],
+                    volume: [123456],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      }),
+    );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: {},
+      fetchImpl,
+    });
+
+    await expect(manager.fetchStockData(" aapl ", "1M")).resolves.toEqual({
+      ohlcv: [
+        {
+          close: 104.25,
+          date: "2026-04-24T00:00:00.000Z",
+          high: 105,
+          low: 99.5,
+          open: 100,
+          volume: 123456,
+        },
+      ],
+      source: "Yahoo Finance",
+      symbol: "AAPL",
+      timeframe: "1M",
+    });
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "https://query1.finance.yahoo.com/v8/finance/chart/AAPL",
+      ),
+      expect.objectContaining({ cache: "no-store" }),
+    );
+    expect(apiTracker.logAPICall).toHaveBeenCalledWith(
+      "Yahoo Finance",
+      "CHART",
+      "AAPL",
+      "1M",
+      true,
+      expect.any(Number),
+    );
+  });
+
+  it("falls through to Twelve Data when Yahoo stock data fails and Twelve Data is configured", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi
+      .fn<FetchMock>()
+      .mockResolvedValueOnce(Response.json({ chart: { result: null } }))
+      .mockResolvedValueOnce(
+        Response.json({
+          values: [
+            {
+              close: "104.25",
+              datetime: "2026-04-24",
+              high: "105.00",
+              low: "99.50",
+              open: "100.00",
+              volume: "123456",
+            },
+          ],
+        }),
+      );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: { TWELVE_DATA_API_KEY: "twelve-test-key" },
+      fetchImpl,
+    });
+
+    await expect(manager.fetchStockData("AAPL", "1M")).resolves.toMatchObject({
+      source: "Twelve Data",
+      symbol: "AAPL",
+      timeframe: "1M",
+    });
+
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(String(fetchImpl.mock.calls[0][0])).toContain(
+      "query1.finance.yahoo.com",
+    );
+    expect(String(fetchImpl.mock.calls[1][0])).toContain("api.twelvedata.com");
+  });
+
+  it("uses Yahoo Finance as the primary fundamentals provider", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi.fn<FetchMock>(async () =>
+      Response.json({
+        quoteSummary: {
+          result: [
+            {
+              defaultKeyStatistics: {
+                priceToBook: { raw: 12.1 },
+                trailingEps: { raw: 6.43 },
+              },
+              financialData: {
+                profitMargins: { raw: 0.2631 },
+                returnOnEquity: { raw: 1.4725 },
+              },
+              summaryDetail: {
+                trailingPE: { raw: 31.5 },
+              },
+            },
+          ],
+        },
+      }),
+    );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: {},
+      fetchImpl,
+    });
+
+    await expect(manager.fetchFundamentalData("AAPL")).resolves.toEqual({
+      source: "Yahoo Finance",
+      overview: {
+        EPS: 6.43,
+        PERatio: 31.5,
+        PriceToBookRatio: 12.1,
+        ProfitMargin: 26.31,
+        ReturnOnEquityTTM: 147.25,
+      },
+    });
+
+    expect(String(fetchImpl.mock.calls[0][0])).toContain(
+      "https://query2.finance.yahoo.com/v10/finance/quoteSummary/AAPL",
     );
   });
 
