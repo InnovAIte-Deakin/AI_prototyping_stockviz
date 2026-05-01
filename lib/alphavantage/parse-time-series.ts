@@ -1,12 +1,7 @@
-/** Normalized OHLCV point from Alpha Vantage time series JSON. */
-export type AlphaVantageOhlcPoint = {
-  date: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-};
+import type { OhlcPoint } from "@/lib/market/yahoo-finance";
+
+/** Normalized OHLCV point. Kept for Alpha Vantage compatibility imports. */
+export type AlphaVantageOhlcPoint = OhlcPoint;
 
 const DAILY_SERIES_KEY = "Time Series (Daily)";
 const MONTHLY_SERIES_KEY = "Monthly Time Series";

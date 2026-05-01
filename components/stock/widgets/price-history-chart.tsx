@@ -22,8 +22,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   type PriceHistoryTab,
-  useAlphaVantageSeries,
-} from "@/hooks/use-alpha-vantage-series";
+  usePriceSeries,
+} from "@/hooks/use-price-series";
 import { cn } from "@/lib/utils";
 
 type PriceHistoryChartProps = {
@@ -125,7 +125,7 @@ export const PriceHistoryChart = ({
     errorMonthly,
     isLoadingDaily,
     isLoadingMonthly,
-  } = useAlphaVantageSeries(symbol, tab);
+  } = usePriceSeries(symbol, tab);
 
   const handleTabChange = (value: string) => {
     if (value === "daily" || value === "monthly" || value === "yearly") {
@@ -151,8 +151,8 @@ export const PriceHistoryChart = ({
       <CardHeader>
         <CardTitle>Price history</CardTitle>
         <CardDescription>
-          Historical OHLC from Alpha Vantage (daily compact, monthly; yearly
-          aggregated from monthly).
+          Historical OHLC from Yahoo Finance (daily, monthly; yearly aggregated
+          from monthly).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

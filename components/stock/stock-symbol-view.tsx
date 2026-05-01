@@ -34,7 +34,7 @@ export const StockSymbolView = ({
           </h1>
           <p className="text-muted-foreground text-sm">
             Quote, metrics, peers, and analyst data via Finnhub; historical
-            prices via Alpha Vantage.
+            prices via Yahoo Finance.
           </p>
         </div>
         <WishlistButton
