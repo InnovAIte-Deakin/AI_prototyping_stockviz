@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { parseAlphaVantageTimeSeries } from "@/lib/alphavantage/parse-time-series";
+import {
+  buildYahooChartUrl,
+  parseYahooChartResponse,
+} from "@/lib/market/yahoo-finance";
 import { enforceRateLimit } from "@/lib/rate-limit";
-
-const ALPHA_VANTAGE_QUERY = "https://www.alphavantage.co/query";
 
 const validateSymbol = (raw: string | null): string | null => {
   const s = raw?.trim() ?? "";
@@ -24,19 +25,11 @@ const validateInterval = (raw: string | null): "daily" | "monthly" | null => {
   return null;
 };
 
-/** Proxies Alpha Vantage `TIME_SERIES_DAILY` (compact) or `TIME_SERIES_MONTHLY`. */
+/** Proxies Yahoo Finance daily or monthly chart series. */
 export async function GET(request: Request) {
   const limited = enforceRateLimit(request);
   if (limited) {
     return limited;
-  }
-
-  const apiKey = process.env.ALPHA_VANTAGE_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "ALPHA_VANTAGE_API_KEY is not configured" },
-      { status: 503 },
-    );
   }
 
   const { searchParams } = new URL(request.url);
@@ -57,18 +50,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const params = new URLSearchParams({
-    apikey: apiKey,
-    symbol,
-    function:
-      interval === "daily" ? "TIME_SERIES_DAILY" : "TIME_SERIES_MONTHLY",
-  });
-
-  if (interval === "daily") {
-    params.set("outputsize", "compact");
-  }
-
-  const url = `${ALPHA_VANTAGE_QUERY}?${params}`;
+  const url = buildYahooChartUrl(symbol, interval);
   const revalidate = interval === "daily" ? 120 : 3600;
 
   const upstream = await fetch(url, {
@@ -78,13 +60,13 @@ export async function GET(request: Request) {
   if (!upstream.ok) {
     const body = await upstream.text();
     return NextResponse.json(
-      { error: "Alpha Vantage time series request failed", details: body },
+      { error: "Yahoo Finance chart request failed", details: body },
       { status: upstream.status },
     );
   }
 
   const raw: unknown = await upstream.json();
-  const parsed = parseAlphaVantageTimeSeries(raw);
+  const parsed = parseYahooChartResponse(raw);
 
   if (!parsed.ok) {
     return NextResponse.json({ error: parsed.error }, { status: 422 });

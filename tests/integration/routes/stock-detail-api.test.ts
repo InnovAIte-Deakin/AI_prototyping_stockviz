@@ -126,16 +126,25 @@ describe("stock detail API routes", () => {
     expect(url.searchParams.get("metric")).toBe("all");
   });
 
-  it("normalizes Alpha Vantage daily price series for stock detail charts", async () => {
+  it("normalizes Yahoo Finance daily price series for stock detail charts", async () => {
     const fetchMock = mockFetchJson({
-      "Time Series (Daily)": {
-        "2026-04-24": {
-          "1. open": "100.00",
-          "2. high": "105.00",
-          "3. low": "99.50",
-          "4. close": "104.25",
-          "5. volume": "123456",
-        },
+      chart: {
+        result: [
+          {
+            timestamp: [1776988800],
+            indicators: {
+              quote: [
+                {
+                  close: [104.25],
+                  high: [105],
+                  low: [99.5],
+                  open: [100],
+                  volume: [123456],
+                },
+              ],
+            },
+          },
+        ],
       },
     });
 
@@ -158,13 +167,48 @@ describe("stock detail API routes", () => {
     expect(response.status).toBe(200);
 
     const url = getFirstFetchUrl(fetchMock);
-    expect(url.searchParams.get("function")).toBe("TIME_SERIES_DAILY");
-    expect(url.searchParams.get("outputsize")).toBe("compact");
-    expect(url.searchParams.get("symbol")).toBe("AAPL");
-    expect(url.searchParams.get("apikey")).toBe("alpha-test-key");
+    expect(url.origin).toBe("https://query1.finance.yahoo.com");
+    expect(url.pathname).toBe("/v8/finance/chart/AAPL");
+    expect(url.searchParams.get("range")).toBe("3mo");
+    expect(url.searchParams.get("interval")).toBe("1d");
   });
 
-  it("rejects invalid price-series intervals before calling Alpha Vantage", async () => {
+  it("uses Yahoo monthly chart settings for monthly price series", async () => {
+    const fetchMock = mockFetchJson({
+      chart: {
+        result: [
+          {
+            timestamp: [1767225600],
+            indicators: {
+              quote: [
+                {
+                  close: [250],
+                  high: [260],
+                  low: [240],
+                  open: [245],
+                  volume: [999999],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+
+    const response = await getStockPriceSeries(
+      requestFor("/api/stock-price-series?symbol=AAPL&interval=monthly"),
+    );
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.series).toHaveLength(1);
+
+    const url = getFirstFetchUrl(fetchMock);
+    expect(url.searchParams.get("range")).toBe("max");
+    expect(url.searchParams.get("interval")).toBe("1mo");
+  });
+
+  it("rejects invalid price-series intervals before calling Yahoo Finance", async () => {
     const fetchMock = mockFetchJson({});
 
     const response = await getStockPriceSeries(
