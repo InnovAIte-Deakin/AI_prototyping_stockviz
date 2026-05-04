@@ -1,5 +1,6 @@
 import { signOut } from "@/app/auth/actions"
 import { MoversCarousel } from "@/components/dashboard/movers-carousel"
+import { WishlistCard } from "@/components/dashboard/wishlist-card"
 import { Button } from "@/components/ui/button"
 import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
 
@@ -21,6 +22,12 @@ const DashboardPage = async () => {
         ) : (
           <MoversCarousel gainers={gainers} losers={losers} />
         )}
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="lg:col-span-1">
+          <WishlistCard />
+        </div>
       </section>
 
       <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
