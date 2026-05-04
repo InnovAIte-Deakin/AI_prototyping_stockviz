@@ -1,30 +1,11 @@
 import { NextResponse } from "next/server"
 
-const FINNHUB_API = "https://finnhub.io/api/v1/quote"
-
-const validateSymbol = (raw: string | null): string | null => {
-  const s = raw?.trim() ?? ""
-  if (!s || s.length > 32) {
-    return null
-  }
-  if (!/^[\w.:^-]+$/i.test(s)) {
-    return null
-  }
-  return s
-}
+import { fetchFinnhubQuote, validateQuoteSymbol } from "@/lib/finnhub/quote"
 
 /** Proxies Finnhub `GET /quote`. */
 export async function GET(request: Request) {
-  const token = process.env.FINNHUB_API_KEY
-  if (!token) {
-    return NextResponse.json(
-      { error: "FINNHUB_API_KEY is not configured" },
-      { status: 503 }
-    )
-  }
-
   const { searchParams } = new URL(request.url)
-  const symbol = validateSymbol(searchParams.get("symbol"))
+  const symbol = validateQuoteSymbol(searchParams.get("symbol"))
   if (!symbol) {
     return NextResponse.json(
       { error: "Missing or invalid query parameter symbol" },
@@ -32,20 +13,17 @@ export async function GET(request: Request) {
     )
   }
 
-  const params = new URLSearchParams({ symbol, token })
-  const url = `${FINNHUB_API}?${params}`
-  const upstream = await fetch(url, {
-    next: { revalidate: 30 },
-  })
-
-  if (!upstream.ok) {
-    const body = await upstream.text()
-    return NextResponse.json(
-      { error: "Finnhub quote request failed", details: body },
-      { status: upstream.status }
-    )
+  try {
+    const data = await fetchFinnhubQuote(symbol, { next: { revalidate: 30 } })
+    return NextResponse.json(data)
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Failed to fetch quote"
+    if (msg.includes("FINNHUB_API_KEY")) {
+      return NextResponse.json({ error: msg }, { status: 503 })
+    }
+    if (msg.startsWith("Finnhub quote request failed")) {
+      return NextResponse.json({ error: msg }, { status: 502 })
+    }
+    return NextResponse.json({ error: msg }, { status: 400 })
   }
-
-  const data: unknown = await upstream.json()
-  return NextResponse.json(data)
 }

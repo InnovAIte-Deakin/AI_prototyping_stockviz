@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 
 import { StockSymbolView } from "@/components/stock/stock-symbol-view"
+import { createClient } from "@/lib/supabase/server"
 
 const decodeSymbol = (raw: string): string => {
   try {
@@ -21,5 +22,22 @@ export default async function StockSymbolPage({
     notFound()
   }
 
-  return <StockSymbolView symbol={symbol} />
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let paperCashUsd: number | undefined
+  if (user) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("paper_cash_usd")
+      .eq("id", user.id)
+      .maybeSingle()
+    if (!error && data) {
+      paperCashUsd = data.paper_cash_usd
+    }
+  }
+
+  return <StockSymbolView symbol={symbol} paperCashUsd={paperCashUsd} />
 }
