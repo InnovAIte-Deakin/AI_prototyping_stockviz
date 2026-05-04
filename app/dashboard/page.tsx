@@ -1,6 +1,7 @@
 import { signOut } from "@/app/auth/actions"
 import { PortfolioSummaryCard } from "@/components/dashboard/portfolio-summary-card"
 import { MoversCarousel } from "@/components/dashboard/movers-carousel"
+import { WishlistCard } from "@/components/dashboard/wishlist-card"
 import { Button } from "@/components/ui/button"
 import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
 import { createClient } from "@/lib/supabase/server"
@@ -29,6 +30,23 @@ const DashboardPage = async () => {
         )}
       </section>
 
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="lg:col-span-1">
+          <WishlistCard />
+        </div>
+      </section>
+
+      <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+        <p className="mb-10 text-sm text-zinc-500">You are signed in.</p>
+        <form action={signOut}>
+          <Button
+            type="submit"
+            variant="outline"
+            className="h-11 rounded-xl border-zinc-700 bg-zinc-950 px-8 font-semibold text-zinc-100 hover:bg-zinc-900"
+          >
+            Sign out
+          </Button>
+        </form>
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6">
         {user ? (
           <div className="max-w-4xl">

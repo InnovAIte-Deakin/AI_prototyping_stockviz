@@ -20,6 +20,7 @@ import {
 import { useSymbolSearch } from '@/hooks/use-symbol-search'
 import type { FinnhubSymbolLookupInfo } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { WishlistStar } from '@/components/ui/wishlist-star'
 
 const MAX_RESULTS = 10
 
@@ -161,6 +162,11 @@ export const StockSymbolSearch = ({
                             {description}
                           </span>
                         ) : null}
+                        <WishlistStar 
+                          symbol={label} 
+                          name={description} 
+                          className="ml-auto opacity-0 transition-opacity group-hover:opacity-100 data-[selected=true]:opacity-100 sm:opacity-100" 
+                        />
                       </CommandItem>
                     )
                   })}
