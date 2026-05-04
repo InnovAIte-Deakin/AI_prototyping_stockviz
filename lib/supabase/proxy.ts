@@ -8,7 +8,9 @@ export async function updateSession(request: NextRequest) {
   // If Supabase is not configured, pass through without session management.
   // This allows the app to run during development without a Supabase instance.
   if (!supabaseUrl || !supabaseKey) {
-    return NextResponse.next({ request })
+    return {
+      response: NextResponse.next({ request }),
+    }
   }
 
   let supabaseResponse = NextResponse.next({
@@ -46,5 +48,8 @@ export async function updateSession(request: NextRequest) {
   // No redirect logic here — that will be added in Sprint 5 (E9: Auth).
   await supabase.auth.getClaims()
 
-  return supabaseResponse
+  return {
+    supabase,
+    response: supabaseResponse,
+  }
 }
