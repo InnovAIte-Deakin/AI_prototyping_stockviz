@@ -2,6 +2,7 @@
 
 import { BasicFinancialsWidget } from "@/components/stock/widgets/basic-financials-widget"
 import { PeersWidget } from "@/components/stock/widgets/peers-widget"
+import { PaperTradeWidget } from "@/components/stock/paper-trade-widget"
 import { PriceHistoryChart } from "@/components/stock/widgets/price-history-chart"
 import { QuoteWidget } from "@/components/stock/widgets/quote-widget"
 import { RecommendationWidget } from "@/components/stock/widgets/recommendation-widget"
@@ -11,9 +12,11 @@ import { WishlistStar } from "@/components/ui/wishlist-star"
 type StockSymbolViewProps = {
   symbol: string
   className?: string
+  /** When set, shows paper trading card with this cash balance. */
+  paperCashUsd?: number
 }
 
-export const StockSymbolView = ({ symbol, className }: StockSymbolViewProps) => {
+export const StockSymbolView = ({ symbol, className, paperCashUsd }: StockSymbolViewProps) => {
   return (
     <div className={cn("mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6", className)}>
       <header className="space-y-1">
@@ -30,6 +33,8 @@ export const StockSymbolView = ({ symbol, className }: StockSymbolViewProps) => 
       </header>
 
       <QuoteWidget symbol={symbol} />
+
+      {paperCashUsd !== undefined ? <PaperTradeWidget symbol={symbol} initialPaperCashUsd={paperCashUsd} /> : null}
 
       <PriceHistoryChart symbol={symbol} />
 

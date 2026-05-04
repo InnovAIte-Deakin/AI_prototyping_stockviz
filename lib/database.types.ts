@@ -107,12 +107,57 @@ export type Database = {
           },
         ]
       }
+      portfolio_transactions: {
+        Row: {
+          executed_at: string
+          id: string
+          realized_pl_usd: number | null
+          shares: number
+          side: string
+          symbol: string
+          total_cash_delta_usd: number
+          unit_price_usd: number
+          user_id: string
+        }
+        Insert: {
+          executed_at?: string
+          id?: string
+          realized_pl_usd?: number | null
+          shares: number
+          side: string
+          symbol: string
+          total_cash_delta_usd: number
+          unit_price_usd: number
+          user_id: string
+        }
+        Update: {
+          executed_at?: string
+          id?: string
+          realized_pl_usd?: number | null
+          shares?: number
+          side?: string
+          symbol?: string
+          total_cash_delta_usd?: number
+          unit_price_usd?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
           full_name: string | null
           id: string
+          paper_cash_usd: number
           preferences: Json | null
           updated_at: string
         }
@@ -121,6 +166,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          paper_cash_usd?: number
           preferences?: Json | null
           updated_at?: string
         }
@@ -129,6 +175,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          paper_cash_usd?: number
           preferences?: Json | null
           updated_at?: string
         }
@@ -208,7 +255,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      paper_buy: {
+        Args: {
+          p_shares: number
+          p_symbol: string
+          p_unit_price_usd: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      paper_sell: {
+        Args: {
+          p_shares: number
+          p_symbol: string
+          p_unit_price_usd: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

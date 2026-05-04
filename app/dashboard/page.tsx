@@ -1,11 +1,17 @@
 import { signOut } from "@/app/auth/actions"
+import { PortfolioSummaryCard } from "@/components/dashboard/portfolio-summary-card"
 import { MoversCarousel } from "@/components/dashboard/movers-carousel"
 import { WishlistCard } from "@/components/dashboard/wishlist-card"
 import { Button } from "@/components/ui/button"
 import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
+import { createClient } from "@/lib/supabase/server"
 
 const DashboardPage = async () => {
   const { gainers, losers, error } = await fetchBiggestMovers()
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   return (
     <div className="min-h-screen bg-black text-zinc-100">
@@ -41,6 +47,25 @@ const DashboardPage = async () => {
             Sign out
           </Button>
         </form>
+      <div className="mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6">
+        {user ? (
+          <div className="max-w-4xl">
+            <PortfolioSummaryCard userId={user.id} />
+          </div>
+        ) : null}
+
+        <div className="flex flex-col items-center justify-center px-2 py-8 text-center">
+          <p className="mb-10 text-sm text-zinc-500">You are signed in.</p>
+          <form action={signOut}>
+            <Button
+              type="submit"
+              variant="outline"
+              className="h-11 rounded-xl border-zinc-700 bg-zinc-950 px-8 font-semibold text-zinc-100 hover:bg-zinc-900"
+            >
+              Sign out
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   )

@@ -39,7 +39,14 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
             <StockSymbolSearch />
           </div>
 
-          <div className="min-w-[7rem] shrink-0" aria-hidden />
+          <div className="flex min-w-[7rem] shrink-0 items-center gap-3">
+            <Link
+              href="/portfolio"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Portfolio
+            </Link>
+          </div>
         </div>
       </header>
       <main className="flex-1">{children}</main>
