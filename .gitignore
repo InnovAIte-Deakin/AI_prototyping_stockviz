@@ -22,18 +22,5 @@ next-env.d.ts
 
 docs/APIDocumentation_AlphaVantage
 
-# Personal academic deliverables and evidence artifacts
-docs/EVIDENCE_APPENDIX*
-docs/INDIVIDUAL_RETROSPECTIVE*
-docs/TASK_5_2C_*
-docs/TASK_5_3D_*
-docs/TASK_5_4H_*
-docs/TASK_8_1P_*
-docs/SIT378_SIT782-8.1P.pdf
-docs/Template-Task 5.2C_filled_Ben_Savio_Fernandez.docx
-docs/Template-Task 5.3D_filled_Ben_Savio_Fernandez.docx
-docs/Master of Applied Artificial Intelligence-Template-Task 5.1P-10.1P_filled_Ben_Savio_Fernandez*
-docs/Task_5_4H_Panel_Presentation_Ben_Savio_Fernandez.pptx
-docs/Task_5_4H_Panel_Presentation_Ben_Savio_Fernandez_FINAL.pptx
-docs/evidence/
-scripts/update_task_5_4h_presentation.py
+# Local-only personal/coursework artifacts
+docs/_local/
