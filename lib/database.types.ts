@@ -134,6 +134,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      provider_preferences: {
+        Row: {
+          capability: string;
+          fallback_enabled: boolean;
+          provider: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          capability: string;
+          fallback_enabled?: boolean;
+          provider: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          capability?: string;
+          fallback_enabled?: boolean;
+          provider?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
       stocks: {
         Row: {
           created_at: string;
