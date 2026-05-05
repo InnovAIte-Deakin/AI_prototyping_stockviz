@@ -11,3 +11,11 @@ test("protects the migrated admin diagnostics page from anonymous access", async
     page.getByRole("heading", { name: /welcome back/i }),
   ).toBeVisible();
 });
+
+test("admin page remains protected from anonymous provider control access", async ({
+  page,
+}) => {
+  await page.goto("/admin");
+
+  await expectLoginRedirect(page, "/admin");
+});

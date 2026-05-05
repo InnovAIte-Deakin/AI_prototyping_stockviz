@@ -11,6 +11,7 @@ import {
   KeyRound,
   ServerCog,
   ShieldCheck,
+  Save,
   Trash2,
   XCircle,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import {
 import {
   cleanupExpiredAnalysisCacheAction,
   clearAnalysisCacheAction,
+  updateProviderPreferencesAction,
 } from "@/app/admin/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -353,6 +355,80 @@ function ServicePanel({ diagnostics }: { diagnostics: AdminDiagnostics }) {
   );
 }
 
+function ProviderControlPanel({
+  diagnostics,
+}: {
+  diagnostics: AdminDiagnostics;
+}) {
+  return (
+    <section className="rounded-[22px] border border-[#e2dbd4] bg-white p-5">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-[#4f4e4e]">
+            <ServerCog className="h-4 w-4 text-[#5f5e5e]" />
+            Data source control
+          </h2>
+          <p className="mt-1 text-sm text-[#6a706f]">
+            Selected providers are tried first. Automatic fallback remains
+            enabled.
+          </p>
+        </div>
+        <Badge
+          variant="outline"
+          className="w-fit rounded-full border-[#ddd6d0] bg-[#f5f1ee] text-[#6a706f]"
+        >
+          Global
+        </Badge>
+      </div>
+
+      <form action={updateProviderPreferencesAction} className="space-y-4">
+        <div className="grid gap-3">
+          {diagnostics.providerPreferences.map((preference) => (
+            <div
+              key={preference.capability}
+              className="grid gap-3 rounded-[18px] border border-[#e7e0da] bg-[#fbfaf8] p-4 md:grid-cols-[minmax(0,1fr)_minmax(220px,280px)] md:items-center"
+            >
+              <div>
+                <div className="text-sm font-semibold text-[#4f4e4e]">
+                  {preference.capabilityLabel}
+                </div>
+                <div className="mt-1 text-xs leading-5 text-[#6a706f]">
+                  Current: {preference.providerLabel}. Fallback enabled.
+                </div>
+              </div>
+              <select
+                name={`provider.${preference.capability}`}
+                defaultValue={preference.provider}
+                className="h-10 rounded-xl border border-[#d8d1cb] bg-white px-3 text-sm text-[#4f4e4e] shadow-sm outline-none transition focus:border-[#5f5e5e] focus:ring-2 focus:ring-[#5f5e5e]/20"
+              >
+                {preference.options.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                    {option.available ? "" : " (key missing)"}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-3 border-t border-[#eee8e2] pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs leading-5 text-[#6a706f]">
+            Saving clears analysis cache so users receive data from the new
+            provider order.
+          </p>
+          <Button
+            type="submit"
+            className="h-9 rounded-xl bg-[#5f5e5e] px-3 text-white hover:bg-[#4f4e4e]"
+          >
+            <Save className="mr-2 h-4 w-4" />
+            Save providers
+          </Button>
+        </div>
+      </form>
+    </section>
+  );
+}
+
 function CachePanel({ diagnostics }: { diagnostics: AdminDiagnostics }) {
   return (
     <section className="rounded-[22px] border border-[#e2dbd4] bg-white p-5">
@@ -589,6 +665,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         {notice ? <Notice notice={notice} /> : null}
         <AccessPanel diagnostics={diagnostics} />
         <ServicePanel diagnostics={diagnostics} />
+        <ProviderControlPanel diagnostics={diagnostics} />
         <div className="grid gap-6 xl:grid-cols-[1fr_1.1fr]">
           <CachePanel diagnostics={diagnostics} />
           <ApiUsagePanel diagnostics={diagnostics} />
