@@ -22,6 +22,45 @@ const createApiTracker = () => ({
   logAPICall: vi.fn(async () => undefined),
 });
 
+const createProviderPreferences = (overrides = {}) => ({
+  fundamentals: {
+    capability: "fundamentals",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  sentiment_news: {
+    capability: "sentiment_news",
+    fallbackEnabled: true,
+    provider: "alphaVantage",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  stock_ohlcv: {
+    capability: "stock_ohlcv",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  stock_price_series: {
+    capability: "stock_price_series",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  symbol_search: {
+    capability: "symbol_search",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  ...overrides,
+});
+
 describe("search service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -60,8 +99,17 @@ describe("search service", () => {
       cache,
       env: { FINNHUB_API_KEY: "finnhub-test-key" },
       fetchImpl,
+      loadProviderPreferences: async () =>
+        createProviderPreferences({
+          symbol_search: {
+            capability: "symbol_search",
+            fallbackEnabled: true,
+            provider: "finnhub",
+            updatedAt: null,
+            updatedBy: null,
+          },
+        }),
     });
-    manager.priorityOrder.search = ["finnhub"];
     const service = createSearchService({ dataSourceManager: manager });
 
     await expect(service.searchSymbols(" apple ")).resolves.toEqual({
@@ -141,6 +189,46 @@ describe("search service", () => {
     expect(String(fetchImpl.mock.calls[0][0])).toContain(
       "https://query2.finance.yahoo.com/v1/finance/search",
     );
+  });
+
+  it("uses the selected symbol search provider before the default order", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi.fn<FetchMock>(async () =>
+      Response.json({
+        result: [
+          {
+            description: "Apple Inc",
+            symbol: "AAPL",
+            type: "Common Stock",
+          },
+        ],
+      }),
+    );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: { FINNHUB_API_KEY: "finnhub-test-key" },
+      fetchImpl,
+      loadProviderPreferences: async () =>
+        createProviderPreferences({
+          symbol_search: {
+            capability: "symbol_search",
+            fallbackEnabled: true,
+            provider: "finnhub",
+            updatedAt: null,
+            updatedBy: null,
+          },
+        }),
+    });
+    const service = createSearchService({ dataSourceManager: manager });
+
+    await expect(service.searchSymbols("apple")).resolves.toMatchObject({
+      source: "Finnhub",
+      status: "success",
+    });
+
+    expect(String(fetchImpl.mock.calls[0][0])).toContain("finnhub.io");
   });
 
   it("falls through to Finnhub when Yahoo search fails and Finnhub is configured", async () => {

@@ -22,6 +22,45 @@ const createApiTracker = () => ({
   logAPICall: vi.fn(async () => undefined),
 });
 
+const createProviderPreferences = (overrides = {}) => ({
+  fundamentals: {
+    capability: "fundamentals",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  sentiment_news: {
+    capability: "sentiment_news",
+    fallbackEnabled: true,
+    provider: "alphaVantage",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  stock_ohlcv: {
+    capability: "stock_ohlcv",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  stock_price_series: {
+    capability: "stock_price_series",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  symbol_search: {
+    capability: "symbol_search",
+    fallbackEnabled: true,
+    provider: "yahooFinance",
+    updatedAt: null,
+    updatedBy: null,
+  },
+  ...overrides,
+});
+
 describe("market data service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -57,8 +96,17 @@ describe("market data service", () => {
       cache,
       env: { TWELVE_DATA_API_KEY: "twelve-test-key" },
       fetchImpl,
+      loadProviderPreferences: async () =>
+        createProviderPreferences({
+          stock_ohlcv: {
+            capability: "stock_ohlcv",
+            fallbackEnabled: true,
+            provider: "twelveData",
+            updatedAt: null,
+            updatedBy: null,
+          },
+        }),
     });
-    manager.priorityOrder.stockData = ["twelveData"];
 
     await expect(manager.fetchStockData(" aapl ", "1M")).resolves.toEqual({
       ohlcv: [
@@ -171,6 +219,48 @@ describe("market data service", () => {
     );
   });
 
+  it("uses the selected stock OHLCV provider before the default order", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi.fn<FetchMock>(async () =>
+      Response.json({
+        values: [
+          {
+            close: "104.25",
+            datetime: "2026-04-24",
+            high: "105.00",
+            low: "99.50",
+            open: "100.00",
+            volume: "123456",
+          },
+        ],
+      }),
+    );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: { TWELVE_DATA_API_KEY: "twelve-test-key" },
+      fetchImpl,
+      loadProviderPreferences: async () =>
+        createProviderPreferences({
+          stock_ohlcv: {
+            capability: "stock_ohlcv",
+            fallbackEnabled: true,
+            provider: "twelveData",
+            updatedAt: null,
+            updatedBy: null,
+          },
+        }),
+    });
+
+    await expect(manager.fetchStockData("AAPL", "1M")).resolves.toMatchObject({
+      source: "Twelve Data",
+      symbol: "AAPL",
+    });
+
+    expect(String(fetchImpl.mock.calls[0][0])).toContain("api.twelvedata.com");
+  });
+
   it("falls through to Twelve Data when Yahoo stock data fails and Twelve Data is configured", async () => {
     const cache = createCache();
     const apiTracker = createApiTracker();
@@ -255,6 +345,50 @@ describe("market data service", () => {
 
     expect(String(fetchImpl.mock.calls[0][0])).toContain(
       "https://query2.finance.yahoo.com/v10/finance/quoteSummary/AAPL",
+    );
+  });
+
+  it("uses the selected fundamentals provider before the default order", async () => {
+    const cache = createCache();
+    const apiTracker = createApiTracker();
+    const fetchImpl = vi.fn<FetchMock>(async () =>
+      Response.json([
+        {
+          currentRatioTTM: 1.2,
+          debtEquityRatioTTM: 20,
+          dividendYieldTTM: 0.01,
+          netProfitMarginTTM: 0.25,
+          operatingProfitMarginTTM: 0.3,
+          peRatioTTM: 22,
+          pegRatioTTM: 1.4,
+          priceToBookRatioTTM: 4,
+          returnOnEquityTTM: 0.35,
+        },
+      ]),
+    );
+    const manager = createDataSourceManager({
+      apiTracker,
+      cache,
+      env: { FMP_API_KEY: "fmp-test-key" },
+      fetchImpl,
+      loadProviderPreferences: async () =>
+        createProviderPreferences({
+          fundamentals: {
+            capability: "fundamentals",
+            fallbackEnabled: true,
+            provider: "fmp",
+            updatedAt: null,
+            updatedBy: null,
+          },
+        }),
+    });
+
+    await expect(manager.fetchFundamentalData("AAPL")).resolves.toMatchObject({
+      source: "Financial Modeling Prep",
+    });
+
+    expect(String(fetchImpl.mock.calls[0][0])).toContain(
+      "financialmodelingprep.com",
     );
   });
 
