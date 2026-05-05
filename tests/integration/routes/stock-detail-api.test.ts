@@ -1,5 +1,55 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const providerPreferences = vi.hoisted(() => ({
+  selected: "yahooFinance",
+}));
+
+vi.mock("@/lib/market/provider-preferences", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/lib/market/provider-preferences")
+  >("@/lib/market/provider-preferences");
+  return {
+    ...actual,
+    getProviderPreferences: vi.fn(async () => ({
+      fundamentals: {
+        capability: "fundamentals",
+        fallbackEnabled: true,
+        provider: "yahooFinance",
+        updatedAt: null,
+        updatedBy: null,
+      },
+      sentiment_news: {
+        capability: "sentiment_news",
+        fallbackEnabled: true,
+        provider: "alphaVantage",
+        updatedAt: null,
+        updatedBy: null,
+      },
+      stock_ohlcv: {
+        capability: "stock_ohlcv",
+        fallbackEnabled: true,
+        provider: "yahooFinance",
+        updatedAt: null,
+        updatedBy: null,
+      },
+      stock_price_series: {
+        capability: "stock_price_series",
+        fallbackEnabled: true,
+        provider: providerPreferences.selected,
+        updatedAt: null,
+        updatedBy: null,
+      },
+      symbol_search: {
+        capability: "symbol_search",
+        fallbackEnabled: true,
+        provider: "yahooFinance",
+        updatedAt: null,
+        updatedBy: null,
+      },
+    })),
+  };
+});
+
 import { GET as getQuote } from "@/app/api/quote/route";
 import { GET as getStockMetric } from "@/app/api/stock-metric/route";
 import { GET as getStockPeers } from "@/app/api/stock-peers/route";
@@ -77,6 +127,7 @@ describe("stock detail API routes", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    providerPreferences.selected = "yahooFinance";
     process.env = { ...originalEnv };
   });
 
@@ -206,6 +257,77 @@ describe("stock detail API routes", () => {
     const url = getFirstFetchUrl(fetchMock);
     expect(url.searchParams.get("range")).toBe("max");
     expect(url.searchParams.get("interval")).toBe("1mo");
+  });
+
+  it("uses Alpha Vantage first when selected for stock detail price series", async () => {
+    providerPreferences.selected = "alphaVantage";
+    const fetchMock = mockFetchJson({
+      "Time Series (Daily)": {
+        "2026-04-24": {
+          "1. open": "100.00",
+          "2. high": "105.00",
+          "3. low": "99.50",
+          "4. close": "104.25",
+          "5. volume": "123456",
+        },
+      },
+    });
+    vi.stubEnv("ALPHA_VANTAGE_API_KEY", "alpha-test-key");
+
+    const response = await getStockPriceSeries(
+      requestFor("/api/stock-price-series?symbol=AAPL&interval=daily"),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      series: [
+        {
+          close: 104.25,
+          date: "2026-04-24",
+          high: 105,
+          low: 99.5,
+          open: 100,
+          volume: 123456,
+        },
+      ],
+    });
+
+    const url = getFirstFetchUrl(fetchMock);
+    expect(url.origin).toBe("https://www.alphavantage.co");
+    expect(url.searchParams.get("function")).toBe("TIME_SERIES_DAILY");
+  });
+
+  it("falls back to Yahoo when selected Alpha Vantage is unavailable", async () => {
+    providerPreferences.selected = "alphaVantage";
+    vi.stubEnv("ALPHA_VANTAGE_API_KEY", "");
+    const fetchMock = mockFetchJson({
+      chart: {
+        result: [
+          {
+            timestamp: [1776988800],
+            indicators: {
+              quote: [
+                {
+                  close: [104.25],
+                  high: [105],
+                  low: [99.5],
+                  open: [100],
+                  volume: [123456],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+
+    const response = await getStockPriceSeries(
+      requestFor("/api/stock-price-series?symbol=AAPL&interval=daily"),
+    );
+
+    expect(response.status).toBe(200);
+    const url = getFirstFetchUrl(fetchMock);
+    expect(url.origin).toBe("https://query1.finance.yahoo.com");
   });
 
   it("rejects invalid price-series intervals before calling Yahoo Finance", async () => {
