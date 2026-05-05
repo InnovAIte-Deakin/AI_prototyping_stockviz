@@ -90,6 +90,18 @@ function noticeFor(params: Record<string, string | string[] | undefined>) {
         title: "Cache cleanup failed",
         tone: "error" as const,
       };
+    case "provider-settings-saved":
+      return {
+        description: `Provider preferences were saved. ${count || "0"} cache entries were cleared.`,
+        title: "Provider settings saved",
+        tone: "success" as const,
+      };
+    case "provider-settings-error":
+      return {
+        description: detail || "Provider preferences could not be saved.",
+        title: "Provider settings failed",
+        tone: "error" as const,
+      };
     default:
       return null;
   }

@@ -6,7 +6,9 @@ import { redirect } from "next/navigation";
 import {
   cleanupExpiredAnalysisCacheForAdmin,
   clearAnalysisCacheForAdmin,
+  updateProviderPreferencesForAdmin,
 } from "@/lib/admin/diagnostics-service";
+import { PROVIDER_CAPABILITIES } from "@/lib/market/provider-preferences";
 
 const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
@@ -53,6 +55,30 @@ export async function cleanupExpiredAnalysisCacheAction() {
     });
   } catch (error) {
     target = adminNoticeUrl("cache-cleanup-error", {
+      detail: toErrorMessage(error),
+    });
+  }
+
+  redirect(target);
+}
+
+export async function updateProviderPreferencesAction(formData: FormData) {
+  let target = adminNoticeUrl("provider-settings-error");
+
+  try {
+    const preferences = PROVIDER_CAPABILITIES.map((capability) => ({
+      capability,
+      provider: String(formData.get(`provider.${capability}`) || ""),
+    }));
+
+    await updateProviderPreferencesForAdmin(preferences);
+    const cacheResult = await clearAnalysisCacheForAdmin();
+    revalidatePath("/admin");
+    target = adminNoticeUrl("provider-settings-saved", {
+      count: cacheResult.deletedCount,
+    });
+  } catch (error) {
+    target = adminNoticeUrl("provider-settings-error", {
       detail: toErrorMessage(error),
     });
   }

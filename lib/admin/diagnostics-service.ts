@@ -6,6 +6,16 @@ import {
   getSupabaseServiceRoleKey,
   getSupabaseUrl,
 } from "@/lib/supabase/env";
+import {
+  getProviderPreferences,
+  PROVIDER_CAPABILITY_LABELS,
+  PROVIDER_CAPABILITY_OPTIONS,
+  PROVIDER_LABELS,
+  saveProviderPreferences,
+  type ProviderCapability,
+  type ProviderId,
+  type ProviderPreference,
+} from "@/lib/market/provider-preferences";
 import { createClient } from "@/lib/supabase/server";
 
 const ADMIN_EMAIL_ENV_KEYS = ["STOCKVIZ_ADMIN_EMAILS", "ADMIN_EMAILS"];
@@ -84,6 +94,17 @@ export type ApiUsageDiagnostic = {
   totalCalls: number;
 };
 
+export type ProviderPreferenceDiagnostic = ProviderPreference & {
+  capabilityLabel: string;
+  options: Array<{
+    available: boolean;
+    id: ProviderId;
+    label: string;
+    requiresEnv: string | null;
+  }>;
+  providerLabel: string;
+};
+
 export type AdminDiagnostics = {
   access: AdminAccess;
   apiUsage: ApiUsageDiagnostic;
@@ -93,6 +114,7 @@ export type AdminDiagnostics = {
     status: DiagnosticStatus;
   };
   generatedAt: string;
+  providerPreferences: ProviderPreferenceDiagnostic[];
   providers: ProviderDiagnostic[];
   system: {
     environment: string;
@@ -106,6 +128,31 @@ const toErrorMessage = (error: unknown): string =>
 
 const hasValue = (value: string | undefined): boolean =>
   Boolean(value && value.trim() && !value.includes("your-"));
+
+const isProviderEnvAvailable = (envName: string | undefined): boolean => {
+  if (!envName) {
+    return true;
+  }
+  return hasValue(process.env[envName]);
+};
+
+function toProviderPreferenceDiagnostics(
+  preferences: Record<ProviderCapability, ProviderPreference>,
+): ProviderPreferenceDiagnostic[] {
+  return Object.values(preferences).map((preference) => ({
+    ...preference,
+    capabilityLabel: PROVIDER_CAPABILITY_LABELS[preference.capability],
+    options: PROVIDER_CAPABILITY_OPTIONS[preference.capability].map(
+      (option) => ({
+        available: isProviderEnvAvailable(option.requiresEnv),
+        id: option.id,
+        label: option.label,
+        requiresEnv: option.requiresEnv || null,
+      }),
+    ),
+    providerLabel: PROVIDER_LABELS[preference.provider],
+  }));
+}
 
 const getAdminEmailAllowlist = (): string[] => {
   const raw = ADMIN_EMAIL_ENV_KEYS.map((key) => process.env[key])
@@ -379,9 +426,10 @@ async function getApiUsageDiagnostic(): Promise<ApiUsageDiagnostic> {
 
 export async function getAdminDiagnostics(): Promise<AdminDiagnostics> {
   const access = await requireAdminAccess();
-  const [cache, apiUsage] = await Promise.all([
+  const [cache, apiUsage, providerPreferences] = await Promise.all([
     getCacheDiagnostic(),
     getApiUsageDiagnostic(),
+    getProviderPreferences(),
   ]);
 
   const databaseOk = cache.available && apiUsage.available;
@@ -398,6 +446,7 @@ export async function getAdminDiagnostics(): Promise<AdminDiagnostics> {
       status: databaseOk ? "ok" : "error",
     },
     generatedAt: new Date().toISOString(),
+    providerPreferences: toProviderPreferenceDiagnostics(providerPreferences),
     providers: getProviderDiagnostics(),
     system: {
       environment: process.env.NODE_ENV || "development",
@@ -405,6 +454,17 @@ export async function getAdminDiagnostics(): Promise<AdminDiagnostics> {
       uptimeSeconds: Math.round(process.uptime()),
     },
   };
+}
+
+export async function updateProviderPreferencesForAdmin(
+  preferences: Array<{ capability: string; provider: string }>,
+) {
+  const access = await requireAdminAccess();
+  const updated = await saveProviderPreferences({
+    preferences,
+    updatedBy: access.userId,
+  });
+  return toProviderPreferenceDiagnostics(updated);
 }
 
 export async function clearAnalysisCacheForAdmin() {
