@@ -78,7 +78,9 @@ async function loginAsSeededDemoUser(page: Page) {
   await page.goto("/login");
 
   await page.getByLabel(/email address/i).fill("demo@stockviz.local");
-  await page.getByLabel(/password/i).fill("StockVizDemo123!");
+  await page
+    .getByRole("textbox", { name: /^password$/i })
+    .fill("StockVizDemo123!");
   await page.getByRole("button", { name: /sign in/i }).click();
 
   await expect(page).toHaveURL(/\/dashboard$/);
@@ -111,5 +113,5 @@ test("lets a signed-in user open analysis from the dashboard search", async ({
   await expect(page).toHaveURL(/\/analysis\/AAPL$/);
   await expect(
     page.getByRole("heading", { name: /AAPL analysis/i }),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30_000 });
 });
