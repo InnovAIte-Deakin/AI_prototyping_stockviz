@@ -19,35 +19,7 @@ import {
   deleteWishlistItemForCurrentUser,
   updateWishlistItemForCurrentUser,
 } from "@/lib/user/wishlist-service";
-
-type UserFieldName =
-  | "currency"
-  | "defaultTimeframe"
-  | "exchangeMic"
-  | "fundamentalWeight"
-  | "notes"
-  | "riskProfile"
-  | "sentimentWeight"
-  | "stockName"
-  | "symbol"
-  | "technicalWeight"
-  | "wishlistId";
-
-export type UserActionState = {
-  status: "idle" | "error" | "success";
-  message?: string;
-  fieldErrors?: Partial<Record<UserFieldName, string>>;
-  saved?: boolean;
-  submittedAt?: number;
-  symbol?: string;
-  wishlistId?: string | null;
-  preferences?: UserPreferences;
-};
-
-export const INITIAL_USER_ACTION_STATE: UserActionState = {
-  status: "idle",
-  submittedAt: 0,
-};
+import type { UserActionState, UserFieldName } from "@/app/user/action-types";
 
 const symbolPattern = /^[A-Z0-9.\-]{1,15}$/;
 

@@ -6,11 +6,13 @@ import { ArrowRight, Heart, Settings2, SlidersHorizontal } from "lucide-react";
 
 import {
   deleteWishlistAction,
-  INITIAL_USER_ACTION_STATE,
   updatePreferencesAction,
   updateWishlistNotesAction,
-  type UserActionState,
 } from "@/app/user/actions";
+import {
+  INITIAL_USER_ACTION_STATE,
+  type UserActionState,
+} from "@/app/user/action-types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

@@ -6,8 +6,8 @@ import { Heart } from "lucide-react";
 import {
   createWishlistAction,
   deleteWishlistAction,
-  INITIAL_USER_ACTION_STATE,
 } from "@/app/user/actions";
+import { INITIAL_USER_ACTION_STATE } from "@/app/user/action-types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { WishlistItemSummary } from "@/lib/user/wishlist-service";

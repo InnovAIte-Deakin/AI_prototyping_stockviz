@@ -57,11 +57,7 @@ export default function Login() {
         </header>
 
         <div className="w-full max-w-[480px] flex flex-col gap-10 py-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full flex flex-col gap-10"
-          >
+          <div className="w-full flex flex-col gap-10">
             <div className="text-center">
               <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">
                 Welcome back
@@ -157,7 +153,7 @@ export default function Login() {
                 {isPending ? "Processing..." : "Sign In"}
               </Button>
             </form>
-          </motion.div>
+          </div>
 
           <p className="text-center text-sm text-[#5a6060]">
             Don&apos;t have an account?{" "}
