@@ -1,31 +1,8 @@
 "use server";
 
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { requireSupabasePublicEnv } from "@/lib/supabase/env";
 
-export async function createClient() {
-  const cookieStore = await cookies();
-  const { supabaseUrl, supabasePublishableKey } = requireSupabasePublicEnv();
-
-  return createServerClient(supabaseUrl, supabasePublishableKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options),
-          );
-        } catch {
-          // Can be ignored if handled by proxy later
-        }
-      },
-    },
-  });
-}
+import { createClient } from "@/lib/supabase/server";
 
 export async function login(formData: FormData) {
   const email = formData.get("email") as string;
