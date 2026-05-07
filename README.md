@@ -14,9 +14,9 @@ StockViz is a web application for exploring, filtering, and visualizing stock ma
 - `supabase/` contains backend configuration and supporting project assets.
 - `legacy/frontend/` and `legacy/backend/` contain the original React and Express prototype and are no longer part of the active runtime.
 
-## Yahoo Fundamental Branch
+## Yahoo-First Market Data Direction
 
-This branch explores a new market data direction for StockViz by making Yahoo Finance the primary source for price series, fundamentals, and symbol search. It was created separately from the local migration branch so the existing migration workflow can remain stable while the Yahoo-based provider path is evaluated.
+The active app now uses Yahoo Finance as the primary source for chart data, fundamentals, and symbol search, with configured providers retained as fallbacks. The admin diagnostics page can control preferred providers where supported.
 
 Changes from the original migrated project:
 
@@ -54,6 +54,7 @@ supabase db reset
 
 Docker Desktop needs to be running before you use the local Supabase CLI.
 Copy `.env.local.example` to `.env.local` and fill in the local Supabase URL and publishable key before testing authenticated flows.
+Root `.env.local.example` documents the Next.js app environment contract. `supabase/.env.local.example` documents local Supabase CLI defaults for the Supabase project directory.
 
 If login or registration shows `fetch failed`, check that the local Supabase
 stack is running:
