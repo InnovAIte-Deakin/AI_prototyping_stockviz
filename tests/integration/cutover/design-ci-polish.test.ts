@@ -24,12 +24,29 @@ const requiredCiCommands = [
   "npm run parity:check",
 ] as const;
 
+const userFacingFiles = [
+  "app/dashboard/page.tsx",
+  "app/analysis/[symbol]/page.tsx",
+  "components/layout/navbar.tsx",
+  "components/layout/footer.tsx",
+] as const;
+
 describe("design token and CI polish", () => {
   it.each(tokenizedFiles)("uses semantic colors in %s", (relativePath) => {
     const source = readFileSync(path.join(repoRoot, relativePath), "utf8");
 
     expect(source).not.toMatch(/#[0-9a-fA-F]{3,8}/);
   });
+
+  it.each(userFacingFiles)(
+    "does not show migration copy in %s",
+    (relativePath) => {
+      const source = readFileSync(path.join(repoRoot, relativePath), "utf8");
+      expect(source).not.toMatch(
+        /Migration|Migrated|migration shell|root app/i,
+      );
+    },
+  );
 
   it("defines CI checks for the project quality gates", () => {
     const workflowPath = path.join(repoRoot, ".github/workflows/ci.yml");

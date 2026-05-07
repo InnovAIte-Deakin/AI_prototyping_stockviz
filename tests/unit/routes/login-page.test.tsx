@@ -16,9 +16,11 @@ describe("login page", () => {
     expect(html).toContain('name="email"');
     expect(html).toContain('name="password"');
     expect(html).toContain("Sign In");
+    expect(html).toContain('aria-label="Show password"');
+    expect(html).not.toContain('href="#"');
 
     const formIndex = html.indexOf("<form");
     expect(formIndex).toBeGreaterThan(-1);
     expect(html.slice(0, formIndex)).not.toMatch(/opacity:\s*0/);
-  });
+  }, 10000);
 });

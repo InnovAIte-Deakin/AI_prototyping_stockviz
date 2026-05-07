@@ -13,13 +13,13 @@ const launchCards = [
   {
     title: "Live search",
     description:
-      "Search symbols from the new root market service and jump straight into analysis.",
+      "Search symbols from the active market service and jump straight into analysis.",
     icon: SearchCode,
   },
   {
-    title: "Root analysis route",
+    title: "Analysis workspace",
     description:
-      "Review score, recommendation, sentiment, and chart output in the migrated app shell.",
+      "Review score, recommendation, sentiment, and chart output in the product workspace.",
     icon: ChartNoAxesCombined,
   },
   {
@@ -38,15 +38,14 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-3xl space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                Migration Launch Surface
+                Research Workspace
               </p>
               <h1 className="text-4xl font-semibold tracking-tight text-surface-tint md:text-5xl">
-                Search a symbol and open the first migrated analysis slice.
+                Search a symbol and open a full analysis workspace.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-                The dashboard now acts as the authenticated handoff into the new
-                market-data pipeline. Search for a stock, open its analysis
-                page, and validate the root services from the active app.
+                Search for a stock, open its analysis page, and review the
+                latest market-data-backed signal.
               </p>
             </div>
 
@@ -98,7 +97,7 @@ export default function DashboardPage() {
                 Need a quick example?
               </p>
               <p className="text-sm text-muted-foreground">
-                Open the migrated route with a well-known ticker and verify the
+                Open the analysis route with a well-known ticker and review the
                 chart plus blended score output.
               </p>
             </div>

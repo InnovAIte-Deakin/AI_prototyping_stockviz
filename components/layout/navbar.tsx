@@ -93,11 +93,11 @@ export default function Navbar() {
                     StockViz
                   </span>
                   <Badge className="hidden border-[#ddd6d0] bg-[#f3eeea] text-[#6a706f] lg:inline-flex">
-                    Migration shell
+                    Research shell
                   </Badge>
                 </div>
                 <p className="hidden text-xs text-[#7b7f7f] sm:block">
-                  Root app workspace
+                  Research terminal
                 </p>
               </div>
             </Link>

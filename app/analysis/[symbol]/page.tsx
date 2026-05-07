@@ -118,7 +118,7 @@ export async function generateMetadata({
 
   return {
     title: normalizedSymbol ? `${normalizedSymbol} Analysis` : "Analysis",
-    description: `StockViz analysis for ${normalizedSymbol || "a symbol"} using the migrated root market services.`,
+    description: `StockViz analysis for ${normalizedSymbol || "a symbol"} using active market services.`,
   };
 }
 
@@ -263,15 +263,14 @@ export default async function AnalysisPage({
             <div className="space-y-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                  Migrated Analysis Route
+                  Analysis Workspace
                 </p>
                 <h1 className="mt-2 text-4xl font-semibold tracking-tight text-surface-tint md:text-5xl">
                   {normalizedSymbol} analysis
                 </h1>
                 <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
-                  This screen is powered by the new root market data layer and
-                  extracted analysis services. It is the first end-to-end slice
-                  back on the App Router.
+                  This screen combines market data, fundamentals, technical
+                  indicators, sentiment, and AI-assisted summary notes.
                 </p>
               </div>
 
@@ -287,7 +286,14 @@ export default async function AnalysisPage({
                         : "bg-white text-surface-tint"
                     }`}
                   >
-                    <Link href={timeframeHrefs[candidate]}>{candidate}</Link>
+                    <Link
+                      href={timeframeHrefs[candidate]}
+                      aria-current={
+                        candidate === timeframe ? "true" : undefined
+                      }
+                    >
+                      {candidate}
+                    </Link>
                   </Button>
                 ))}
               </div>
@@ -329,6 +335,7 @@ export default async function AnalysisPage({
                 </div>
                 <div className="flex items-end gap-3">
                   <p className="text-4xl font-semibold text-on-surface">
+                    <span className="sr-only">{card.label} score </span>
                     {card.score}
                   </p>
                   <span
@@ -386,7 +393,7 @@ export default async function AnalysisPage({
                     Summary
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Blended output from extracted root analysis services.
+                    Blended output from analysis services.
                   </p>
                 </div>
               </div>

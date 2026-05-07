@@ -39,9 +39,7 @@ export default function Footer() {
                 <p className="text-lg font-semibold tracking-tight text-[#4f4e4e]">
                   StockViz
                 </p>
-                <p className="text-sm text-[#6a706f]">
-                  App Router migration shell
-                </p>
+                <p className="text-sm text-[#6a706f]">Research workspace</p>
               </div>
             </div>
             <p className="max-w-sm text-sm leading-7 text-[#636968]">
@@ -136,7 +134,7 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-semibold text-[#4f4e4e]">Migration signals</h3>
+            <h3 className="font-semibold text-[#4f4e4e]">Product signals</h3>
             <div className="space-y-3">
               {shellHighlights.map((item, index) => {
                 const Icon =
@@ -174,7 +172,7 @@ export default function Footer() {
         <div className="mt-8 flex flex-col gap-3 border-t border-[#ddd6d0] pt-8 text-sm text-[#6a706f] sm:flex-row sm:items-center sm:justify-between">
           <p>
             (c) {currentYear} StockViz. Shared shell parity is live; route
-            expansion continues from the migration plan.
+            expansion continues from the product roadmap.
           </p>
           <p className="sm:text-right">
             Dashboard, market, portfolio, admin diagnostics, analysis, and stock
