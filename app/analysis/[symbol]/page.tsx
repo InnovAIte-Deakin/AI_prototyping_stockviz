@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -32,6 +32,7 @@ import {
   normalizeWeights,
   type SearchParamValue,
 } from "@/lib/url-state";
+import { getResolvedSymbolRedirect } from "@/lib/market/symbol-resolution";
 
 const TIMEFRAMES = ["1D", "1W", "1M", "3M", "6M", "1Y", "2Y"] as const;
 const { analyzeSymbol } = runtime;
@@ -74,6 +75,35 @@ function normalizeTimeframe(value: string | undefined): Timeframe {
   return TIMEFRAMES.includes(value as Timeframe) ? (value as Timeframe) : "1M";
 }
 
+function encodeSearchParams(
+  searchParams: Record<string, SearchParamValue>,
+): string {
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        params.append(key, item);
+      }
+    } else if (typeof value === "string") {
+      params.set(key, value);
+    }
+  }
+
+  return params.toString();
+}
+
+async function resolveCompanyNameRoute(
+  symbol: string,
+): Promise<string | null> {
+  if (symbol.length <= 5) {
+    return null;
+  }
+
+  const response = await runtime.searchService.searchSymbols(symbol);
+  return getResolvedSymbolRedirect(symbol, response.results || []);
+}
+
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
@@ -107,6 +137,16 @@ export default async function AnalysisPage({
   const timeframe = normalizeTimeframe(
     getSingleSearchParam(resolvedSearchParams.tf),
   );
+  const resolvedRouteSymbol = await resolveCompanyNameRoute(normalizedSymbol);
+  if (resolvedRouteSymbol) {
+    const query = encodeSearchParams(resolvedSearchParams);
+    redirect(
+      query
+        ? `/analysis/${encodeURIComponent(resolvedRouteSymbol)}?${query}`
+        : `/analysis/${encodeURIComponent(resolvedRouteSymbol)}`,
+    );
+  }
+
   const availableIndicators =
     runtime.technicalAnalysisService.getAvailableIndicators();
   const defaultIndicatorConfig = normalizeIndicatorConfig(
