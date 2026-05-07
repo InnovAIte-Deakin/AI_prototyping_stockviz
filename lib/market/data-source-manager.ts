@@ -10,16 +10,116 @@ import {
 import {
   buildProviderOrder,
   getProviderPreferences,
+  type ProviderCapability,
+  type ProviderId,
 } from "./provider-preferences";
 
-const { createCacheService } = cacheModule;
-const { createApiTracker } = observabilityModule;
+type Environment = Record<string, string | undefined>;
+type DataType = "stockData" | "fundamentals" | "search";
+type Timeframe = string;
 
-function getAlphaVantageApiKey(env = process.env) {
+type OhlcvPoint = {
+  close: number;
+  date: string;
+  high: number;
+  low: number;
+  open: number;
+  volume: number;
+};
+
+type StockDataResult = {
+  ohlcv: OhlcvPoint[];
+  source: string;
+  symbol: string;
+  timeframe: string;
+};
+
+type SearchResult = {
+  name: string;
+  region: string;
+  symbol: string;
+  type: string;
+};
+
+type SearchResponse = {
+  results: SearchResult[];
+  source: string;
+};
+
+type FundamentalData = {
+  overview: Record<string, unknown>;
+  source: string;
+};
+
+type CacheLike = {
+  getAsync<T = unknown>(key: string): Promise<T | null>;
+  setAsync(key: string, data: unknown, ttlMs?: number): Promise<void>;
+  stats(): Promise<unknown> | unknown;
+};
+
+type ApiTrackerLike = {
+  getAPIStatistics(): unknown;
+  logAPICall(
+    apiName: string,
+    endpoint: string,
+    symbol?: string | null,
+    timeframe?: string | null,
+    success?: boolean,
+    responseTime?: number,
+  ): Promise<void> | void;
+};
+
+type LoggerLike = {
+  warn(...data: unknown[]): void;
+};
+
+type ProviderPreferences = Record<
+  string,
+  {
+    fallbackEnabled?: boolean;
+    provider?: string;
+  }
+>;
+type LoadProviderPreferences = () => Promise<ProviderPreferences>;
+
+type FetchJsonOptions = {
+  apiName: string;
+  endpoint: string;
+  symbol?: string | null;
+  timeframe?: string | null;
+  timeoutMs?: number;
+};
+
+type DataSourceManagerOptions = {
+  apiTracker?: ApiTrackerLike;
+  cache?: CacheLike;
+  env?: Environment;
+  fetchImpl?: typeof fetch;
+  loadProviderPreferences?: LoadProviderPreferences;
+  logger?: LoggerLike;
+};
+
+type UsageLimit = {
+  current: number;
+  daily: number;
+  resetTime: number;
+};
+
+const { createCacheService } = cacheModule as {
+  createCacheService: () => CacheLike;
+};
+const { createApiTracker } = observabilityModule as {
+  createApiTracker: () => ApiTrackerLike;
+};
+
+const toErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
+function getAlphaVantageApiKey(env: Environment = process.env) {
   return env.ALPHA_VANTAGE_API_KEY;
 }
 
-const POPULAR_STOCKS = [
+const POPULAR_STOCKS: SearchResult[] = [
   {
     symbol: "AAPL",
     name: "Apple Inc.",
@@ -71,6 +171,20 @@ const POPULAR_STOCKS = [
 ];
 
 class DataSourceManager {
+  private alphaVantageKey: string | undefined;
+  private apiTracker: ApiTrackerLike;
+  private cache: CacheLike;
+  private env: Environment;
+  private fetchImpl: typeof fetch;
+  private finnhubKey: string | undefined;
+  private fmpKey: string | undefined;
+  private loadProviderPreferences: LoadProviderPreferences;
+  private logger: LoggerLike;
+  private polygonKey: string | undefined;
+  private priorityOrder: Record<DataType, ProviderId[]>;
+  private twelveDataKey: string | undefined;
+  private usageLimits: Record<ProviderId, UsageLimit>;
+
   constructor({
     env = process.env,
     fetchImpl = fetch,
@@ -78,7 +192,7 @@ class DataSourceManager {
     apiTracker = createApiTracker(),
     logger = console,
     loadProviderPreferences = getProviderPreferences,
-  } = {}) {
+  }: DataSourceManagerOptions = {}) {
     this.env = env;
     this.fetchImpl = fetchImpl;
     this.cache = cache;
@@ -120,16 +234,16 @@ class DataSourceManager {
     };
   }
 
-  getNextResetTime() {
+  getNextResetTime(): number {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
     return tomorrow.getTime();
   }
 
-  resetCountersIfNeeded() {
+  resetCountersIfNeeded(): void {
     const now = Date.now();
-    for (const source of Object.keys(this.usageLimits)) {
+    for (const source of Object.keys(this.usageLimits) as ProviderId[]) {
       if (now >= this.usageLimits[source].resetTime) {
         this.usageLimits[source].current = 0;
         this.usageLimits[source].resetTime = this.getNextResetTime();
@@ -137,7 +251,7 @@ class DataSourceManager {
     }
   }
 
-  hasApiKey(source) {
+  hasApiKey(source: ProviderId): boolean {
     switch (source) {
       case "alphaVantage":
         return Boolean(this.alphaVantageKey);
@@ -156,7 +270,7 @@ class DataSourceManager {
     }
   }
 
-  canUseSource(source) {
+  canUseSource(source: ProviderId): boolean {
     this.resetCountersIfNeeded();
     const limits = this.usageLimits[source];
     return (
@@ -164,51 +278,54 @@ class DataSourceManager {
     );
   }
 
-  incrementUsage(source) {
+  incrementUsage(source: ProviderId): void {
     if (this.usageLimits[source]) {
       this.usageLimits[source].current += 1;
     }
   }
 
-  getAvailableSource(dataType) {
+  getAvailableSource(dataType: DataType): ProviderId | null {
     const sources = this.priorityOrder[dataType] || [];
     return sources.find((source) => this.canUseSource(source)) || null;
   }
 
-  getAvailableSources(dataType) {
+  getAvailableSources(dataType: DataType): ProviderId[] {
     const sources = this.priorityOrder[dataType] || [];
     return sources.filter((source) => this.canUseSource(source));
   }
 
-  async getAvailableSourcesForCapability(dataType, capability) {
+  async getAvailableSourcesForCapability(
+    dataType: DataType,
+    capability: ProviderCapability,
+  ): Promise<ProviderId[]> {
     try {
       const preferences = await this.loadProviderPreferences();
       const preference = preferences[capability];
       const ordered = buildProviderOrder(
         capability,
-        preference?.provider,
+        preference?.provider ?? "",
         preference?.fallbackEnabled !== false,
       );
       return ordered.filter((source) => this.canUseSource(source));
     } catch (error) {
       this.logger.warn(
         `Provider preferences unavailable for ${capability}:`,
-        error.message,
+        toErrorMessage(error),
       );
       return this.getAvailableSources(dataType);
     }
   }
 
-  async fetchJson(
-    url,
+  async fetchJson<T = Record<string, unknown>>(
+    url: string,
     {
       apiName,
       endpoint,
       symbol = null,
       timeframe = null,
       timeoutMs = 15000,
-    } = {},
-  ) {
+    }: FetchJsonOptions,
+  ): Promise<T> {
     const startTime = Date.now();
 
     try {
@@ -222,7 +339,7 @@ class DataSourceManager {
         throw new Error(`${apiName} HTTP ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as T;
       // Log only after successful completion
       await this.apiTracker.logAPICall(
         apiName,
@@ -248,14 +365,17 @@ class DataSourceManager {
     }
   }
 
-  async fetchStockData(symbol, timeframe = "1M") {
+  async fetchStockData(
+    symbol: string,
+    timeframe: Timeframe = "1M",
+  ): Promise<StockDataResult> {
     const normalizedSymbol = String(symbol || "")
       .trim()
       .toUpperCase();
     const cacheKey = `stock_data_${normalizedSymbol}_${timeframe}`;
 
     // Use async cache get
-    const cached = await this.cache.getAsync(cacheKey);
+    const cached = await this.cache.getAsync<StockDataResult>(cacheKey);
     if (cached) return { ...cached, source: "cache" };
 
     const sources = await this.getAvailableSourcesForCapability(
@@ -267,7 +387,7 @@ class DataSourceManager {
 
     for (const source of sources) {
       try {
-        let data;
+        let data: StockDataResult;
         if (source === "twelveData")
           data = await this.fetchTwelveData(normalizedSymbol, timeframe);
         else if (source === "polygon")
@@ -290,7 +410,7 @@ class DataSourceManager {
       } catch (error) {
         this.logger.warn(
           `Stock data fetch failed via ${source}:`,
-          error.message,
+          toErrorMessage(error),
         );
       }
     }
@@ -298,8 +418,11 @@ class DataSourceManager {
     return this.generateMockData(normalizedSymbol, timeframe);
   }
 
-  async fetchTwelveData(symbol, timeframe) {
-    const intervalMap = {
+  async fetchTwelveData(
+    symbol: string,
+    timeframe: Timeframe,
+  ): Promise<StockDataResult> {
+    const intervalMap: Record<string, string> = {
       "1D": "5min",
       "1W": "30min",
       "1M": "1day",
@@ -311,7 +434,11 @@ class DataSourceManager {
     const interval = intervalMap[timeframe] || "1day";
     const outputSize = timeframe === "1D" ? "96" : "120";
     const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=${interval}&outputsize=${outputSize}&apikey=${this.twelveDataKey}`;
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<{
+      message?: string;
+      status?: string;
+      values?: Array<Record<string, unknown>>;
+    }>(url, {
       apiName: "Twelve Data",
       endpoint: "TIME_SERIES",
       symbol,
@@ -327,8 +454,8 @@ class DataSourceManager {
       timeframe,
       source: "Twelve Data",
       ohlcv: data.values
-        .map((item) => ({
-          date: item.datetime,
+        .map((item): OhlcvPoint => ({
+          date: String(item.datetime ?? ""),
           open: Number(item.open),
           high: Number(item.high),
           low: Number(item.low),
@@ -339,10 +466,13 @@ class DataSourceManager {
     };
   }
 
-  async fetchPolygonData(symbol, timeframe) {
+  async fetchPolygonData(
+    symbol: string,
+    timeframe: Timeframe,
+  ): Promise<StockDataResult> {
     const endDate = new Date();
     const startDate = new Date();
-    const daysBack = {
+    const daysBack: Record<string, number> = {
       "1D": 1,
       "1W": 7,
       "1M": 30,
@@ -357,7 +487,10 @@ class DataSourceManager {
     const endDateStr = endDate.toISOString().split("T")[0];
     const multiplier = timeframe === "1D" ? "5/minute" : "1/day";
     const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/${multiplier}/${startDateStr}/${endDateStr}?adjusted=true&sort=asc&apikey=${this.polygonKey}`;
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<{
+      results?: Array<Record<string, unknown>>;
+      status?: string;
+    }>(url, {
       apiName: "Polygon",
       endpoint: "AGGREGATES",
       symbol,
@@ -376,8 +509,8 @@ class DataSourceManager {
       symbol,
       timeframe,
       source: "Polygon.io",
-      ohlcv: data.results.map((item) => ({
-        date: new Date(item.t).toISOString(),
+      ohlcv: data.results.map((item): OhlcvPoint => ({
+        date: new Date(Number(item.t)).toISOString(),
         open: Number(item.o),
         high: Number(item.h),
         low: Number(item.l),
@@ -387,8 +520,11 @@ class DataSourceManager {
     };
   }
 
-  async fetchYahooFinanceData(symbol, timeframe) {
-    const intervalMap = {
+  async fetchYahooFinanceData(
+    symbol: string,
+    timeframe: Timeframe,
+  ): Promise<StockDataResult> {
+    const intervalMap: Record<string, string> = {
       "1D": "5m",
       "1W": "30m",
       "1M": "1d",
@@ -397,7 +533,7 @@ class DataSourceManager {
       "1Y": "1wk",
       "2Y": "1wk",
     };
-    const daysBack = {
+    const daysBack: Record<string, number> = {
       "1D": 1,
       "1W": 7,
       "1M": 30,
@@ -435,8 +571,11 @@ class DataSourceManager {
     };
   }
 
-  async fetchAlphaVantageData(symbol, timeframe) {
-    const intervalMap = {
+  async fetchAlphaVantageData(
+    symbol: string,
+    timeframe: Timeframe,
+  ): Promise<StockDataResult> {
+    const intervalMap: Record<string, string> = {
       "1D": "5min",
       "1W": "30min",
       "1M": "daily",
@@ -446,8 +585,8 @@ class DataSourceManager {
       "2Y": "weekly",
     };
     const interval = intervalMap[timeframe] || "daily";
-    let url;
-    let timeSeriesKey;
+    let url: string;
+    let timeSeriesKey: string;
 
     if (["1min", "5min", "15min", "30min", "60min"].includes(interval)) {
       url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${encodeURIComponent(symbol)}&interval=${interval}&outputsize=full&apikey=${this.alphaVantageKey}`;
@@ -460,7 +599,7 @@ class DataSourceManager {
       timeSeriesKey = "Time Series (Daily)";
     }
 
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<Record<string, unknown>>(url, {
       apiName: "Alpha Vantage",
       endpoint: "TIME_SERIES",
       symbol,
@@ -468,10 +607,14 @@ class DataSourceManager {
     });
 
     if (data.Note || data["Error Message"] || data.Information) {
-      throw new Error(data.Note || data["Error Message"] || data.Information);
+      throw new Error(
+        String(data.Note || data["Error Message"] || data.Information),
+      );
     }
 
-    const timeSeries = data[timeSeriesKey];
+    const timeSeries = data[timeSeriesKey] as
+      | Record<string, Record<string, unknown>>
+      | undefined;
     if (!timeSeries) throw new Error("No Alpha Vantage time series returned");
 
     return {
@@ -479,7 +622,7 @@ class DataSourceManager {
       timeframe,
       source: "Alpha Vantage",
       ohlcv: Object.entries(timeSeries)
-        .map(([date, values]) => ({
+        .map(([date, values]): OhlcvPoint => ({
           date,
           open: Number(values["1. open"]),
           high: Number(values["2. high"]),
@@ -487,15 +630,15 @@ class DataSourceManager {
           close: Number(values["4. close"]),
           volume: Number(values["5. volume"] || values["6. volume"] || 0),
         }))
-        .sort((a, b) => new Date(a.date) - new Date(b.date)),
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
     };
   }
 
-  async fetchFundamentalData(symbol) {
+  async fetchFundamentalData(symbol: string): Promise<FundamentalData> {
     const cacheKey = `fundamentals_${symbol}`;
 
     // Use async cache get
-    const cached = await this.cache.getAsync(cacheKey);
+    const cached = await this.cache.getAsync<FundamentalData>(cacheKey);
     if (cached) return { ...cached, source: "cache" };
 
     const sources = await this.getAvailableSourcesForCapability(
@@ -507,7 +650,7 @@ class DataSourceManager {
 
     for (const source of sources) {
       try {
-        let data;
+        let data: FundamentalData;
         if (source === "yahooFinance")
           data = await this.fetchYahooFundamentals(symbol);
         else if (source === "fmp") data = await this.fetchFMPFundamentals(symbol);
@@ -522,7 +665,7 @@ class DataSourceManager {
       } catch (error) {
         this.logger.warn(
           `Fundamentals fetch failed via ${source}:`,
-          error.message,
+          toErrorMessage(error),
         );
       }
     }
@@ -530,7 +673,7 @@ class DataSourceManager {
     throw new Error("All fundamental data sources failed");
   }
 
-  async fetchYahooFundamentals(symbol) {
+  async fetchYahooFundamentals(symbol: string): Promise<FundamentalData> {
     const data = await this.fetchJson(buildYahooQuoteSummaryUrl(symbol), {
       apiName: "Yahoo Finance",
       endpoint: "QUOTE_SUMMARY",
@@ -540,24 +683,24 @@ class DataSourceManager {
     return normalizeYahooFundamentals(data);
   }
 
-  async fetchFMPFundamentals(symbol) {
+  async fetchFMPFundamentals(symbol: string): Promise<FundamentalData> {
     const profileUrl = `https://financialmodelingprep.com/api/v3/profile/${symbol}?apikey=${this.fmpKey}`;
     const metricsUrl = `https://financialmodelingprep.com/api/v3/key-metrics/${symbol}?apikey=${this.fmpKey}`;
     const [profileResponse, metricsResponse] = await Promise.all([
-      this.fetchJson(profileUrl, {
+      this.fetchJson<Array<Record<string, unknown>>>(profileUrl, {
         apiName: "FMP",
         endpoint: "PROFILE",
         symbol,
       }),
-      this.fetchJson(metricsUrl, {
+      this.fetchJson<Array<Record<string, unknown>>>(metricsUrl, {
         apiName: "FMP",
         endpoint: "KEY_METRICS",
         symbol,
       }),
     ]);
 
-    const profile = profileResponse?.[0];
-    const metrics = metricsResponse?.[0];
+    const profile = profileResponse[0];
+    const metrics = metricsResponse[0];
     if (!profile || !metrics) throw new Error("Invalid FMP response");
 
     return {
@@ -568,15 +711,17 @@ class DataSourceManager {
         PriceToBookRatio: metrics.pbRatio,
         ReturnOnEquityTTM: metrics.roe,
         ProfitMargin:
-          profile.mktCap > 0 ? (profile.lastDiv / profile.price) * 100 : null,
+          Number(profile.mktCap) > 0
+            ? (Number(profile.lastDiv) / Number(profile.price)) * 100
+            : null,
         EPS: profile.eps,
       },
     };
   }
 
-  async fetchFinnhubFundamentals(symbol) {
+  async fetchFinnhubFundamentals(symbol: string): Promise<FundamentalData> {
     const url = `https://finnhub.io/api/v1/stock/metric?symbol=${symbol}&metric=all&token=${this.finnhubKey}`;
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<{ metric?: Record<string, unknown> }>(url, {
       apiName: "Finnhub",
       endpoint: "METRICS",
       symbol,
@@ -595,16 +740,16 @@ class DataSourceManager {
     };
   }
 
-  async fetchAlphaVantageFundamentals(symbol) {
+  async fetchAlphaVantageFundamentals(symbol: string): Promise<FundamentalData> {
     const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${this.alphaVantageKey}`;
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<Record<string, unknown>>(url, {
       apiName: "Alpha Vantage",
       endpoint: "OVERVIEW",
       symbol,
     });
 
     if (data.Note || data["Error Message"]) {
-      throw new Error(data.Note || data["Error Message"]);
+      throw new Error(String(data.Note || data["Error Message"]));
     }
 
     return {
@@ -613,14 +758,14 @@ class DataSourceManager {
     };
   }
 
-  async searchSymbols(query) {
+  async searchSymbols(query: string): Promise<SearchResponse> {
     const trimmedQuery = String(query || "").trim();
     if (!trimmedQuery) return { results: [], source: "empty" };
 
     const cacheKey = `search_${trimmedQuery.toLowerCase()}`;
 
     // Use async cache get
-    const cached = await this.cache.getAsync(cacheKey);
+    const cached = await this.cache.getAsync<SearchResponse>(cacheKey);
     if (cached) return { ...cached, source: "cache" };
 
     const sources = await this.getAvailableSourcesForCapability(
@@ -636,7 +781,7 @@ class DataSourceManager {
 
     for (const source of sources) {
       try {
-        let results;
+        let results: SearchResponse;
         if (source === "yahooFinance")
           results = await this.searchYahooFinance(trimmedQuery);
         else if (source === "finnhub")
@@ -650,7 +795,7 @@ class DataSourceManager {
         this.incrementUsage(source);
         return results;
       } catch (error) {
-        this.logger.warn(`Search failed via ${source}:`, error.message);
+        this.logger.warn(`Search failed via ${source}:`, toErrorMessage(error));
       }
     }
 
@@ -660,7 +805,7 @@ class DataSourceManager {
     };
   }
 
-  async searchYahooFinance(query) {
+  async searchYahooFinance(query: string): Promise<SearchResponse> {
     const data = await this.fetchJson(buildYahooSearchUrl(query), {
       apiName: "Yahoo Finance",
       endpoint: "SEARCH",
@@ -670,9 +815,15 @@ class DataSourceManager {
     return normalizeYahooSearchResults(data);
   }
 
-  async searchFinnhub(query) {
+  async searchFinnhub(query: string): Promise<SearchResponse> {
     const url = `https://finnhub.io/api/v1/search?q=${encodeURIComponent(query)}&token=${this.finnhubKey}`;
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<{
+      result?: Array<{
+        description?: string;
+        symbol?: string;
+        type?: string;
+      }>;
+    }>(url, {
       apiName: "Finnhub",
       endpoint: "SEARCH",
       symbol: query,
@@ -681,9 +832,9 @@ class DataSourceManager {
     return {
       source: "Finnhub",
       results: Array.isArray(data.result)
-        ? data.result.slice(0, 20).map((item) => ({
-            symbol: item.symbol,
-            name: item.description,
+        ? data.result.slice(0, 20).map((item): SearchResult => ({
+            symbol: item.symbol ?? "",
+            name: item.description ?? item.symbol ?? "",
             type: item.type || "Equity",
             region: item.type || "US",
           }))
@@ -691,9 +842,16 @@ class DataSourceManager {
     };
   }
 
-  async searchTwelveData(query) {
+  async searchTwelveData(query: string): Promise<SearchResponse> {
     const url = `https://api.twelvedata.com/symbol_search?symbol=${encodeURIComponent(query)}&apikey=${this.twelveDataKey}`;
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<{
+      data?: Array<{
+        exchange?: string;
+        instrument_name?: string;
+        instrument_type?: string;
+        symbol?: string;
+      }>;
+    }>(url, {
       apiName: "Twelve Data",
       endpoint: "SEARCH",
       symbol: query,
@@ -702,19 +860,21 @@ class DataSourceManager {
     return {
       source: "Twelve Data",
       results: Array.isArray(data.data)
-        ? data.data.slice(0, 20).map((item) => ({
-            symbol: item.symbol,
-            name: item.instrument_name,
+        ? data.data.slice(0, 20).map((item): SearchResult => ({
+            symbol: item.symbol ?? "",
+            name: item.instrument_name ?? item.symbol ?? "",
             type: item.instrument_type || "Equity",
-            region: item.exchange,
+            region: item.exchange ?? "Twelve Data",
           }))
         : [],
     };
   }
 
-  async searchAlphaVantage(query) {
+  async searchAlphaVantage(query: string): Promise<SearchResponse> {
     const url = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${encodeURIComponent(query)}&apikey=${this.alphaVantageKey}`;
-    const data = await this.fetchJson(url, {
+    const data = await this.fetchJson<{
+      bestMatches?: Array<Record<string, unknown>>;
+    }>(url, {
       apiName: "Alpha Vantage",
       endpoint: "SEARCH",
       symbol: query,
@@ -723,17 +883,17 @@ class DataSourceManager {
     return {
       source: "Alpha Vantage",
       results: Array.isArray(data.bestMatches)
-        ? data.bestMatches.slice(0, 20).map((item) => ({
-            symbol: item["1. symbol"],
-            name: item["2. name"],
-            type: item["3. type"] || "Equity",
-            region: item["4. region"],
+        ? data.bestMatches.slice(0, 20).map((item): SearchResult => ({
+            symbol: String(item["1. symbol"] ?? ""),
+            name: String(item["2. name"] ?? item["1. symbol"] ?? ""),
+            type: String(item["3. type"] || "Equity"),
+            region: String(item["4. region"] || "Alpha Vantage"),
           }))
         : [],
     };
   }
 
-  generateFallbackSearchResults(query) {
+  generateFallbackSearchResults(query: string): SearchResult[] {
     const normalized = query.toLowerCase();
     return POPULAR_STOCKS.filter(
       (stock) =>
@@ -742,10 +902,13 @@ class DataSourceManager {
     ).slice(0, 8);
   }
 
-  generateMockData(symbol, timeframe) {
-    const ohlcv = [];
+  generateMockData(
+    symbol: string,
+    timeframe: Timeframe,
+  ): StockDataResult {
+    const ohlcv: OhlcvPoint[] = [];
     let price = 100 + Math.random() * 60;
-    const dataPointsMap = {
+    const dataPointsMap: Record<string, number> = {
       "1D": 96,
       "1W": 56,
       "1M": 30,
@@ -787,7 +950,7 @@ class DataSourceManager {
   getStatus() {
     this.resetCountersIfNeeded();
     return {
-      sources: Object.keys(this.usageLimits).map((name) => ({
+      sources: (Object.keys(this.usageLimits) as ProviderId[]).map((name) => ({
         name,
         hasApiKey: this.hasApiKey(name),
         usage: this.usageLimits[name].current,
@@ -801,7 +964,7 @@ class DataSourceManager {
   }
 }
 
-function createDataSourceManager(options) {
+function createDataSourceManager(options?: DataSourceManagerOptions) {
   return new DataSourceManager(options);
 }
 

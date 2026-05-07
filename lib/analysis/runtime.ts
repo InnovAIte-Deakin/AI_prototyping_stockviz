@@ -6,7 +6,7 @@ import enhancedScoringServiceModule from "./enhanced-scoring-service.js";
 import basicTechnicalAnalysisServiceModule from "./basic-technical-analysis-service.js";
 import cacheModule from "../cache/index";
 import observabilityModule from "../observability/index.js";
-import dataSourceManagerModule from "../market/data-source-manager.js";
+import dataSourceManagerModule from "../market/data-source-manager";
 import dataServiceModule from "../market/data-service.js";
 import searchServiceModule from "../market/search-service.js";
 import aiModule from "../ai/index.js";
