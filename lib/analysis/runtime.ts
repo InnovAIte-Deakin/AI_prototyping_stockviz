@@ -1,4 +1,4 @@
-import analysisServiceModule from "./analysis-service.js";
+import analysisServiceModule from "./analysis-service";
 import weightServiceModule from "./weight-service.js";
 import fundamentalAnalysisServiceModule from "./fundamental-analysis-service.js";
 import sentimentServiceModule from "./sentiment-service.js";
@@ -25,7 +25,9 @@ const { createDataSourceManager } = dataSourceManagerModule;
 const { createDataService } = dataServiceModule;
 const { createSearchService } = searchServiceModule;
 const { createSummaryService } = aiModule as typeof aiModule & {
-  createSummaryService: (options?: Record<string, unknown>) => unknown;
+  createSummaryService: (options?: Record<string, unknown>) => {
+    generateWeightedAISummary: (...args: unknown[]) => Promise<string> | string;
+  };
 };
 
 const cache = createCacheService();

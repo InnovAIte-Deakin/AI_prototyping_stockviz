@@ -1,4 +1,139 @@
+import type { AnalysisWeights, IndicatorConfig } from "@/lib/url-state";
+
+type OhlcvPoint = {
+  close?: number;
+  high?: number;
+  low?: number;
+  [key: string]: unknown;
+};
+
+type StockDataLike = {
+  ohlcv?: OhlcvPoint[];
+  source?: string;
+};
+
+type LooseIndicatorConfig = IndicatorConfig | Record<string, unknown>;
+
+type ScoreLike = {
+  indicators?: IndicatorMap;
+  notes?: string;
+  recommendation?: string;
+  score?: number;
+  summary?: string;
+  [key: string]: unknown;
+};
+
+type MacdLike = {
+  hist?: number[];
+  histogram?: number[];
+};
+
+type BollingerLike = {
+  lower?: number[];
+  upper?: number[];
+};
+
+type IndicatorMap = Record<string, unknown> & {
+  BollingerBands?: BollingerLike;
+  MACD?: MacdLike;
+  RSI?: number[];
+  SMA?: { values?: number[] };
+  SMA20?: number[];
+  SMA50?: number[];
+  bollingerBands?: BollingerLike;
+  macd?: MacdLike;
+  rsi?: number[];
+};
+
+type WeightedSummaryMode = "advanced" | "normal";
+
+type SummaryService = {
+  generateWeightedAISummary(...args: unknown[]): Promise<string> | string;
+};
+
+type WeightService = {
+  defaultWeights: AnalysisWeights;
+  validateAndParseWeights(weights: Partial<AnalysisWeights>): AnalysisWeights;
+};
+
+type TechnicalAnalysisService = {
+  calculateIndicators(
+    ohlcv: OhlcvPoint[],
+    indicatorsConfig: IndicatorConfig,
+  ): Promise<IndicatorMap>;
+};
+
+type SentimentService = {
+  fetchAlphaVantageNewsSentiment(symbol: string): Promise<ScoreLike>;
+};
+
+type FundamentalAnalysisService = {
+  analyze(symbol: string): Promise<ScoreLike>;
+};
+
+type EnhancedScoreResult = ScoreLike & {
+  confidence?: number;
+  details?: string[];
+  flags?: string[];
+};
+
+type AggregateScoreResult = {
+  aggregateScore: number;
+  confidence: number;
+  details: string[];
+  flags: string[];
+  label: string;
+};
+
+type EnhancedScoringService = {
+  calculateAggregateScore(
+    fundamental: EnhancedScoreResult,
+    technical: EnhancedScoreResult,
+    sentiment: EnhancedScoreResult,
+    weights: { fundamental: number; sentiment: number; technical: number },
+  ): AggregateScoreResult;
+  calculateEnhancedFundamentalScore(fundamental: ScoreLike): EnhancedScoreResult;
+  calculateEnhancedSentimentScore(sentiment: ScoreLike): EnhancedScoreResult;
+  calculateEnhancedTechnicalScore(
+    indicators: IndicatorMap | undefined,
+    latestPoint: OhlcvPoint,
+  ): EnhancedScoreResult;
+};
+
+type LoggerLike = {
+  error(...data: unknown[]): void;
+  warn(...data: unknown[]): void;
+};
+
+type AnalysisServiceOptions = {
+  enhancedScoringService: EnhancedScoringService;
+  fundamentalAnalysisService: FundamentalAnalysisService;
+  geminiService?: SummaryService;
+  logger?: LoggerLike;
+  sentimentService: SentimentService;
+  summaryService?: SummaryService;
+  technicalAnalysisService: TechnicalAnalysisService;
+  weightService: WeightService;
+};
+
+type AnalysisServiceResponse = {
+  analysis: Record<string, unknown>;
+  status: "success";
+  symbol: string;
+};
+
+const toErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
 class AnalysisService {
+  private enhancedScoringService: EnhancedScoringService;
+  private fundamentalAnalysisService: FundamentalAnalysisService;
+  private logger: LoggerLike;
+  private sentimentService: SentimentService;
+  private summaryService: SummaryService;
+  private technicalAnalysisService: TechnicalAnalysisService;
+  private weightService: WeightService;
+
   constructor({
     summaryService,
     geminiService,
@@ -8,8 +143,12 @@ class AnalysisService {
     fundamentalAnalysisService,
     enhancedScoringService,
     logger = console,
-  }) {
-    this.summaryService = summaryService || geminiService;
+  }: AnalysisServiceOptions) {
+    const resolvedSummaryService = summaryService || geminiService;
+    if (!resolvedSummaryService) {
+      throw new Error("AnalysisService requires a summary service");
+    }
+    this.summaryService = resolvedSummaryService;
     this.weightService = weightService;
     this.technicalAnalysisService = technicalAnalysisService;
     this.sentimentService = sentimentService;
@@ -18,7 +157,11 @@ class AnalysisService {
     this.logger = logger;
   }
 
-  async performNormalAnalysis(symbol, stockData, timeframe) {
+  async performNormalAnalysis(
+    symbol: string,
+    stockData: StockDataLike,
+    timeframe: string,
+  ): Promise<AnalysisServiceResponse> {
     const normalizedSymbol = String(symbol || "").toUpperCase();
     const fundamental = await this.getFundamentalAnalysis(normalizedSymbol);
     const overallScore = Math.round(fundamental?.score ?? 50);
@@ -64,12 +207,12 @@ class AnalysisService {
   }
 
   async performAdvancedAnalysis(
-    symbol,
-    stockData,
-    timeframe,
-    rawWeights = {},
-    indicatorsConfig = {},
-  ) {
+    symbol: string,
+    stockData: StockDataLike,
+    timeframe: string,
+    rawWeights: Partial<AnalysisWeights> = {},
+    indicatorsConfig: LooseIndicatorConfig = {},
+  ): Promise<AnalysisServiceResponse> {
     const normalizedSymbol = String(symbol || "").toUpperCase();
     const weights = this.weightService.validateAndParseWeights({
       fundamental: Number(
@@ -148,11 +291,11 @@ class AnalysisService {
   }
 
   async performEnhancedAnalysis(
-    symbol,
-    stockData,
-    timeframe,
-    rawWeights = {},
-    indicatorsConfig = {},
+    symbol: string,
+    stockData: StockDataLike,
+    timeframe: string,
+    rawWeights: Partial<AnalysisWeights> = {},
+    indicatorsConfig: LooseIndicatorConfig = {},
   ) {
     const normalizedSymbol = String(symbol || "").toUpperCase();
     const weights = this.weightService.validateAndParseWeights({
@@ -288,16 +431,16 @@ class AnalysisService {
     }
   }
 
-  async getFundamentalAnalysis(symbol) {
+  async getFundamentalAnalysis(symbol: string): Promise<ScoreLike> {
     return this.fundamentalAnalysisService.analyze(symbol);
   }
 
   async getTechnicalAnalysis(
-    symbol,
-    stockData,
-    timeframe,
-    indicatorsConfig = {},
-  ) {
+    symbol: string,
+    stockData: StockDataLike,
+    timeframe: string,
+    indicatorsConfig: LooseIndicatorConfig = {},
+  ): Promise<ScoreLike> {
     try {
       if (!Array.isArray(stockData?.ohlcv) || stockData.ohlcv.length < 10) {
         throw new Error("Insufficient OHLCV data for technical analysis");
@@ -306,7 +449,7 @@ class AnalysisService {
       const indicators =
         await this.technicalAnalysisService.calculateIndicators(
           stockData.ohlcv,
-          indicatorsConfig,
+          indicatorsConfig as IndicatorConfig,
         );
       const score = this.calculateTechnicalScore(indicators, stockData.ohlcv);
 
@@ -317,7 +460,7 @@ class AnalysisService {
         configuration: indicatorsConfig,
       };
     } catch (error) {
-      this.logger.error("Technical analysis error:", error.message);
+      this.logger.error("Technical analysis error:", toErrorMessage(error));
       const last = stockData?.ohlcv?.at(-1) || {};
       return {
         score: 60,
@@ -333,9 +476,13 @@ class AnalysisService {
     }
   }
 
-  calculateTechnicalScore(indicators, ohlcv) {
+  calculateTechnicalScore(
+    indicators: IndicatorMap,
+    ohlcv: OhlcvPoint[],
+  ): number {
     let score = 50;
-    const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
+    const clamp = (value: number, low: number, high: number) =>
+      Math.max(low, Math.min(high, value));
     const lastClose =
       Array.isArray(ohlcv) && ohlcv.length
         ? ohlcv[ohlcv.length - 1].close
@@ -353,8 +500,9 @@ class AnalysisService {
 
     if (indicators?.MACD || indicators?.macd) {
       const macd = indicators.MACD || indicators.macd;
-      if (Array.isArray(macd?.histogram || macd?.hist)) {
-        const histogram = Number((macd.histogram || macd.hist).at(-1));
+      const histogramSeries = macd?.histogram ?? macd?.hist;
+      if (Array.isArray(histogramSeries)) {
+        const histogram = Number(histogramSeries.at(-1));
         if (!Number.isNaN(histogram)) score += histogram > 0 ? 7 : -7;
       }
     }
@@ -390,7 +538,7 @@ class AnalysisService {
     return clamp(Math.round(score), 0, 100);
   }
 
-  async getSentimentAnalysis(symbol) {
+  async getSentimentAnalysis(symbol: string): Promise<ScoreLike> {
     try {
       const sentiment =
         await this.sentimentService.fetchAlphaVantageNewsSentiment(symbol);
@@ -402,7 +550,7 @@ class AnalysisService {
     } catch (error) {
       this.logger.warn(
         "Sentiment fetch failed, using placeholder:",
-        error.message,
+        toErrorMessage(error),
       );
       return {
         score: 50,
@@ -413,7 +561,12 @@ class AnalysisService {
     }
   }
 
-  calculateWeightedScore(fundamental, technical, sentiment, weights) {
+  calculateWeightedScore(
+    fundamental: ScoreLike,
+    technical: ScoreLike,
+    sentiment: ScoreLike,
+    weights: AnalysisWeights,
+  ): number {
     const f = Number(fundamental?.score ?? 50);
     const t = Number(technical?.score ?? 50);
     const s = Number(sentiment?.score ?? 50);
@@ -427,13 +580,13 @@ class AnalysisService {
   }
 
   async generateWeightedAISummary(
-    symbol,
-    fundamental,
-    technical,
-    sentiment,
-    weights,
-    weightedScore,
-  ) {
+    symbol: string,
+    fundamental: ScoreLike,
+    technical: ScoreLike,
+    sentiment: ScoreLike,
+    weights: AnalysisWeights,
+    weightedScore: number,
+  ): Promise<string> {
     try {
       const mode = this.determineUserMode(weights, technical);
       const summary = await this.summaryService.generateWeightedAISummary(
@@ -449,7 +602,7 @@ class AnalysisService {
     } catch (error) {
       this.logger.warn(
         "Enhanced Gemini summary failed; using fallback:",
-        error.message,
+        toErrorMessage(error),
       );
     }
 
@@ -471,13 +624,17 @@ class AnalysisService {
       .join("\n");
   }
 
-  calculateConfidenceLevel(score) {
+  calculateConfidenceLevel(score: number): string {
     if (score >= 75) return "high";
     if (score >= 60) return "medium";
     return "low";
   }
 
-  calculateRiskLevel(fundamental, technical, sentiment) {
+  calculateRiskLevel(
+    fundamental: ScoreLike,
+    technical: ScoreLike,
+    sentiment: ScoreLike,
+  ): string {
     const f = Number(fundamental?.score ?? 50);
     const t = Number(technical?.score ?? 50);
     const s = Number(sentiment?.score ?? 50);
@@ -489,13 +646,16 @@ class AnalysisService {
     return "elevated";
   }
 
-  getRecommendationFromScore(score) {
+  getRecommendationFromScore(score: number): string {
     if (score >= 70) return "BUY";
     if (score >= 50) return "HOLD";
     return "SELL";
   }
 
-  determineUserMode(weights, technical) {
+  determineUserMode(
+    weights: AnalysisWeights,
+    technical: ScoreLike,
+  ): WeightedSummaryMode {
     const defaults = this.weightService.defaultWeights;
     const customWeights =
       weights.fundamental !== defaults.fundamental ||
@@ -510,7 +670,7 @@ class AnalysisService {
       : "normal";
   }
 
-  getConfidenceDescription(confidence) {
+  getConfidenceDescription(confidence: number): string {
     if (confidence >= 0.8) return "High - Strong data quality and agreement";
     if (confidence >= 0.6)
       return "Medium - Good data quality with some limitations";
@@ -518,7 +678,7 @@ class AnalysisService {
     return "Very Low - Insufficient or unreliable data";
   }
 
-  getEnhancedRecommendationText(label, score) {
+  getEnhancedRecommendationText(label: string, score: number): string {
     const recommendations = {
       "STRONG BUY": `Exceptional investment opportunity with score of ${score}/100. Strong fundamentals, positive technical signals, and favorable sentiment align for potential significant returns.`,
       BUY: `Attractive investment with score of ${score}/100. Multiple positive factors suggest good upside potential with reasonable risk.`,
@@ -530,17 +690,21 @@ class AnalysisService {
     };
 
     return (
-      recommendations[label] ||
+      recommendations[label as keyof typeof recommendations] ||
       `Score of ${score}/100 with ${label} recommendation.`
     );
   }
 }
 
-function createAnalysisService(options) {
+function createAnalysisService(options: AnalysisServiceOptions) {
   return new AnalysisService(options);
 }
 
-module.exports = {
+const analysisServiceModule = {
   AnalysisService,
   createAnalysisService,
 };
+
+export { AnalysisService, createAnalysisService };
+
+export default analysisServiceModule;
