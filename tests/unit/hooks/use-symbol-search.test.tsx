@@ -35,8 +35,9 @@ describe("useSymbolSearch", () => {
 
   it("loads debounced symbol results", async () => {
     const fetchMock = mockFetchJson({
-      count: 1,
-      result: [{ description: "Apple Inc.", symbol: "AAPL" }],
+      results: [{ name: "Apple Inc.", symbol: "AAPL" }],
+      source: "Yahoo Finance",
+      status: "success",
     });
 
     const { result } = renderHook(() =>
@@ -45,12 +46,16 @@ describe("useSymbolSearch", () => {
 
     await waitFor(() =>
       expect(result.current.results).toEqual([
-        { description: "Apple Inc.", symbol: "AAPL" },
+        expect.objectContaining({
+          description: "Apple Inc.",
+          displaySymbol: "AAPL",
+          symbol: "AAPL",
+        }),
       ]),
     );
     expect(result.current.count).toBe(1);
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/symbol-search?q=AAPL&exchange=US",
+      "/api/search?query=AAPL",
       { signal: expect.any(AbortSignal) },
     );
   });

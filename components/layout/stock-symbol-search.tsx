@@ -27,7 +27,7 @@ const PLACEHOLDER = "Search stocks, tickers, companies, and more…";
 
 type StockSymbolSearchProps = {
   className?: string;
-  /** Optional Finnhub `exchange` filter (e.g. `US`). See GET `/search`. */
+  /** Retained for compatibility; provider-backed search currently ignores exchange filters. */
   exchange?: string;
 };
 

@@ -2,12 +2,12 @@
 
 import * as React from "react";
 
-import type { FinnhubSymbolLookupInfo } from "@/lib/types";
+import type { FinnhubSymbolLookupInfo, SearchResultItem } from "@/lib/types";
 
 export type UseSymbolSearchOptions = {
   /** Current search text (e.g. controlled input value). */
   query: string;
-  /** Optional exchange filter (e.g. `US`). */
+  /** Retained for compatibility; provider-backed search currently ignores exchange filters. */
   exchange?: string;
   /**
    * Minimum trimmed length before calling the API. Default `2` to limit requests.
@@ -24,22 +24,24 @@ export type UseSymbolSearchResult = {
   isLoading: boolean;
 };
 
-const buildQuery = (q: string, exchange?: string): string => {
-  const params = new URLSearchParams({ q });
-  if (exchange) {
-    params.set("exchange", exchange);
-  }
-  return params.toString();
-};
+const buildQuery = (query: string): string =>
+  new URLSearchParams({ query }).toString();
+
+const toLookupResult = (item: SearchResultItem): FinnhubSymbolLookupInfo => ({
+  description: item.name,
+  displaySymbol: item.symbol,
+  symbol: item.symbol,
+  type: item.type,
+});
 
 /**
- * Debounced Finnhub symbol lookup via `/api/symbol-search` (`GET /search`).
- * Requires `FINNHUB_API_KEY` on the server.
+ * Debounced symbol lookup via `/api/search`, backed by the active provider
+ * preferences and Yahoo Finance by default.
  */
 export const useSymbolSearch = (
   options: UseSymbolSearchOptions,
 ): UseSymbolSearchResult => {
-  const { query, exchange, minQueryLength = 2, debounceMs = 300 } = options;
+  const { query, minQueryLength = 2, debounceMs = 300 } = options;
 
   const [results, setResults] = React.useState<FinnhubSymbolLookupInfo[]>([]);
   const [count, setCount] = React.useState<number | null>(null);
@@ -65,12 +67,16 @@ export const useSymbolSearch = (
         setIsLoading(true);
         setError(null);
         try {
-          const qs = buildQuery(trimmed, exchange);
-          const res = await fetch(`/api/symbol-search?${qs}`, {
+          const qs = buildQuery(trimmed);
+          const res = await fetch(`/api/search?${qs}`, {
             signal: fetchController!.signal,
           });
           const payload = (await res.json()) as
-            | { count?: number; result?: FinnhubSymbolLookupInfo[] }
+            | {
+                message?: string;
+                results?: SearchResultItem[];
+                status?: string;
+              }
             | { error?: string };
 
           if (aborted) {
@@ -81,20 +87,18 @@ export const useSymbolSearch = (
             const msg =
               "error" in payload && typeof payload.error === "string"
                 ? payload.error
+                : "message" in payload && typeof payload.message === "string"
+                  ? payload.message
                 : `Request failed (${res.status})`;
             throw new Error(msg);
           }
 
-          if (!("result" in payload) || !Array.isArray(payload.result)) {
+          if (!("results" in payload) || !Array.isArray(payload.results)) {
             throw new Error("Invalid symbol search response");
           }
 
-          setResults(payload.result);
-          setCount(
-            typeof payload.count === "number"
-              ? payload.count
-              : payload.result.length,
-          );
+          setResults(payload.results.map(toLookupResult));
+          setCount(payload.results.length);
         } catch (e) {
           if (aborted) {
             return;
@@ -118,7 +122,7 @@ export const useSymbolSearch = (
       window.clearTimeout(timerId);
       fetchController?.abort();
     };
-  }, [query, exchange, minQueryLength, debounceMs]);
+  }, [query, minQueryLength, debounceMs]);
 
   return { results, count, error, isLoading };
 };

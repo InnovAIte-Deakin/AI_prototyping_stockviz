@@ -36,10 +36,11 @@ export function SymbolSearch({
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const topResolvedSymbol = results[0]?.symbol?.trim();
   const analysisHref = useMemo(() => {
-    const normalized = deferredQuery.toUpperCase();
+    const normalized = (topResolvedSymbol || deferredQuery).toUpperCase();
     return normalized ? `/analysis/${encodeURIComponent(normalized)}` : null;
-  }, [deferredQuery]);
+  }, [deferredQuery, topResolvedSymbol]);
 
   useEffect(() => {
     if (deferredQuery.length < 1) {
@@ -49,9 +50,10 @@ export function SymbolSearch({
     }
 
     const controller = new AbortController();
+    setResults([]);
+    setIsLoading(true);
     const timeout = window.setTimeout(async () => {
       try {
-        setIsLoading(true);
         const response = await fetch(
           `/api/search?query=${encodeURIComponent(deferredQuery)}`,
           {
@@ -93,6 +95,7 @@ export function SymbolSearch({
   };
 
   const canSubmit = query.trim().length > 0;
+  const submitSymbol = topResolvedSymbol || query;
 
   return (
     <div className="space-y-3">
@@ -111,7 +114,7 @@ export function SymbolSearch({
         <Button
           type="button"
           disabled={!canSubmit || isPending}
-          onClick={() => openAnalysis(query)}
+          onClick={() => openAnalysis(submitSymbol)}
           className="h-12 rounded-xl bg-primary px-5 text-white hover:bg-primary/90"
         >
           {isPending ? "Opening..." : submitLabel}
