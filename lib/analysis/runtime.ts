@@ -2,7 +2,7 @@ import analysisServiceModule from "./analysis-service";
 import weightServiceModule from "./weight-service.js";
 import fundamentalAnalysisServiceModule from "./fundamental-analysis-service.js";
 import sentimentServiceModule from "./sentiment-service.js";
-import enhancedScoringServiceModule from "./enhanced-scoring-service.js";
+import enhancedScoringServiceModule from "./enhanced-scoring-service";
 import basicTechnicalAnalysisServiceModule from "./basic-technical-analysis-service.js";
 import cacheModule from "../cache/index";
 import observabilityModule from "../observability/index.js";

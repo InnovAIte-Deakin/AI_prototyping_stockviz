@@ -1,4 +1,129 @@
+type NumericInput = number | string | null | undefined;
+
+type FundamentalInput = Record<string, unknown> & {
+  currentRatio?: NumericInput;
+  debtToEquity?: NumericInput;
+  earningsGrowth?: NumericInput;
+  metrics?: Record<string, unknown>;
+  peRatio?: NumericInput;
+  priceToBook?: NumericInput;
+  profitMargin?: NumericInput;
+  quickRatio?: NumericInput;
+  revenueGrowth?: NumericInput;
+  roe?: NumericInput;
+};
+
+type NormalizedFundamentalInput = {
+  currentRatio?: number;
+  debtToEquity?: number;
+  earningsGrowth?: number;
+  peRatio?: number;
+  priceToBook?: number;
+  profitMargin?: number;
+  quickRatio?: number;
+  revenueGrowth?: number;
+  roe?: number;
+};
+
+type MacdInput = {
+  histogram?: NumericInput[];
+};
+
+type BollingerBandInput = {
+  lower?: NumericInput[];
+  upper?: NumericInput[];
+};
+
+type IndicatorInput = Record<string, unknown> & {
+  BollingerBands?: BollingerBandInput;
+  MACD?: MacdInput;
+  OBV?: NumericInput[];
+  RSI?: NumericInput[];
+  rsi?: NumericInput[];
+};
+
+type MarketDataInput = {
+  changePercent?: NumericInput;
+  close?: NumericInput;
+  price?: NumericInput;
+};
+
+type SentimentItem = {
+  score?: NumericInput;
+  sentiment?: NumericInput;
+};
+
+type SentimentInput = Record<string, unknown> & {
+  headlines?: SentimentItem[];
+  newsItems?: SentimentItem[];
+};
+
+type EnhancedScoreBreakdown = Record<string, number>;
+
+type EnhancedScore = {
+  breakdown?: EnhancedScoreBreakdown;
+  confidence: number;
+  details: string[];
+  flags: string[];
+  score: number;
+};
+
+type AggregateWeights = {
+  fundamental: number;
+  sentiment: number;
+  technical: number;
+};
+
+type AggregateLabel =
+  | "STRONG BUY"
+  | "BUY"
+  | "WEAK BUY"
+  | "HOLD"
+  | "WEAK SELL"
+  | "SELL"
+  | "STRONG SELL";
+
+type AggregateScore = {
+  aggregateScore: number;
+  breakdown: {
+    fundamental: number;
+    sentiment: number;
+    technical: number;
+  };
+  confidence: number;
+  details: string[];
+  flags: string[];
+  label: AggregateLabel;
+};
+
+const clampScore = (score: number): number =>
+  Math.max(0, Math.min(100, Math.round(score)));
+
+const numberOrUndefined = (value: unknown): number | undefined => {
+  if (value === undefined || value === null || value === "") return undefined;
+  const numeric = Number(value);
+  return Number.isNaN(numeric) ? undefined : numeric;
+};
+
+const firstNumber = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    const numeric = numberOrUndefined(value);
+    if (numeric !== undefined) return numeric;
+  }
+  return undefined;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const lastNumber = (values?: NumericInput[]): number | undefined =>
+  Array.isArray(values) && values.length
+    ? numberOrUndefined(values[values.length - 1])
+    : undefined;
+
 class EnhancedScoringService {
+  defaultWeights: AggregateWeights;
+
   constructor() {
     this.defaultWeights = {
       fundamental: 0.4,
@@ -7,47 +132,70 @@ class EnhancedScoringService {
     };
   }
 
-  percentToRatio(value) {
-    if (value === undefined || value === null || Number.isNaN(Number(value)))
-      return undefined;
-    const numeric = Number(value);
+  percentToRatio(value: unknown): number | undefined {
+    const numeric = numberOrUndefined(value);
+    if (numeric === undefined) return undefined;
     return numeric > 1 ? numeric / 100 : numeric;
   }
 
-  normalizeFundamentalInput(fundamentalData = {}) {
-    const metrics = fundamentalData.metrics || {};
+  normalizeFundamentalInput(
+    fundamentalData: FundamentalInput = {},
+  ): NormalizedFundamentalInput {
+    const metrics = isRecord(fundamentalData.metrics)
+      ? fundamentalData.metrics
+      : {};
+
     return {
-      peRatio: fundamentalData.peRatio ?? metrics.pe ?? metrics.peRatio,
-      priceToBook:
-        fundamentalData.priceToBook ?? metrics.pb ?? metrics.priceToBook,
-      roe:
-        fundamentalData.roe ??
-        metrics.returnOnEquity ??
-        metrics.roe ??
+      peRatio: firstNumber(
+        fundamentalData.peRatio,
+        metrics.pe,
+        metrics.peRatio,
+      ),
+      priceToBook: firstNumber(
+        fundamentalData.priceToBook,
+        metrics.pb,
+        metrics.priceToBook,
+      ),
+      roe: firstNumber(
+        fundamentalData.roe,
+        metrics.returnOnEquity,
+        metrics.roe,
         this.percentToRatio(metrics.returnOnEquityTTM),
-      debtToEquity: fundamentalData.debtToEquity ?? metrics.debtToEquity,
-      revenueGrowth:
-        fundamentalData.revenueGrowth ??
-        metrics.revenueGrowth ??
+      ),
+      debtToEquity: firstNumber(
+        fundamentalData.debtToEquity,
+        metrics.debtToEquity,
+      ),
+      revenueGrowth: firstNumber(
+        fundamentalData.revenueGrowth,
+        metrics.revenueGrowth,
         this.percentToRatio(metrics.revenueCAGR),
-      earningsGrowth:
-        fundamentalData.earningsGrowth ??
-        metrics.earningsGrowth ??
+      ),
+      earningsGrowth: firstNumber(
+        fundamentalData.earningsGrowth,
+        metrics.earningsGrowth,
         this.percentToRatio(metrics.epsGrowth),
-      profitMargin:
-        fundamentalData.profitMargin ??
-        metrics.profitMargin ??
+      ),
+      profitMargin: firstNumber(
+        fundamentalData.profitMargin,
+        metrics.profitMargin,
         this.percentToRatio(metrics.profitMargin),
-      currentRatio: fundamentalData.currentRatio ?? metrics.currentRatio,
-      quickRatio: fundamentalData.quickRatio ?? metrics.quickRatio,
+      ),
+      currentRatio: firstNumber(
+        fundamentalData.currentRatio,
+        metrics.currentRatio,
+      ),
+      quickRatio: firstNumber(fundamentalData.quickRatio, metrics.quickRatio),
     };
   }
 
-  calculateEnhancedFundamentalScore(fundamentalData) {
+  calculateEnhancedFundamentalScore(
+    fundamentalData: FundamentalInput,
+  ): EnhancedScore {
     const normalized = this.normalizeFundamentalInput(fundamentalData);
     let score = 50;
-    const details = [];
-    const flags = [];
+    const details: string[] = [];
+    const flags: string[] = [];
 
     if (normalized.peRatio) {
       if (normalized.peRatio < 15) {
@@ -164,7 +312,7 @@ class EnhancedScoringService {
     ].filter((value) => value !== undefined && value !== null).length;
 
     return {
-      score: Math.max(0, Math.min(100, Math.round(score))),
+      score: clampScore(score),
       confidence: Math.min(0.9, 0.4 + dataPoints * 0.1),
       details,
       flags,
@@ -178,11 +326,14 @@ class EnhancedScoringService {
     };
   }
 
-  calculateEnhancedTechnicalScore(indicators, marketData) {
+  calculateEnhancedTechnicalScore(
+    indicators: IndicatorInput = {},
+    marketData: MarketDataInput = {},
+  ): EnhancedScore {
     let score = 50;
-    const details = [];
-    const flags = [];
-    const changePercent = Number(marketData?.changePercent || 0);
+    const details: string[] = [];
+    const flags: string[] = [];
+    const changePercent = numberOrUndefined(marketData?.changePercent) ?? 0;
 
     if (changePercent > 8) {
       score += 12;
@@ -202,71 +353,65 @@ class EnhancedScoringService {
       flags.push(`Negative momentum (${changePercent.toFixed(2)}%)`);
     }
 
-    const rsiSeries = indicators?.RSI || indicators?.rsi;
-    if (Array.isArray(rsiSeries) && rsiSeries.length > 0) {
-      const rsi = rsiSeries[rsiSeries.length - 1];
+    const rsi = lastNumber(indicators?.RSI || indicators?.rsi);
+    if (rsi !== undefined) {
       if (rsi < 30) {
         score += 15;
-        details.push(
-          `RSI oversold at ${rsi.toFixed(1)} - potential buy signal`,
-        );
+        details.push(`RSI oversold at ${rsi.toFixed(1)} - potential buy signal`);
       } else if (rsi > 70) {
         score -= 15;
-        flags.push(
-          `RSI overbought at ${rsi.toFixed(1)} - potential sell signal`,
-        );
+        flags.push(`RSI overbought at ${rsi.toFixed(1)} - potential sell signal`);
       } else if (rsi > 50) {
         score += 5;
         details.push(`RSI bullish at ${rsi.toFixed(1)}`);
       }
     }
 
-    const lastClose = Number(marketData?.price || marketData?.close || 0);
-    if (
-      indicators?.MACD?.histogram &&
-      Array.isArray(indicators.MACD.histogram)
-    ) {
-      const histogram = indicators.MACD.histogram;
-      const current = histogram[histogram.length - 1];
-      const previous = histogram[histogram.length - 2];
+    const lastClose =
+      numberOrUndefined(marketData?.price) ??
+      numberOrUndefined(marketData?.close) ??
+      0;
+    const histogram = indicators?.MACD?.histogram;
+    if (Array.isArray(histogram)) {
+      const current = lastNumber(histogram);
+      const previous = numberOrUndefined(histogram[histogram.length - 2]);
 
-      if (current > 0 && previous <= 0) {
+      if (current !== undefined && current > 0 && previous !== undefined && previous <= 0) {
         score += 12;
         details.push("MACD bullish crossover - momentum turning positive");
-      } else if (current > 0) {
+      } else if (current !== undefined && current > 0) {
         score += 7;
         details.push("MACD histogram positive - bullish momentum");
-      } else if (current < 0 && previous >= 0) {
+      } else if (
+        current !== undefined &&
+        current < 0 &&
+        previous !== undefined &&
+        previous >= 0
+      ) {
         score -= 12;
         flags.push("MACD bearish crossover - momentum turning negative");
       }
     }
 
-    if (
-      indicators?.OBV &&
-      Array.isArray(indicators.OBV) &&
-      indicators.OBV.length > 20
-    ) {
-      const current = indicators.OBV[indicators.OBV.length - 1];
-      const previous = indicators.OBV[indicators.OBV.length - 20];
-      if (current > previous) {
-        score += 8;
-        details.push("On-Balance Volume increasing - accumulation pattern");
-      } else {
-        score -= 5;
-        flags.push("On-Balance Volume decreasing - distribution pattern");
+    if (Array.isArray(indicators?.OBV) && indicators.OBV.length > 20) {
+      const current = lastNumber(indicators.OBV);
+      const previous = numberOrUndefined(
+        indicators.OBV[indicators.OBV.length - 20],
+      );
+      if (current !== undefined && previous !== undefined) {
+        if (current > previous) {
+          score += 8;
+          details.push("On-Balance Volume increasing - accumulation pattern");
+        } else {
+          score -= 5;
+          flags.push("On-Balance Volume decreasing - distribution pattern");
+        }
       }
     }
 
     if (indicators?.BollingerBands && lastClose) {
-      const lower =
-        indicators.BollingerBands.lower?.[
-          indicators.BollingerBands.lower.length - 1
-        ];
-      const upper =
-        indicators.BollingerBands.upper?.[
-          indicators.BollingerBands.upper.length - 1
-        ];
+      const lower = lastNumber(indicators.BollingerBands.lower);
+      const upper = lastNumber(indicators.BollingerBands.upper);
 
       if (lower !== undefined && upper !== undefined) {
         if (lastClose < lower) {
@@ -280,7 +425,7 @@ class EnhancedScoringService {
     }
 
     return {
-      score: Math.max(0, Math.min(100, Math.round(score))),
+      score: clampScore(score),
       confidence: 0.8,
       details,
       flags,
@@ -293,13 +438,19 @@ class EnhancedScoringService {
     };
   }
 
-  calculateEnhancedSentimentScore(sentimentData = {}) {
+  calculateEnhancedSentimentScore(
+    sentimentData: SentimentInput = {},
+  ): EnhancedScore {
     let score = 50;
-    const details = [];
-    const flags = [];
-    const newsItems = sentimentData.newsItems || sentimentData.headlines || [];
+    const details: string[] = [];
+    const flags: string[] = [];
+    const newsItems = Array.isArray(sentimentData.newsItems)
+      ? sentimentData.newsItems
+      : Array.isArray(sentimentData.headlines)
+        ? sentimentData.headlines
+        : [];
 
-    if (!Array.isArray(newsItems) || newsItems.length === 0) {
+    if (newsItems.length === 0) {
       flags.push("No recent news available for sentiment analysis");
       return {
         score: 50,
@@ -317,10 +468,10 @@ class EnhancedScoringService {
 
     newsItems.forEach((item) => {
       const raw = item.sentiment !== undefined ? item.sentiment : item.score;
-      if (raw === undefined || raw === null) return;
+      const numeric = numberOrUndefined(raw);
+      if (numeric === undefined) return;
 
-      let normalized = Number(raw);
-      if (Number.isNaN(normalized)) return;
+      let normalized = numeric;
       if (normalized > 1 || normalized < -1) normalized /= 100;
 
       totalSentiment += normalized;
@@ -374,7 +525,7 @@ class EnhancedScoringService {
     );
 
     return {
-      score: Math.max(0, Math.min(100, Math.round(score))),
+      score: clampScore(score),
       confidence: Math.min(0.8, 0.4 + Math.min(totalNews, 10) * 0.04),
       details,
       flags,
@@ -388,18 +539,18 @@ class EnhancedScoringService {
   }
 
   calculateAggregateScore(
-    fundamental,
-    technical,
-    sentiment,
-    weights = this.defaultWeights,
-  ) {
+    fundamental: EnhancedScore,
+    technical: EnhancedScore,
+    sentiment: EnhancedScore,
+    weights: AggregateWeights = this.defaultWeights,
+  ): AggregateScore {
     const aggregateScore = Math.round(
       fundamental.score * weights.fundamental +
         technical.score * weights.technical +
         sentiment.score * weights.sentiment,
     );
 
-    let label;
+    let label: AggregateLabel;
     if (aggregateScore >= 80) label = "STRONG BUY";
     else if (aggregateScore >= 70) label = "BUY";
     else if (aggregateScore >= 60) label = "WEAK BUY";
@@ -432,47 +583,51 @@ class EnhancedScoringService {
     };
   }
 
-  calculateValuationScore(data) {
+  calculateValuationScore(data: NormalizedFundamentalInput): number {
     let score = 50;
     if (data.peRatio && data.peRatio < 20) score += 15;
     if (data.priceToBook && data.priceToBook < 2) score += 10;
-    return Math.max(0, Math.min(100, score));
+    return clampScore(score);
   }
 
-  calculateProfitabilityScore(data) {
+  calculateProfitabilityScore(data: NormalizedFundamentalInput): number {
     let score = 50;
     if (data.roe && data.roe > 0.15) score += 20;
     if (data.profitMargin && data.profitMargin > 0.1) score += 15;
-    return Math.max(0, Math.min(100, score));
+    return clampScore(score);
   }
 
-  calculateGrowthScore(data) {
+  calculateGrowthScore(data: NormalizedFundamentalInput): number {
     let score = 50;
     if (data.revenueGrowth && data.revenueGrowth > 0.1) score += 25;
     if (data.earningsGrowth && data.earningsGrowth > 0.1) score += 25;
-    return Math.max(0, Math.min(100, score));
+    return clampScore(score);
   }
 
-  calculateLeverageScore(data) {
+  calculateLeverageScore(data: NormalizedFundamentalInput): number {
     let score = 50;
     if (data.debtToEquity && data.debtToEquity < 0.3) score += 25;
     if (data.debtToEquity && data.debtToEquity > 0.7) score -= 25;
-    return Math.max(0, Math.min(100, score));
+    return clampScore(score);
   }
 
-  calculateLiquidityScore(data) {
+  calculateLiquidityScore(data: NormalizedFundamentalInput): number {
     let score = 50;
     if (data.currentRatio && data.currentRatio > 1.5) score += 25;
     if (data.quickRatio && data.quickRatio > 1.0) score += 25;
-    return Math.max(0, Math.min(100, score));
+    return clampScore(score);
   }
 
-  calculateMomentumScore(indicators, marketData) {
+  calculateMomentumScore(
+    indicators: IndicatorInput = {},
+    marketData: MarketDataInput = {},
+  ): number {
+    void indicators;
     let score = 50;
-    const changePercent = Number(marketData?.changePercent || 0);
+    const changePercent = numberOrUndefined(marketData?.changePercent) ?? 0;
     if (changePercent > 5) score += 25;
     if (changePercent < -5) score -= 25;
-    return Math.max(0, Math.min(100, score));
+    return clampScore(score);
   }
 }
 
@@ -480,7 +635,11 @@ function createEnhancedScoringService() {
   return new EnhancedScoringService();
 }
 
-module.exports = {
+const enhancedScoringServiceModule = {
   EnhancedScoringService,
   createEnhancedScoringService,
 };
+
+export { EnhancedScoringService, createEnhancedScoringService };
+
+export default enhancedScoringServiceModule;
