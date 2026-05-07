@@ -10,6 +10,16 @@ on:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:65321
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-publishable-key
+      SUPABASE_SERVICE_ROLE_KEY: ci-service-role-key
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:65322/postgres
+      GEMINI_API_KEY: ""
+      AI_SUMMARY_PROVIDER: fallback
+      ALPHA_VANTAGE_API_KEY: ""
+      FINNHUB_API_KEY: ""
+      TWELVE_DATA_API_KEY: ""
 
     steps:
       - name: Check out repository
@@ -32,6 +42,9 @@ jobs:
 
       - name: Test
         run: npm run test
+
+      - name: Coverage smoke
+        run: npm run test -- --coverage.enabled=false
 
       - name: Build
         run: npm run build

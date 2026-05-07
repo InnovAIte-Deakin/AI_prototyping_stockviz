@@ -81,6 +81,8 @@ Optional admin restriction:
 
 ## Useful Commands
 
+CI runs lint, typecheck, Vitest, build, and parity checks against deterministic dummy environment values. Browser E2E tests remain local until the project has a CI-owned Supabase/Auth fixture.
+
 ```bash
 npm run lint
 npm run typecheck
