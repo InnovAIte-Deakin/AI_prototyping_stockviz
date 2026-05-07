@@ -4,10 +4,8 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { ArrowRight, PencilLine, Trash2 } from "lucide-react";
 
-import {
-  deleteHoldingAction,
-  INITIAL_PORTFOLIO_ACTION_STATE,
-} from "@/app/portfolio/actions";
+import { deleteHoldingAction } from "@/app/portfolio/actions";
+import { INITIAL_PORTFOLIO_ACTION_STATE } from "@/app/portfolio/action-types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

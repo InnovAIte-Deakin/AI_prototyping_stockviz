@@ -5,10 +5,12 @@ import { useActionState } from "react";
 
 import {
   createHoldingAction,
-  INITIAL_PORTFOLIO_ACTION_STATE,
-  type PortfolioActionState,
   updateHoldingAction,
 } from "@/app/portfolio/actions";
+import {
+  INITIAL_PORTFOLIO_ACTION_STATE,
+  type PortfolioActionState,
+} from "@/app/portfolio/action-types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {

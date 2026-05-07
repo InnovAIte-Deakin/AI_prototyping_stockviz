@@ -8,24 +8,9 @@ import {
   PortfolioAuthError,
   updateHoldingForCurrentUser,
 } from "@/lib/portfolio/holdings-service";
-
-type PortfolioFieldName =
-  | "symbol"
-  | "shares"
-  | "avgPrice"
-  | "acquiredAt"
-  | "notes"
-  | "holdingId";
-
-export type PortfolioActionState = {
-  status: "idle" | "error" | "success";
-  message?: string;
-  fieldErrors?: Partial<Record<PortfolioFieldName, string>>;
-};
-
-export const INITIAL_PORTFOLIO_ACTION_STATE: PortfolioActionState = {
-  status: "idle",
-};
+import type {
+  PortfolioActionState,
+} from "@/app/portfolio/action-types";
 
 type ParsedHoldingPayload = {
   symbol: string;
