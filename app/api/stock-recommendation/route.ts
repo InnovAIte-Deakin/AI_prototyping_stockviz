@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { upstreamErrorResponse } from "@/lib/api/upstream-errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
 const FINNHUB_API = "https://finnhub.io/api/v1/stock/recommendation";
@@ -47,10 +48,12 @@ export async function GET(request: Request) {
 
   if (!upstream.ok) {
     const body = await upstream.text();
-    return NextResponse.json(
-      { error: "Finnhub stock recommendation request failed", details: body },
-      { status: upstream.status },
-    );
+    return upstreamErrorResponse({
+      body,
+      publicMessage: "Finnhub stock recommendation request failed",
+      service: "Finnhub stock recommendation",
+      status: upstream.status,
+    });
   }
 
   const data: unknown = await upstream.json();

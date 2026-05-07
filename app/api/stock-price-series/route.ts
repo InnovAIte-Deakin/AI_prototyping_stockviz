@@ -152,11 +152,9 @@ export async function GET(request: Request) {
     }
   }
 
+  console.warn("Stock price series providers failed", { errors });
   return NextResponse.json(
-    {
-      error: "All stock price series providers failed",
-      details: errors.join(" | "),
-    },
+    { error: "All stock price series providers failed" },
     { status: 502 },
   );
 }

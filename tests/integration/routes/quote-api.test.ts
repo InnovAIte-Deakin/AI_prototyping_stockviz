@@ -61,6 +61,17 @@ describe("quote API route", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("does not expose upstream error details to clients", async () => {
+    mockFetchJson({ token: "secret-upstream-body" }, { status: 502 });
+
+    const response = await getQuote(requestFor("/api/quote?symbol=AAPL"));
+
+    expect(response.status).toBe(502);
+    const body = await response.json();
+    expect(body).toMatchObject({ error: expect.any(String) });
+    expect(body).not.toHaveProperty("details");
+  });
+
   it("returns 429 for the request over the per-IP limit", async () => {
     mockFetchJson({ c: 100 });
 

@@ -68,4 +68,15 @@ describe("market status API route", () => {
     expect(url.searchParams.get("exchange")).toBe("US");
     expect(url.searchParams.get("token")).toBe("finnhub-test-key");
   });
+
+  it("does not expose upstream error details to clients", async () => {
+    mockFetchJson({ token: "secret-upstream-body" }, { status: 502 });
+
+    const response = await getMarketStatusRoute(requestFor());
+
+    expect(response.status).toBe(502);
+    const body = await response.json();
+    expect(body).toMatchObject({ error: expect.any(String) });
+    expect(body).not.toHaveProperty("details");
+  });
 });

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { upstreamErrorResponse } from "@/lib/api/upstream-errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import type { FinnhubMarketNewsCategory } from "@/lib/types";
 
@@ -77,10 +78,12 @@ export async function GET(request: Request) {
 
   if (!upstream.ok) {
     const body = await upstream.text();
-    return NextResponse.json(
-      { error: "Finnhub market news request failed", details: body },
-      { status: upstream.status },
-    );
+    return upstreamErrorResponse({
+      body,
+      publicMessage: "Finnhub market news request failed",
+      service: "Finnhub market news",
+      status: upstream.status,
+    });
   }
 
   const data: unknown = await upstream.json();

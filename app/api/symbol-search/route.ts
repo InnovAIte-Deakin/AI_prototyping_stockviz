@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { upstreamErrorResponse } from "@/lib/api/upstream-errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { upsertStocks } from "@/lib/stocks/upsert-stock";
 
@@ -42,10 +43,12 @@ export async function GET(request: Request) {
 
   if (!upstream.ok) {
     const body = await upstream.text();
-    return NextResponse.json(
-      { error: "Finnhub symbol search request failed", details: body },
-      { status: upstream.status },
-    );
+    return upstreamErrorResponse({
+      body,
+      publicMessage: "Finnhub symbol search request failed",
+      service: "Finnhub symbol search",
+      status: upstream.status,
+    });
   }
 
   const data = (await upstream.json()) as {

@@ -168,6 +168,20 @@ describe("stock detail API routes", () => {
     },
   );
 
+  it.each(finnhubRoutes)(
+    "does not expose upstream error details for $name",
+    async ({ handler, path }) => {
+      mockFetchJson({ token: "secret-upstream-body" }, { status: 502 });
+
+      const response = await handler(requestFor(path));
+
+      expect(response.status).toBe(502);
+      const body = await response.json();
+      expect(body).toMatchObject({ error: expect.any(String) });
+      expect(body).not.toHaveProperty("details");
+    },
+  );
+
   it("adds the all-metrics flag for the basic financials route", async () => {
     const fetchMock = mockFetchJson({ metric: {} });
 
@@ -342,5 +356,20 @@ describe("stock detail API routes", () => {
     });
     expect(response.status).toBe(400);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not expose provider failure details for stock detail price series", async () => {
+    mockFetchJson({ token: "secret-upstream-body" }, { status: 502 });
+
+    const response = await getStockPriceSeries(
+      requestFor("/api/stock-price-series?symbol=AAPL&interval=daily"),
+    );
+
+    expect(response.status).toBe(502);
+    const body = await response.json();
+    expect(body).toEqual({
+      error: "All stock price series providers failed",
+    });
+    expect(body).not.toHaveProperty("details");
   });
 });
