@@ -14,17 +14,17 @@ StockViz is a web application for exploring, filtering, and visualizing stock ma
 - `supabase/` contains backend configuration and supporting project assets.
 - `legacy/frontend/` and `legacy/backend/` contain the original React and Express prototype and are no longer part of the active runtime.
 
-## Yahoo-First Market Data Direction
+## Market Data Direction
 
-The active app now uses Yahoo Finance as the primary source for chart data, fundamentals, and symbol search, with configured providers retained as fallbacks. The admin diagnostics page can control preferred providers where supported.
+The active app now uses Yahoo Finance as the primary source for chart data and symbol search, while Alpha Vantage is preferred for fundamentals and sentiment when configured. The admin diagnostics page can control preferred providers where supported, with alternate providers retained as fallbacks.
 
 Changes from the original migrated project:
 
 - Added a Yahoo Finance market data adapter for chart data, quote summary fundamentals, and symbol search normalization.
-- Updated the market data manager so Yahoo Finance is tried first for stock data, fundamentals, and search, while the existing providers remain available as fallbacks.
+- Updated the market data manager so Yahoo Finance is tried first for stock data and search, while Alpha Vantage is preferred for fundamentals and sentiment where configured.
 - Updated the stock price series API to serve Yahoo Finance chart data through the existing `{ series }` response contract used by the application.
 - Renamed the active client-side price series hook and yearly aggregation utility to provider-neutral modules, while keeping Alpha Vantage compatibility re-exports for existing imports.
-- Updated dashboard/detail copy and admin diagnostics so the active provider status reflects Yahoo Finance as the primary source and Alpha Vantage as a fallback or sentiment provider.
+- Updated dashboard/detail copy and admin diagnostics so the active provider status reflects Yahoo Finance for chart/search data and Alpha Vantage for fundamentals/sentiment data.
 - Added tests for the Yahoo Finance normalizers, provider fallback behavior, and the updated price series route.
 
 ## Getting Started

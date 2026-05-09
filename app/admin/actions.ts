@@ -10,8 +10,32 @@ import {
 } from "@/lib/admin/diagnostics-service";
 import { PROVIDER_CAPABILITIES } from "@/lib/market/provider-preferences";
 
-const toErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : String(error);
+const getStringField = (
+  value: Record<string, unknown>,
+  key: string,
+): string | null => {
+  const field = value[key];
+  return typeof field === "string" && field.trim() ? field.trim() : null;
+};
+
+const toErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "object" && error !== null) {
+    const record = error as Record<string, unknown>;
+    return (
+      getStringField(record, "message") ||
+      getStringField(record, "error_description") ||
+      getStringField(record, "error") ||
+      getStringField(record, "details") ||
+      JSON.stringify(record)
+    );
+  }
+
+  return String(error);
+};
 
 const adminNoticeUrl = (
   notice: string,

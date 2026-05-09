@@ -50,7 +50,7 @@ describe("provider preference database service", () => {
       },
       fundamentals: {
         fallbackEnabled: true,
-        provider: "yahooFinance",
+        provider: "alphaVantage",
       },
     });
   });

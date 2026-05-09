@@ -229,14 +229,14 @@ function getProviderDiagnostics(): ProviderDiagnostic[] {
       name: "Yahoo Finance",
       status: "ok",
       detail:
-        "Primary stock data, fundamentals, stock-detail history, and search provider. No API key is required.",
+        "Primary stock chart, stock-detail history, and search provider. No API key is required.",
     },
     {
       name: "Alpha Vantage",
       status: alphaVantage ? "ok" : "warning",
       detail: alphaVantage
-        ? "Sentiment provider and fallback market-data key is configured."
-        : "Sentiment provider and fallback market-data key is not configured.",
+        ? "Fundamentals, sentiment, and fallback market-data key is configured."
+        : "Fundamentals, sentiment, and fallback market-data key is not configured.",
     },
     {
       name: "Finnhub",

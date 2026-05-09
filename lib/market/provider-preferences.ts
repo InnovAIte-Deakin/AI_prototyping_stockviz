@@ -147,7 +147,7 @@ export const DEFAULT_PROVIDER_PREFERENCES: Record<
   fundamentals: {
     capability: "fundamentals",
     fallbackEnabled: true,
-    provider: "yahooFinance",
+    provider: "alphaVantage",
     updatedAt: null,
     updatedBy: null,
   },

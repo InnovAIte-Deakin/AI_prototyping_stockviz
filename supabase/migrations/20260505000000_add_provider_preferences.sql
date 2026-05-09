@@ -45,7 +45,7 @@ insert into public.provider_preferences
 values
   ('stock_ohlcv', 'yahooFinance', true),
   ('stock_price_series', 'yahooFinance', true),
-  ('fundamentals', 'yahooFinance', true),
+  ('fundamentals', 'alphaVantage', true),
   ('symbol_search', 'yahooFinance', true),
   ('sentiment_news', 'alphaVantage', true)
 on conflict (capability) do update set

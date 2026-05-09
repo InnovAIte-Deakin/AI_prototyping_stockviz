@@ -55,6 +55,18 @@ describe("provider preferences", () => {
     ]);
   });
 
+  it("prefers Alpha Vantage over Yahoo Finance for fundamentals by default", () => {
+    expect(DEFAULT_PROVIDER_PREFERENCES.fundamentals.provider).toBe(
+      "alphaVantage",
+    );
+    expect(buildProviderOrder("fundamentals", "", true)).toEqual([
+      "alphaVantage",
+      "yahooFinance",
+      "fmp",
+      "finnhub",
+    ]);
+  });
+
   it("normalizes database rows over defaults", () => {
     const normalized = normalizeProviderPreferenceRows([
       {
