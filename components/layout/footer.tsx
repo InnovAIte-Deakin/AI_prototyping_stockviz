@@ -58,7 +58,7 @@ export default function Footer() {
                   </p>
                   <p className="mt-1 text-sm leading-6 text-[#6a706f]">
                     Use the header search to jump directly into
-                    `/stock/[symbol]` from anywhere in the protected shell.
+                    `/analysis/[symbol]` from anywhere in the protected shell.
                   </p>
                 </div>
               </div>

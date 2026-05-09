@@ -83,7 +83,7 @@ export async function MarketOverview() {
 
               <div className="rounded-[24px] border border-border bg-card p-5">
                 <p className="mb-3 text-sm font-medium text-muted-foreground">
-                  Open a stock detail route
+                  Open an analysis route
                 </p>
                 <StockSymbolSearch className="max-w-none" exchange="US" />
               </div>

@@ -71,7 +71,7 @@ export const StockSymbolSearch = ({
     }
     setOpen(false);
     setQuery("");
-    router.push(`/stock/${encodeURIComponent(sym)}`);
+    router.push(`/analysis/${encodeURIComponent(sym)}`);
   };
 
   return (
