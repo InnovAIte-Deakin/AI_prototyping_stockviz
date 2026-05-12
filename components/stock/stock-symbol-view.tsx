@@ -4,6 +4,7 @@ import { BasicFinancialsWidget } from "@/components/stock/widgets/basic-financia
 import { PeersWidget } from "@/components/stock/widgets/peers-widget"
 import { PaperTradeWidget } from "@/components/stock/paper-trade-widget"
 import { PriceHistoryChart } from "@/components/stock/widgets/price-history-chart"
+import { TechnicalAnalysisPanel } from "@/components/stock/widgets/technical-analysis-panel"
 import { QuoteWidget } from "@/components/stock/widgets/quote-widget"
 import { RecommendationWidget } from "@/components/stock/widgets/recommendation-widget"
 import { cn } from "@/lib/utils"
@@ -27,14 +28,16 @@ export const StockSymbolView = ({ symbol, className, paperCashUsd }: StockSymbol
           <WishlistStar symbol={symbol} className="size-8 rounded-full bg-muted/50" iconClassName="size-5" />
         </div>
         <p className="text-muted-foreground text-sm">
-          Quote, metrics, peers, and analyst data via Finnhub; historical prices
-          via Alpha Vantage.
+          Quote, metrics, peers, and analyst data via Finnhub; historical prices and
+          on-chart indicators via Alpha Vantage daily OHLC.
         </p>
       </header>
 
       <QuoteWidget symbol={symbol} />
 
       {paperCashUsd !== undefined ? <PaperTradeWidget symbol={symbol} initialPaperCashUsd={paperCashUsd} /> : null}
+
+      <TechnicalAnalysisPanel symbol={symbol} />
 
       <PriceHistoryChart symbol={symbol} />
 

@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { aggregateMonthlyToYearly } from "@/lib/alphavantage/aggregate-yearly"
+import { loadPriceSeriesShared } from "@/lib/alphavantage/shared-price-series-fetch"
 import type { AlphaVantageOhlcPoint } from "@/lib/alphavantage/parse-time-series"
 
 export type PriceHistoryTab = "daily" | "monthly" | "yearly"
@@ -16,18 +17,6 @@ export type AlphaVantageSeriesState = {
   isLoadingDaily: boolean
   isLoadingMonthly: boolean
 }
-
-const buildQuery = (symbol: string, interval: "daily" | "monthly"): string => {
-  const params = new URLSearchParams({
-    symbol: symbol.trim(),
-    interval,
-  })
-  return params.toString()
-}
-
-type SeriesResponse =
-  | { series: AlphaVantageOhlcPoint[] }
-  | { error?: string }
 
 /**
  * Loads daily and/or monthly OHLC from the app proxy. Monthly is shared for Monthly + Yearly tabs;
@@ -76,58 +65,28 @@ export const useAlphaVantageSeries = (
       return
     }
 
-    const controller = new AbortController()
     let cancelled = false
 
     setIsLoadingDaily(true)
     setErrorDaily(null)
 
     void (async () => {
-      try {
-        const res = await fetch(
-          `/api/stock-price-series?${buildQuery(trimmed, "daily")}`,
-          { signal: controller.signal }
-        )
-        const payload = (await res.json()) as SeriesResponse
-
-        if (cancelled) {
-          return
-        }
-
-        if (!res.ok) {
-          const msg =
-            "error" in payload && typeof payload.error === "string"
-              ? payload.error
-              : `Request failed (${res.status})`
-          throw new Error(msg)
-        }
-
-        if (!("series" in payload) || !Array.isArray(payload.series)) {
-          throw new Error("Unexpected response shape")
-        }
-
-        setDaily(payload.series)
-      } catch (e) {
-        if (cancelled) {
-          return
-        }
-        if (e instanceof DOMException && e.name === "AbortError") {
-          return
-        }
-        setErrorDaily(
-          e instanceof Error ? e.message : "Failed to load daily series"
-        )
-        setDaily(null)
-      } finally {
-        if (!cancelled) {
-          setIsLoadingDaily(false)
-        }
+      const result = await loadPriceSeriesShared(trimmed, "daily")
+      if (cancelled) {
+        return
       }
+      if (result.ok) {
+        setDaily(result.series)
+        setErrorDaily(null)
+      } else {
+        setDaily(null)
+        setErrorDaily(result.error)
+      }
+      setIsLoadingDaily(false)
     })()
 
     return () => {
       cancelled = true
-      controller.abort()
       setIsLoadingDaily(false)
     }
   }, [trimmed, activeTab, daily])
@@ -143,58 +102,28 @@ export const useAlphaVantageSeries = (
       return
     }
 
-    const controller = new AbortController()
     let cancelled = false
 
     setIsLoadingMonthly(true)
     setErrorMonthly(null)
 
     void (async () => {
-      try {
-        const res = await fetch(
-          `/api/stock-price-series?${buildQuery(trimmed, "monthly")}`,
-          { signal: controller.signal }
-        )
-        const payload = (await res.json()) as SeriesResponse
-
-        if (cancelled) {
-          return
-        }
-
-        if (!res.ok) {
-          const msg =
-            "error" in payload && typeof payload.error === "string"
-              ? payload.error
-              : `Request failed (${res.status})`
-          throw new Error(msg)
-        }
-
-        if (!("series" in payload) || !Array.isArray(payload.series)) {
-          throw new Error("Unexpected response shape")
-        }
-
-        setMonthly(payload.series)
-      } catch (e) {
-        if (cancelled) {
-          return
-        }
-        if (e instanceof DOMException && e.name === "AbortError") {
-          return
-        }
-        setErrorMonthly(
-          e instanceof Error ? e.message : "Failed to load monthly series"
-        )
-        setMonthly(null)
-      } finally {
-        if (!cancelled) {
-          setIsLoadingMonthly(false)
-        }
+      const result = await loadPriceSeriesShared(trimmed, "monthly")
+      if (cancelled) {
+        return
       }
+      if (result.ok) {
+        setMonthly(result.series)
+        setErrorMonthly(null)
+      } else {
+        setMonthly(null)
+        setErrorMonthly(result.error)
+      }
+      setIsLoadingMonthly(false)
     })()
 
     return () => {
       cancelled = true
-      controller.abort()
       setIsLoadingMonthly(false)
     }
   }, [trimmed, activeTab, monthly])
