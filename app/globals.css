@@ -286,4 +286,23 @@
       transform: translateY(0);
     }
   }
+
+  .movers-marquee-track {
+    animation: movers-marquee 90s linear infinite;
+  }
+
+  .movers-marquee-track:hover,
+  .movers-marquee-track:focus-within {
+    animation-play-state: paused;
+  }
+
+  @keyframes movers-marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }

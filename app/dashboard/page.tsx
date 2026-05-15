@@ -6,8 +6,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
+import { DashboardSpotlightChart } from "@/components/dashboard/dashboard-spotlight-chart";
+import { MoversCarousel } from "@/components/dashboard/movers-carousel";
 import { SymbolSearch } from "@/components/search/symbol-search";
 import { Button } from "@/components/ui/button";
+import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers";
 
 const launchCards = [
   {
@@ -30,7 +33,10 @@ const launchCards = [
   },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const movers = await fetchBiggestMovers();
+  const spotlight = movers.gainers[0] ?? null;
+
   return (
     <div className="min-h-screen bg-surface px-6 py-10 text-on-background md:px-10">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -67,6 +73,36 @@ export default function DashboardPage() {
             <SymbolSearch submitLabel="Analyze symbol" />
           </div>
         </div>
+
+        <section className="space-y-4 rounded-[24px] border border-border bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase text-muted-foreground">
+                Market movers
+              </p>
+              <h2 className="mt-1 text-2xl font-semibold text-on-surface">
+                Biggest gainers and losers
+              </h2>
+            </div>
+            {movers.error ? (
+              <p className="max-w-xl text-sm text-muted-foreground">
+                {movers.error}
+              </p>
+            ) : null}
+          </div>
+
+          {!movers.error ? (
+            <MoversCarousel gainers={movers.gainers} losers={movers.losers} />
+          ) : null}
+        </section>
+
+        {spotlight ? (
+          <DashboardSpotlightChart
+            changePct={spotlight.changePct}
+            companyName={spotlight.name}
+            symbol={spotlight.symbol}
+          />
+        ) : null}
 
         <div className="grid gap-4 md:grid-cols-3">
           {launchCards.map((card) => {
