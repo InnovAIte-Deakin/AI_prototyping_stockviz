@@ -6,11 +6,11 @@ import {
   ArrowRight,
   BarChart3,
   Gauge,
-  MessageSquareText,
   Newspaper,
 } from "lucide-react";
 import runtime from "@/lib/analysis/runtime";
 import { AnalysisControls } from "@/components/analysis/analysis-controls";
+import { AiSummaryCard } from "@/components/analysis/ai-summary-card";
 import { SymbolSearch } from "@/components/search/symbol-search";
 import { PriceHistoryChart } from "@/components/analysis/price-history-chart";
 import { SentimentHeadlines } from "@/components/analysis/sentiment-headlines";
@@ -383,58 +383,14 @@ export default async function AnalysisPage({
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-[24px] border border-border bg-white p-6 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-muted p-3 text-surface-tint">
-                  <MessageSquareText className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-on-surface">
-                    Summary
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    Blended output from analysis services.
-                  </p>
-                </div>
-              </div>
-              <p className="mt-5 text-sm leading-7 text-on-surface">{summary}</p>
-
-              <dl className="mt-6 grid grid-cols-2 gap-4 rounded-[20px] bg-card p-4 text-sm">
-                <div>
-                  <dt className="text-muted-foreground">Timeframe</dt>
-                  <dd className="mt-1 font-medium text-on-surface">
-                    {timeframe}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Weights</dt>
-                  <dd className="mt-1 font-medium text-on-surface">
-                    F {weights.fundamental}% / T {weights.technical}% / S{" "}
-                    {weights.sentiment}%
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Indicators</dt>
-                  <dd className="mt-1 font-medium text-on-surface">
-                    {activeIndicatorNames.length > 0
-                      ? activeIndicatorNames.join(", ")
-                      : "None enabled"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Recommendation</dt>
-                  <dd className="mt-1 font-medium text-on-surface">
-                    {overall.recommendation || "HOLD"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Data source</dt>
-                  <dd className="mt-1 font-medium text-on-surface">
-                    {stockData?.source || "Unknown"}
-                  </dd>
-                </div>
-              </dl>
-            </div>
+            <AiSummaryCard
+              dataSource={stockData?.source || "Unknown"}
+              indicators={activeIndicatorNames}
+              recommendation={overall.recommendation || "HOLD"}
+              summary={summary}
+              timeframe={timeframe}
+              weights={weights}
+            />
 
             <SentimentHeadlines
               sentiment={sentiment}
