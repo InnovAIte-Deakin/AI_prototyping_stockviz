@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
-import { cn } from '@/lib/utils'
+
 
 const SHELLLESS_ROUTES = new Set(['/login', '/register', '/forgot-password', '/reset-password'])
 
@@ -20,10 +20,8 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
   return (
     <>
       <header
-        className={cn(
-          'border-b border-border/50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80',
-          'font-[family-name:var(--font-geist-sans)]'
-        )}
+        className='border-b border-border/50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80'
+
       >
         <div className="flex h-14 items-center gap-4 px-4 sm:px-6">
           <div className="flex min-w-[7rem] shrink-0 items-center">

@@ -70,7 +70,7 @@ export default function Login() {
               </motion.div>
             )}
             <div className="space-y-1.5">
-              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="email">
+              <Label className="block text-base font-semibold text-[#5a6060] mb-1.5" htmlFor="email">
                 Email Address
               </Label>
               <motion.div
@@ -80,7 +80,7 @@ export default function Login() {
               >
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                 <Input
-                  className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  className={`w-full pl-12 pr-4 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                   id="email"
                   name="email"
                   placeholder="name@example.com"
@@ -91,10 +91,10 @@ export default function Login() {
             </div>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center mb-2.5">
-                <Label className="block text-sm font-semibold text-[#5a6060]" htmlFor="password">
+                <Label className="block text-base font-semibold text-[#5a6060]" htmlFor="password">
                   Password
                 </Label>
-                <Link className="text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="/forgot-password">
+                <Link className="text-sm font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="/forgot-password">
                   Forgot password?
                 </Link>
               </div>
@@ -105,7 +105,7 @@ export default function Login() {
               >
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                 <Input
-                  className={`w-full pl-12 pr-12 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                  className={`w-full pl-12 pr-12 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/20'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                   id="password"
                   name="password"
                   placeholder="••••••••"
@@ -123,7 +123,7 @@ export default function Login() {
             </div>
             <Button
               disabled={isPending}
-              className="w-full bg-[#5f5e5e] text-white h-[56px] px-4 rounded-xl font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
+              className="w-full bg-[#5f5e5e] text-white h-[48px] px-4 rounded-lg font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
               type="submit"
             >
               {isPending ? 'Processing...' : 'Sign In'}
@@ -132,7 +132,7 @@ export default function Login() {
         </motion.div>
 
         {/* Footer Links */}
-        <p className="text-center text-sm text-[#5a6060]">
+        <p className="text-center text-base text-[#5a6060]">
           Don&apos;t have an account?{' '}
           <Link className="font-bold text-[#5f5e5e] hover:text-[#525251] transition-colors underline underline-offset-4" href="/register">
             Sign up for free
