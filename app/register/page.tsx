@@ -59,7 +59,7 @@ export default function Register() {
               {item}
             </a>
           ))}
-          <Link href="/login" className="text-sm font-semibold text-[#5f5e5e] ml-4">
+          <Link href="/login" className="text-base font-semibold text-[#5f5e5e] ml-4">
             Log In
           </Link>
         </div>
@@ -83,7 +83,7 @@ export default function Register() {
               </motion.div>
             )}
             <div className="space-y-1.5">
-              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="name">
+              <Label className="block text-base font-semibold text-[#5a6060] mb-1.5" htmlFor="name">
                 Full Name
               </Label>
               <motion.div
@@ -97,14 +97,14 @@ export default function Register() {
                   name="name"
                   type="text"
                   placeholder="E.g., Alexander Hamilton"
-                  className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.name ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                  className={`w-full pl-12 pr-4 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.name ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-lg outline-none`}
                   onChange={() => setFieldErrors(prev => ({ ...prev, name: undefined }))}
                 />
               </motion.div>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="email">
+              <Label className="block text-base font-semibold text-[#5a6060] mb-1.5" htmlFor="email">
                 Email Address
               </Label>
               <motion.div
@@ -118,14 +118,14 @@ export default function Register() {
                   name="email"
                   type="email"
                   placeholder="name@company.com"
-                  className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none`}
+                  className={`w-full pl-12 pr-4 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.email ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-lg outline-none`}
                   onChange={() => setFieldErrors(prev => ({ ...prev, email: undefined }))}
                 />
               </motion.div>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="password">
+              <Label className="block text-base font-semibold text-[#5a6060] mb-1.5" htmlFor="password">
                 Password
               </Label>
                 <motion.div
@@ -139,7 +139,7 @@ export default function Register() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Min. 8 characters"
-                    className={`w-full pl-12 pr-12 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-xl outline-none pr-10`}
+                    className={`w-full pl-12 pr-12 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.password ? 'border-[#752121]' : 'border-[#adb3b2]/30'} focus-visible:border-[#5f5e5e] focus-visible:ring-0 transition-colors text-base placeholder:text-[#adb3b2]/60 rounded-lg outline-none pr-10`}
                     onChange={() => setFieldErrors(prev => ({ ...prev, password: undefined }))}
                   />
                   <button
@@ -164,7 +164,7 @@ export default function Register() {
                   className={`mt-1 h-4 w-4 rounded border ${fieldErrors.terms ? 'border-[#752121]' : 'border-[#adb3b2]/30'} text-[#5f5e5e] focus-visible:ring-0 cursor-pointer`}
                   onCheckedChange={() => setFieldErrors(prev => ({ ...prev, terms: undefined }))}
                 />
-                <Label htmlFor="terms" className="text-xs leading-relaxed text-[#5a6060] font-normal normal-case tracking-normal">
+                <Label htmlFor="terms" className="text-sm leading-relaxed text-[#5a6060] font-normal normal-case tracking-normal">
                   I agree to the <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Terms of Service</a> and <a href="#" className="text-[#5f5e5e] hover:underline underline-offset-4">Privacy Policy</a>.
                 </Label>
               </div>
@@ -173,14 +173,14 @@ export default function Register() {
             <Button
               disabled={isPending}
               type="submit"
-              className="w-full h-[56px] bg-[#5f5e5e] text-white font-bold tracking-tight text-base hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] transition-all duration-200 rounded-xl shadow-none disabled:opacity-50 mt-6"
+              className="w-full h-[48px] bg-[#5f5e5e] text-white font-bold tracking-tight text-base hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] transition-all duration-200 rounded-lg shadow-none disabled:opacity-50 mt-6"
             >
               {isPending ? 'Processing...' : 'Create Account'}
             </Button>
           </form>
 
           <div className="mt-10 text-center">
-            <p className="text-sm text-[#5a6060]">
+            <p className="text-base text-[#5a6060]">
               Already have an account?{' '}
               <Link href="/login" className="text-[#5f5e5e] font-bold hover:underline underline-offset-4 ml-1">
                 Log in

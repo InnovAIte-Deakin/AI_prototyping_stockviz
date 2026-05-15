@@ -16,11 +16,11 @@ export function WishlistCard() {
       </CardHeader>
       <CardContent className="flex-1">
         {isLoading ? (
-          <div className="flex h-full items-center justify-center text-sm text-zinc-500">
+          <div className="flex h-full items-center justify-center text-base text-zinc-500">
             Loading...
           </div>
         ) : items.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center space-y-3 text-center text-sm text-zinc-500 py-6">
+          <div className="flex h-full flex-col items-center justify-center space-y-3 text-center text-base text-zinc-500 py-6">
             <p>Your wishlist is empty.</p>
             <p>Search for a stock and click the star to add it here.</p>
           </div>
@@ -37,7 +37,7 @@ export function WishlistCard() {
                 >
                   <span className="font-semibold text-zinc-100">{item.symbol}</span>
                   {item.name && (
-                    <span className="truncate text-xs text-zinc-400">
+                    <span className="truncate text-sm text-zinc-400">
                       {item.name}
                     </span>
                   )}

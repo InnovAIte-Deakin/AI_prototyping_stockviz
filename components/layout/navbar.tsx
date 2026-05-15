@@ -119,7 +119,7 @@ export default function Navbar() {
                 <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
                   StockViz
                 </span>
-                <div className="text-xs text-muted-foreground -mt-1">
+                <div className="text-sm text-muted-foreground -mt-1">
                   Analysis Platform
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative group',
+                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 relative group',
                       isActive(item.href)
                         ? 'bg-primary text-primary-foreground shadow-md'
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
@@ -248,7 +248,7 @@ export default function Navbar() {
                         href={item.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={cn(
-                          'flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200',
+                          'flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium transition-all duration-200',
                           isActive(item.href)
                             ? 'bg-primary text-primary-foreground'
                             : 'text-muted-foreground hover:text-foreground hover:bg-accent'
@@ -257,7 +257,7 @@ export default function Navbar() {
                         <Icon className="h-5 w-5" />
                         <div className="flex-1">
                           <div>{item.label}</div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-sm text-muted-foreground">
                             {item.description}
                           </div>
                         </div>

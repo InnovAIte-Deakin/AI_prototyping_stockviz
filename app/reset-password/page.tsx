@@ -93,7 +93,7 @@ export default function ResetPassword() {
               {/* New Password */}
               <div className="space-y-1.5">
                 <Label
-                  className="block text-sm font-semibold text-[#5a6060] mb-1.5"
+                  className="block text-base font-semibold text-[#5a6060] mb-1.5"
                   htmlFor="password"
                 >
                   New Password
@@ -105,7 +105,7 @@ export default function ResetPassword() {
                 >
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                   <Input
-                    className={`w-full pl-12 pr-12 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.password ? "border-[#752121]" : "border-[#adb3b2]/20"} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                    className={`w-full pl-12 pr-12 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.password ? "border-[#752121]" : "border-[#adb3b2]/20"} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                     id="password"
                     name="password"
                     placeholder="Min. 8 characters"
@@ -127,7 +127,7 @@ export default function ResetPassword() {
               {/* Confirm Password */}
               <div className="space-y-1.5">
                 <Label
-                  className="block text-sm font-semibold text-[#5a6060] mb-1.5"
+                  className="block text-base font-semibold text-[#5a6060] mb-1.5"
                   htmlFor="confirmPassword"
                 >
                   Confirm Password
@@ -139,7 +139,7 @@ export default function ResetPassword() {
                 >
                   <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                   <Input
-                    className={`w-full pl-12 pr-12 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.confirmPassword ? "border-[#752121]" : "border-[#adb3b2]/20"} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                    className={`w-full pl-12 pr-12 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.confirmPassword ? "border-[#752121]" : "border-[#adb3b2]/20"} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                     id="confirmPassword"
                     name="confirmPassword"
                     placeholder="Re-enter your password"
@@ -160,14 +160,14 @@ export default function ResetPassword() {
 
               <Button
                 disabled={isPending}
-                className="w-full bg-[#5f5e5e] text-white h-[56px] px-4 rounded-xl font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
+                className="w-full bg-[#5f5e5e] text-white h-[48px] px-4 rounded-lg font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
                 type="submit"
               >
                 {isPending ? "Updating..." : "Update Password"}
               </Button>
             </form>
 
-            <p className="text-center text-sm text-[#5a6060]">
+            <p className="text-center text-base text-[#5a6060]">
               Remember your password?{" "}
               <Link
                 className="font-bold text-[#5f5e5e] hover:text-[#525251] transition-colors underline underline-offset-4"
