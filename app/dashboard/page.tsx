@@ -8,6 +8,7 @@ import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
 import { DashboardSpotlightChart } from "@/components/dashboard/dashboard-spotlight-chart";
 import { MoversCarousel } from "@/components/dashboard/movers-carousel";
+import { StagingFeatureMap } from "@/components/dashboard/staging-feature-map";
 import { SymbolSearch } from "@/components/search/symbol-search";
 import { Button } from "@/components/ui/button";
 import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers";
@@ -74,7 +75,12 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <section className="space-y-4 rounded-[24px] border border-border bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]">
+        <StagingFeatureMap />
+
+        <section
+          className="space-y-4 rounded-[24px] border border-border bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]"
+          id="market-movers"
+        >
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase text-muted-foreground">
@@ -91,9 +97,20 @@ export default async function DashboardPage() {
             ) : null}
           </div>
 
-          {!movers.error ? (
+          {movers.error ? (
+            <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4">
+              <p className="text-sm font-medium text-on-surface">
+                Market movers are mapped here.
+              </p>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+                Add `FMP_API_KEY` to `.env.local` to load live gainers, losers,
+                move explanations, and the spotlight chart. The rest of the new
+                feature links above are still available.
+              </p>
+            </div>
+          ) : (
             <MoversCarousel gainers={movers.gainers} losers={movers.losers} />
-          ) : null}
+          )}
         </section>
 
         {spotlight ? (
