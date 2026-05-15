@@ -6,7 +6,7 @@ import { PriceHistoryChart } from "@/components/stock/widgets/price-history-char
 import { QuoteWidget } from "@/components/stock/widgets/quote-widget";
 import { RecommendationWidget } from "@/components/stock/widgets/recommendation-widget";
 import { TechnicalAnalysisPanel } from "@/components/stock/widgets/technical-analysis-panel";
-import { WishlistButton } from "@/components/user/wishlist-button";
+import { WishlistStar } from "@/components/user/wishlist-star";
 import { cn } from "@/lib/utils";
 import type { WishlistItemSummary } from "@/lib/user/wishlist-service";
 
@@ -38,8 +38,9 @@ export const StockSymbolView = ({
             prices via Yahoo Finance.
           </p>
         </div>
-        <WishlistButton
-          compact
+        <WishlistStar
+          className="size-10 border"
+          iconClassName="size-5"
           initialWishlistItem={initialWishlistItem}
           symbol={symbol}
         />

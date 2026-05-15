@@ -17,7 +17,10 @@ import { UserFeatureAuthError } from "@/lib/user/session";
 import {
   createWishlistItemForCurrentUser,
   deleteWishlistItemForCurrentUser,
+  listWishlistForCurrentUser,
+  toWishlistItemSummary,
   updateWishlistItemForCurrentUser,
+  type WishlistItemSummary,
 } from "@/lib/user/wishlist-service";
 import type { UserActionState, UserFieldName } from "@/app/user/action-types";
 
@@ -248,6 +251,122 @@ export async function deleteWishlistAction(
     };
   } catch (error) {
     return mapUserActionError(error, "Could not remove this symbol right now.");
+  }
+}
+
+type WishlistSummariesActionState =
+  | {
+      ok: true;
+      items: WishlistItemSummary[];
+    }
+  | {
+      ok: false;
+      error: string;
+      items: WishlistItemSummary[];
+    };
+
+type ToggleWishlistActionState =
+  | {
+      ok: true;
+      saved: boolean;
+      symbol: string;
+      item: WishlistItemSummary | null;
+    }
+  | {
+      ok: false;
+      error: string;
+      saved: boolean;
+      symbol: string;
+      item: WishlistItemSummary | null;
+    };
+
+const mapWishlistStarActionError = (
+  error: unknown,
+  fallbackMessage: string,
+): string => {
+  if (error instanceof UserFeatureAuthError) {
+    return "Your session has expired. Please sign in again.";
+  }
+  if (error instanceof Error) {
+    return error.message || fallbackMessage;
+  }
+  return fallbackMessage;
+};
+
+export async function listWishlistSummariesAction(): Promise<WishlistSummariesActionState> {
+  try {
+    const items = await listWishlistForCurrentUser();
+    return {
+      ok: true,
+      items: items.map(toWishlistItemSummary),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: mapWishlistStarActionError(
+        error,
+        "Could not load wishlist right now.",
+      ),
+      items: [],
+    };
+  }
+}
+
+export async function toggleWishlistBySymbolAction(
+  symbol: string,
+  name?: string,
+): Promise<ToggleWishlistActionState> {
+  const normalizedSymbol = symbol.trim().toUpperCase();
+
+  if (!normalizedSymbol || !symbolPattern.test(normalizedSymbol)) {
+    return {
+      ok: false,
+      error: "Invalid symbol.",
+      saved: false,
+      symbol: normalizedSymbol,
+      item: null,
+    };
+  }
+
+  try {
+    const items = await listWishlistForCurrentUser();
+    const existing =
+      items.find((item) => item.stock.symbol === normalizedSymbol) ?? null;
+
+    if (existing) {
+      await deleteWishlistItemForCurrentUser(existing.id);
+      revalidateUserFeaturePaths(normalizedSymbol);
+      return {
+        ok: true,
+        saved: false,
+        symbol: normalizedSymbol,
+        item: null,
+      };
+    }
+
+    const created = await createWishlistItemForCurrentUser({
+      symbol: normalizedSymbol,
+      name: name?.trim() || undefined,
+    });
+    revalidateUserFeaturePaths(created.stock.symbol);
+
+    return {
+      ok: true,
+      saved: true,
+      symbol: created.stock.symbol,
+      item: toWishlistItemSummary(created),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: mapWishlistStarActionError(
+        error,
+        "Could not update wishlist right now.",
+      ),
+      saved: false,
+      symbol: normalizedSymbol,
+      item: null,
+    };
   }
 }
 

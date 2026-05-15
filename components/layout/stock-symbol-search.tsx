@@ -17,13 +17,14 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { WishlistStar } from "@/components/user/wishlist-star";
 import { useSymbolSearch } from "@/hooks/use-symbol-search";
 import type { FinnhubSymbolLookupInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const MAX_RESULTS = 10;
 
-const PLACEHOLDER = "Search stocks, tickers, companies, and more…";
+const PLACEHOLDER = "Search stocks, tickers, companies, and more...";
 
 type StockSymbolSearchProps = {
   className?: string;
@@ -125,7 +126,7 @@ export const StockSymbolSearch = ({
 
               {showLoading ? (
                 <div className="px-2 py-6 text-center text-sm text-muted-foreground">
-                  Searching…
+                  Searching...
                 </div>
               ) : null}
 
@@ -144,7 +145,7 @@ export const StockSymbolSearch = ({
               {topMatches.length > 0 ? (
                 <CommandGroup heading="Top matches">
                   {topMatches.map((item, index) => {
-                    const label = item.displaySymbol ?? item.symbol ?? "—";
+                    const label = item.displaySymbol ?? item.symbol ?? "-";
                     const description = item.description ?? "";
                     const value = `${label}-${index}`;
                     return (
@@ -155,14 +156,21 @@ export const StockSymbolSearch = ({
                           handleSelectSymbol(item);
                         }}
                       >
-                        <span className="shrink-0 font-medium tabular-nums">
-                          {label}
-                        </span>
-                        {description ? (
-                          <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                            {description}
+                        <span className="flex min-w-0 flex-1 items-center gap-2">
+                          <span className="shrink-0 font-medium tabular-nums">
+                            {label}
                           </span>
-                        ) : null}
+                          {description ? (
+                            <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                              {description}
+                            </span>
+                          ) : null}
+                        </span>
+                        <WishlistStar
+                          className="ml-auto shrink-0"
+                          name={description || null}
+                          symbol={label}
+                        />
                       </CommandItem>
                     );
                   })}
