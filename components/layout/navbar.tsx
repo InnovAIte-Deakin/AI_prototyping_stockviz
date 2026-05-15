@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -41,11 +41,20 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
+const subscribeToThemeHydration = () => () => undefined;
+const getClientThemeHydrationSnapshot = () => true;
+const getServerThemeHydrationSnapshot = () => false;
+
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const isThemeMounted = useSyncExternalStore(
+    subscribeToThemeHydration,
+    getClientThemeHydrationSnapshot,
+    getServerThemeHydrationSnapshot,
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,7 +66,9 @@ export default function Navbar() {
   }, []);
 
   const getThemeIcon = () => {
-    switch (theme) {
+    const visibleTheme = isThemeMounted ? theme : "system";
+
+    switch (visibleTheme) {
       case "light":
         return <Sun className="h-4 w-4" />;
       case "dark":
@@ -67,8 +78,13 @@ export default function Navbar() {
     }
   };
 
+  const visibleTheme = isThemeMounted ? theme : "system";
   const themeLabel =
-    theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System";
+    visibleTheme === "light"
+      ? "Light"
+      : visibleTheme === "dark"
+        ? "Dark"
+        : "System";
 
   return (
     <nav
