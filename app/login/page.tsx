@@ -59,7 +59,7 @@ export default function Login() {
         >
           <div className="text-center">
             <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">Welcome back</h2>
-            <p className="text-[#5a6060] text-base leading-relaxed">Enter your credentials to access your terminal.</p>
+            <p className="text-[#5a6060] text-base leading-relaxed">Enter your details below to sign in to your account.</p>
           </div>
 
           {/* Login Form */}
