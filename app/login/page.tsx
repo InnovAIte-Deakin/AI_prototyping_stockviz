@@ -70,7 +70,7 @@ export default function Login() {
               </motion.div>
             )}
             <div className="space-y-1.5">
-              <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5" htmlFor="email">
+              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="email">
                 Email Address
               </Label>
               <motion.div
@@ -91,7 +91,7 @@ export default function Login() {
             </div>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center mb-2.5">
-                <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060]" htmlFor="password">
+                <Label className="block text-sm font-semibold text-[#5a6060]" htmlFor="password">
                   Password
                 </Label>
                 <Link className="text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors" href="/forgot-password">
@@ -141,19 +141,7 @@ export default function Login() {
       </div>
     </div>
 
-    {/* Global Footer */}
-    <footer className="mt-auto w-full border-t border-[#adb3b2]/20 bg-[#f9f9f8]">
-      <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-8 gap-4 text-[10px] tracking-widest uppercase text-[#5a6060]">
-        <div className="flex flex-col md:flex-row gap-6 items-center">
-          <span>© 2024 StockViz Editorial. All rights reserved.</span>
-        </div>
-        <nav className="flex gap-8">
-          <a className="hover:text-[#5f5e5e] transition-colors" href="#">Privacy Policy</a>
-          <a className="hover:text-[#5f5e5e] transition-colors" href="#">Terms of Service</a>
-          <a className="hover:text-[#5f5e5e] transition-colors" href="#">Legal Disclosures</a>
-        </nav>
-      </div>
-    </footer>
+
   </div>
 );
 }

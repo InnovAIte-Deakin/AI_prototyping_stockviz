@@ -59,7 +59,7 @@ export default function Register() {
               {item}
             </a>
           ))}
-          <Link href="/login" className="text-xs font-bold uppercase tracking-widest text-[#5f5e5e] ml-4">
+          <Link href="/login" className="text-sm font-semibold text-[#5f5e5e] ml-4">
             Log In
           </Link>
         </div>
@@ -83,7 +83,7 @@ export default function Register() {
               </motion.div>
             )}
             <div className="space-y-1.5">
-              <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5" htmlFor="name">
+              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="name">
                 Full Name
               </Label>
               <motion.div
@@ -104,7 +104,7 @@ export default function Register() {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5" htmlFor="email">
+              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="email">
                 Email Address
               </Label>
               <motion.div
@@ -125,7 +125,7 @@ export default function Register() {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5" htmlFor="password">
+              <Label className="block text-sm font-semibold text-[#5a6060] mb-1.5" htmlFor="password">
                 Password
               </Label>
                 <motion.div
@@ -190,21 +190,7 @@ export default function Register() {
         </motion.div>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full border-t border-[#adb3b2]/20 bg-[#f9f9f8] py-12 px-8">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <span className="text-[10px] font-medium tracking-widest uppercase text-[#5a6060]">
-            © 2024 STOCKVIZ EDITORIAL. ALL RIGHTS RESERVED.
-          </span>
-          <div className="flex gap-8">
-            {['Privacy Policy', 'Terms of Service', 'Legal Disclosures'].map((link) => (
-              <a key={link} href="#" className="text-[10px] font-medium tracking-widest uppercase text-[#5a6060] hover:text-[#5f5e5e] transition-colors">
-                {link}
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
+
     </div>
   );
 }

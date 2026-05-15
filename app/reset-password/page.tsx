@@ -93,7 +93,7 @@ export default function ResetPassword() {
               {/* New Password */}
               <div className="space-y-1.5">
                 <Label
-                  className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5"
+                  className="block text-sm font-semibold text-[#5a6060] mb-1.5"
                   htmlFor="password"
                 >
                   New Password
@@ -127,7 +127,7 @@ export default function ResetPassword() {
               {/* Confirm Password */}
               <div className="space-y-1.5">
                 <Label
-                  className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5"
+                  className="block text-sm font-semibold text-[#5a6060] mb-1.5"
                   htmlFor="confirmPassword"
                 >
                   Confirm Password
@@ -180,19 +180,7 @@ export default function ResetPassword() {
         </div>
       </div>
 
-      {/* Global Footer */}
-      <footer className="mt-auto w-full border-t border-[#adb3b2]/20 bg-[#f9f9f8]">
-        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-8 gap-4 text-[10px] tracking-widest uppercase text-[#5a6060]">
-          <div className="flex flex-col md:flex-row gap-6 items-center">
-            <span>© 2024 StockViz Editorial. All rights reserved.</span>
-          </div>
-          <nav className="flex gap-8">
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Legal Disclosures</a>
-          </nav>
-        </div>
-      </footer>
+
     </div>
   );
 }
