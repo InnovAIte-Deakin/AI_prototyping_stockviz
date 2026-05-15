@@ -223,6 +223,24 @@ Exit criteria:
 | E11-S3   | Add end-to-end tests for search and analysis            | `P0`     | `Frontend`  | `review` | Sprint 6 | Auth-gate smoke coverage and seeded authenticated dashboard-to-analysis e2e pass with local Supabase |
 | E11-S4   | Run root parity checks against selected outputs         | `P0`     | `Fullstack` | `review` | Sprint 6 | AAPL/NVDA/RIVN contract and live root parity checks pass                                             |
 | E11-S5   | Remove archived runtime dependencies                    | `P0`     | `Fullstack` | `review` | Sprint 6 | Active runtime archive import audit passes; legacy folders remain reference-only                     |
+| E11-S6   | Integrate staging quality features                      | `P1`     | `Fullstack` | `review` | Sprint 6 | Stock-detail insights, dashboard movers, wishlist stars, and additive paper trading are integrated   |
+
+## Staging Quality Integration Notes
+
+The `codex/staging-quality-integration` branch selectively ports high-value staging features into the migration architecture instead of merging staging wholesale.
+
+Integrated product scope:
+
+- Stock detail now includes provider-backed technical analysis, interactive price-range explanations, richer fundamentals, recommendation trends, and wishlist star controls.
+- Dashboard now includes FMP-backed market movers, move explanations, and a spotlight chart while preserving the migrated dashboard shell.
+- Portfolio keeps the authenticated manual holdings workflow and adds an optional paper-trading panel backed by a ledger migration.
+
+Operational notes:
+
+- Price charts still use the provider-backed price-series route and retain configured fallbacks.
+- FMP-backed movers/news require `FMP_API_KEY`; explanation routes require `GEMINI_API_KEY` and can use `GEMINI_EXPLAIN_MODEL`.
+- Paper trading requires the `20260512000000_paper_trading_ledger.sql` migration, `SUPABASE_SERVICE_ROLE_KEY`, and `FINNHUB_API_KEY`.
+- Generated Supabase types were manually merged for the paper-trading additions because local type generation requires Docker Desktop and local Supabase.
 
 ## File-By-File Migration Map
 

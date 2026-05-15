@@ -18,6 +18,8 @@ StockViz is a web application for exploring, filtering, and visualizing stock ma
 
 The active app now uses Yahoo Finance as the primary source for chart data and symbol search, while Alpha Vantage is preferred for fundamentals and sentiment when configured. The admin diagnostics page can control preferred providers where supported, with alternate providers retained as fallbacks.
 
+Newer stock-detail and dashboard features also use Finnhub quotes, FMP movers/news, and Gemini explanations where configured. API-key-dependent experiences fail gracefully when their keys are absent.
+
 Changes from the original migrated project:
 
 - Added a Yahoo Finance market data adapter for chart data, quote summary fundamentals, and symbol search normalization.
@@ -26,6 +28,24 @@ Changes from the original migrated project:
 - Renamed the active client-side price series hook and yearly aggregation utility to provider-neutral modules, while keeping Alpha Vantage compatibility re-exports for existing imports.
 - Updated dashboard/detail copy and admin diagnostics so the active provider status reflects Yahoo Finance for chart/search data and Alpha Vantage for fundamentals/sentiment data.
 - Added tests for the Yahoo Finance normalizers, provider fallback behavior, and the updated price series route.
+- Added provider-backed technical analysis, price-range explanations, market movers, wishlist stars, richer financial widgets, and additive paper trading.
+
+## Environment Variables
+
+Copy `.env.local.example` to `.env.local` and fill the services needed for the flows you are testing:
+
+- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for authenticated app routes.
+- `SUPABASE_SERVICE_ROLE_KEY` for admin/provider server reads and paper-trading RPC execution.
+- `FINNHUB_API_KEY` for quotes, stock detail widgets, paper-trading execution prices, and paper portfolio marks.
+- `ALPHA_VANTAGE_API_KEY` and `TWELVE_DATA_API_KEY` for configured market-data fallbacks.
+- `FMP_API_KEY` for dashboard movers and news used in explanations.
+- `GEMINI_API_KEY` plus optional `GEMINI_EXPLAIN_MODEL` for AI explanations.
+
+## Paper Trading Setup
+
+Paper trading is additive to the existing manual portfolio screen. Apply the committed Supabase migrations with `supabase db reset` locally or your normal deployment migration flow. The paper-trading migration adds `profiles.paper_cash_usd`, `portfolio_transactions`, and service-role-only `paper_buy` / `paper_sell` RPCs.
+
+The stock-page trade widget appears only when the signed-in profile has a `paper_cash_usd` value. The portfolio page keeps manual holdings and adds the paper portfolio ledger panel underneath.
 
 ## Getting Started
 
