@@ -1,5 +1,6 @@
 "use client";
 
+import { PaperTradeWidget } from "@/components/stock/paper-trade-widget";
 import { BasicFinancialsWidget } from "@/components/stock/widgets/basic-financials-widget";
 import { PeersWidget } from "@/components/stock/widgets/peers-widget";
 import { PriceHistoryChart } from "@/components/stock/widgets/price-history-chart";
@@ -13,10 +14,12 @@ import type { WishlistItemSummary } from "@/lib/user/wishlist-service";
 type StockSymbolViewProps = {
   symbol: string;
   className?: string;
+  initialPaperCashUsd?: number | null;
   initialWishlistItem?: WishlistItemSummary | null;
 };
 
 export const StockSymbolView = ({
+  initialPaperCashUsd,
   initialWishlistItem,
   symbol,
   className,
@@ -47,6 +50,13 @@ export const StockSymbolView = ({
       </header>
 
       <QuoteWidget symbol={symbol} />
+
+      {typeof initialPaperCashUsd === "number" ? (
+        <PaperTradeWidget
+          initialPaperCashUsd={initialPaperCashUsd}
+          symbol={symbol}
+        />
+      ) : null}
 
       <TechnicalAnalysisPanel symbol={symbol} />
 
