@@ -5,6 +5,7 @@ import { PeersWidget } from "@/components/stock/widgets/peers-widget";
 import { PriceHistoryChart } from "@/components/stock/widgets/price-history-chart";
 import { QuoteWidget } from "@/components/stock/widgets/quote-widget";
 import { RecommendationWidget } from "@/components/stock/widgets/recommendation-widget";
+import { TechnicalAnalysisPanel } from "@/components/stock/widgets/technical-analysis-panel";
 import { WishlistButton } from "@/components/user/wishlist-button";
 import { cn } from "@/lib/utils";
 import type { WishlistItemSummary } from "@/lib/user/wishlist-service";
@@ -45,6 +46,8 @@ export const StockSymbolView = ({
       </header>
 
       <QuoteWidget symbol={symbol} />
+
+      <TechnicalAnalysisPanel symbol={symbol} />
 
       <PriceHistoryChart symbol={symbol} />
 

@@ -27,6 +27,52 @@ const buildQuery = (symbol: string, interval: "daily" | "monthly"): string => {
 
 type SeriesResponse = { series: OhlcPoint[] } | { error?: string };
 
+const inFlightSeriesRequests = new Map<string, Promise<OhlcPoint[]>>();
+
+const loadPriceSeries = (
+  symbol: string,
+  interval: "daily" | "monthly",
+): Promise<OhlcPoint[]> => {
+  const key = `${symbol.trim().toUpperCase()}::${interval}`;
+  const existing = inFlightSeriesRequests.get(key);
+  if (existing) {
+    return existing;
+  }
+
+  const controller = new AbortController();
+  const request = fetch(
+    `/api/stock-price-series?${buildQuery(symbol, interval)}`,
+    {
+      signal: controller.signal,
+    },
+  )
+    .then(async (res) => {
+      const payload = (await res.json()) as SeriesResponse;
+
+      if (!res.ok) {
+        const msg =
+          "error" in payload && typeof payload.error === "string"
+            ? payload.error
+            : `Request failed (${res.status})`;
+        throw new Error(msg);
+      }
+
+      if (!("series" in payload) || !Array.isArray(payload.series)) {
+        throw new Error("Unexpected response shape");
+      }
+
+      return payload.series;
+    })
+    .finally(() => {
+      if (inFlightSeriesRequests.get(key) === request) {
+        inFlightSeriesRequests.delete(key);
+      }
+    });
+
+  inFlightSeriesRequests.set(key, request);
+  return request;
+};
+
 /**
  * Loads daily and/or monthly OHLC from the app proxy. Monthly is shared for Monthly + Yearly tabs;
  * yearly bars are derived client-side from monthly data.
@@ -72,7 +118,6 @@ export const usePriceSeries = (
       return;
     }
 
-    const controller = new AbortController();
     let cancelled = false;
 
     setIsLoadingDaily(true);
@@ -80,34 +125,15 @@ export const usePriceSeries = (
 
     void (async () => {
       try {
-        const res = await fetch(
-          `/api/stock-price-series?${buildQuery(trimmed, "daily")}`,
-          { signal: controller.signal },
-        );
-        const payload = (await res.json()) as SeriesResponse;
+        const series = await loadPriceSeries(trimmed, "daily");
 
         if (cancelled) {
           return;
         }
 
-        if (!res.ok) {
-          const msg =
-            "error" in payload && typeof payload.error === "string"
-              ? payload.error
-              : `Request failed (${res.status})`;
-          throw new Error(msg);
-        }
-
-        if (!("series" in payload) || !Array.isArray(payload.series)) {
-          throw new Error("Unexpected response shape");
-        }
-
-        setDaily(payload.series);
+        setDaily(series);
       } catch (e) {
         if (cancelled) {
-          return;
-        }
-        if (e instanceof DOMException && e.name === "AbortError") {
           return;
         }
         setErrorDaily(
@@ -123,7 +149,6 @@ export const usePriceSeries = (
 
     return () => {
       cancelled = true;
-      controller.abort();
       setIsLoadingDaily(false);
     };
   }, [trimmed, activeTab, daily]);
@@ -139,7 +164,6 @@ export const usePriceSeries = (
       return;
     }
 
-    const controller = new AbortController();
     let cancelled = false;
 
     setIsLoadingMonthly(true);
@@ -147,34 +171,15 @@ export const usePriceSeries = (
 
     void (async () => {
       try {
-        const res = await fetch(
-          `/api/stock-price-series?${buildQuery(trimmed, "monthly")}`,
-          { signal: controller.signal },
-        );
-        const payload = (await res.json()) as SeriesResponse;
+        const series = await loadPriceSeries(trimmed, "monthly");
 
         if (cancelled) {
           return;
         }
 
-        if (!res.ok) {
-          const msg =
-            "error" in payload && typeof payload.error === "string"
-              ? payload.error
-              : `Request failed (${res.status})`;
-          throw new Error(msg);
-        }
-
-        if (!("series" in payload) || !Array.isArray(payload.series)) {
-          throw new Error("Unexpected response shape");
-        }
-
-        setMonthly(payload.series);
+        setMonthly(series);
       } catch (e) {
         if (cancelled) {
-          return;
-        }
-        if (e instanceof DOMException && e.name === "AbortError") {
           return;
         }
         setErrorMonthly(
@@ -190,7 +195,6 @@ export const usePriceSeries = (
 
     return () => {
       cancelled = true;
-      controller.abort();
       setIsLoadingMonthly(false);
     };
   }, [trimmed, activeTab, monthly]);
