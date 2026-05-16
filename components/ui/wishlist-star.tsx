@@ -28,7 +28,7 @@ export function WishlistStar({ symbol, name, className, iconClassName }: Wishlis
       onClick={handleClick}
       disabled={isLoading}
       className={cn(
-        "flex items-center justify-center rounded-md p-1.5 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
+        "flex items-center justify-center rounded-lg p-1.5 transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border)]/20 disabled:opacity-50",
         className
       )}
       aria-label={wishlisted ? `Remove ${symbol} from wishlist` : `Add ${symbol} to wishlist`}
@@ -36,10 +36,10 @@ export function WishlistStar({ symbol, name, className, iconClassName }: Wishlis
     >
       <Star
         className={cn(
-          "size-4 transition-all duration-200",
+          "size-4 transition-all duration-300",
           wishlisted
-            ? "fill-yellow-400 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]"
-            : "text-muted-foreground hover:text-foreground",
+            ? "fill-yellow-400 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.3)]"
+            : "text-muted-foreground hover:text-primary",
           iconClassName
         )}
       />

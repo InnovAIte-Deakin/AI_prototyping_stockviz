@@ -11,9 +11,11 @@ import {
 import { createServiceRoleClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
 
+import { recordCurrentPortfolioSnapshot } from "@/lib/portfolio/history"
+
 const tradeInputSchema = z.object({
   symbol: z.string().trim().min(1).max(32),
-  shares: z.number().positive().finite().max(1e12),
+  shares: z.number().int().positive().finite().max(1e12),
 })
 
 const mapRpcMessage = (raw: string): string => {
@@ -34,15 +36,18 @@ const mapRpcMessage = (raw: string): string => {
     return "Invalid symbol."
   }
   if (lower.includes("invalid_shares")) {
-    return "Invalid share quantity."
+    return "Invalid share quantity. Please use whole numbers."
   }
   if (lower.includes("invalid_price")) {
     return "Invalid or missing market price."
   }
-  if (lower.includes("not authorized")) {
-    return "The database rejected this trade (service role check). Apply pending Supabase migrations, then retry."
+  if (lower.includes("429") || lower.includes("limit")) {
+    return "The daily trade limit has been reached. Please try again later."
   }
-  return "Trade could not be completed. Try again."
+  if (lower.includes("not authorized") || lower.includes("42501") || lower.includes("schema cache")) {
+    return "Trade could not be saved. Please check the portfolio database setup."
+  }
+  return "Trade could not be completed. Please try again."
 }
 
 const revalidatePortfolioSurfaces = (symbolUpper: string) => {
@@ -106,6 +111,10 @@ export const buyPaperShares = async (symbol: string, shares: number): Promise<Pa
   }
 
   revalidatePortfolioSurfaces(normalized.toUpperCase())
+  
+  // Record snapshot for history chart
+  recordCurrentPortfolioSnapshot(user.id).catch(console.error)
+
   return { ok: true }
 }
 
@@ -160,5 +169,9 @@ export const sellPaperShares = async (symbol: string, shares: number): Promise<P
   }
 
   revalidatePortfolioSurfaces(normalized.toUpperCase())
+  
+  // Record snapshot for history chart
+  recordCurrentPortfolioSnapshot(user.id).catch(console.error)
+
   return { ok: true }
 }

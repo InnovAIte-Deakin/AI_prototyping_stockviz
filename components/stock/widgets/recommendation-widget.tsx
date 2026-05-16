@@ -115,16 +115,16 @@ export const RecommendationWidget = ({
   const canGoNewer = sorted.length > 0 && safeIndex < sorted.length - 1
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
       <CardHeader>
-        <CardTitle>Analyst recommendations</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl font-bold text-primary">Analyst recommendations</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Finnhub consensus counts by reporting period. Use{" "}
-          <kbd className="bg-muted rounded border px-1 py-0.5 font-mono text-[10px]">
+          <kbd className="bg-muted rounded border border-border/30 px-1 py-0.5 font-mono text-[10px] text-foreground">
             ←
           </kbd>{" "}
           /{" "}
-          <kbd className="bg-muted rounded border px-1 py-0.5 font-mono text-[10px]">
+          <kbd className="bg-muted rounded border border-border/30 px-1 py-0.5 font-mono text-[10px] text-foreground">
             →
           </kbd>{" "}
           when the chart area is focused to step through periods.
@@ -140,10 +140,12 @@ export const RecommendationWidget = ({
         ) : null}
 
         {error ? (
-          <Alert variant="destructive">
-            <AlertCircle />
-            <AlertTitle>Could not load recommendations</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+            <AlertCircle className="text-destructive" />
+            <AlertTitle className="font-bold">Analyst data unavailable</AlertTitle>
+            <AlertDescription className="text-destructive/90">
+              Analyst consensus for {symbol} is currently unavailable due to API limits.
+            </AlertDescription>
           </Alert>
         ) : null}
 
@@ -152,15 +154,15 @@ export const RecommendationWidget = ({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1 space-y-1">
                 <p
-                  className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
+                  className="text-xs font-medium text-muted-foreground"
                   aria-live="polite"
                 >
                   Reporting period
                 </p>
-                <p className="font-heading truncate text-lg font-semibold">
+                <p className="font-heading truncate text-lg font-bold text-foreground">
                   {current.period ?? "—"}
                 </p>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-muted-foreground text-xs font-medium">
                   {total > 0
                     ? `${total} analyst ${total === 1 ? "rating" : "ratings"} in this period`
                     : "No ratings in this period"}
@@ -174,11 +176,12 @@ export const RecommendationWidget = ({
                   disabled={!canGoOlder}
                   onClick={handlePreviousPeriod}
                   aria-label="Go to earlier reporting period"
+                  className="border-border/30 text-primary font-bold"
                 >
                   <ChevronLeft className="size-4" aria-hidden />
                   <span className="hidden sm:inline">Previous</span>
                 </Button>
-                <span className="text-muted-foreground tabular-nums text-xs">
+                <span className="text-muted-foreground tabular-nums text-xs font-bold">
                   {safeIndex + 1} / {sorted.length}
                 </span>
                 <Button
@@ -188,6 +191,7 @@ export const RecommendationWidget = ({
                   disabled={!canGoNewer}
                   onClick={handleNextPeriod}
                   aria-label="Go to later reporting period"
+                  className="border-border/30 text-primary font-bold"
                 >
                   <span className="hidden sm:inline">Next</span>
                   <ChevronRight className="size-4" aria-hidden />
@@ -200,7 +204,7 @@ export const RecommendationWidget = ({
               tabIndex={0}
               aria-label="Recommendation distribution chart. Use left and right arrow keys to change period."
               onKeyDown={handleChartKeyDown}
-              className="rounded-lg border border-border/80 bg-muted/20 p-2 outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-lg border border-border/20 bg-muted/50 p-2 outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
             >
               {total > 0 ? (
                 <ChartContainer
@@ -217,7 +221,7 @@ export const RecommendationWidget = ({
                     <XAxis type="number" tickLine={false} axisLine={false} />
                     <YAxis type="category" dataKey="periodLabel" hide width={0} />
                     <ChartTooltip
-                      cursor={{ fill: "hsl(var(--muted) / 0.25)" }}
+                      cursor={{ fill: "var(--border)", fillOpacity: 0.1 }}
                       content={
                         <ChartTooltipContent
                           formatter={(value, _name, item) => {
@@ -228,7 +232,7 @@ export const RecommendationWidget = ({
                             const n =
                               typeof value === "number" ? value : Number(value)
                             return (
-                              <span className="tabular-nums">
+                              <span className="tabular-nums font-bold text-foreground">
                                 {Number.isFinite(n)
                                   ? `${name}: ${n.toLocaleString()}`
                                   : "—"}
@@ -258,26 +262,27 @@ export const RecommendationWidget = ({
               )}
             </div>
 
-            <div className="max-h-[min(280px,40vh)] overflow-auto rounded-md border">
+            <div className="max-h-[min(280px,40vh)] overflow-auto rounded-md border border-border/20">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Period</TableHead>
-                    <TableHead className="text-right">Strong buy</TableHead>
-                    <TableHead className="text-right">Buy</TableHead>
-                    <TableHead className="text-right">Hold</TableHead>
-                    <TableHead className="text-right">Sell</TableHead>
-                    <TableHead className="text-right">Strong sell</TableHead>
+                <TableHeader className="bg-muted/50">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="font-bold text-primary">Period</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Strong buy</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Buy</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Hold</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Sell</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Strong sell</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {sorted.map((row, idx) => (
                     <TableRow
                       key={row.period ?? idx}
-                      data-state={idx === safeIndex ? "selected" : undefined}
                       className={cn(
-                        idx === safeIndex && "bg-muted/50"
+                        "cursor-pointer transition-all",
+                        idx === safeIndex ? "bg-muted border-l-2 border-l-[var(--primary)]" : "hover:bg-muted/30"
                       )}
+                      onClick={() => setSelectedIndex(idx)}
                     >
                       <TableCell className="font-medium">
                         {row.period ?? "—"}
@@ -306,9 +311,10 @@ export const RecommendationWidget = ({
         ) : null}
 
         {!isLoading && !error && sorted.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No recommendation data.
-          </p>
+          <div className="rounded-lg border border-border/10 bg-background p-6 text-center">
+            <p className="text-sm font-bold text-muted-foreground">No coverage</p>
+            <p className="text-xs text-muted-foreground mt-1">There are no analyst recommendations currently available for this symbol.</p>
+          </div>
         ) : null}
       </CardContent>
     </Card>

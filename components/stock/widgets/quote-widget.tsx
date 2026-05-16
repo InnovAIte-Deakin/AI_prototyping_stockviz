@@ -18,7 +18,6 @@ type QuoteWidgetProps = {
   symbol: string
   className?: string
 }
-
 const formatPrice = (n: number | undefined): string => {
   if (n === undefined || !Number.isFinite(n)) {
     return "—"
@@ -56,12 +55,14 @@ export const QuoteWidget = ({ symbol, className }: QuoteWidgetProps) => {
       : undefined
 
   return (
-    <Card className={cn(className)}>
-      <CardHeader>
-        <CardTitle>Quote</CardTitle>
-        <CardDescription>
-          Last trade and session stats (Finnhub). US quote data.
-        </CardDescription>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-xl font-bold text-primary">Quote</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Last trade and session stats (Finnhub).
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {isLoading ? (
@@ -77,27 +78,29 @@ export const QuoteWidget = ({ symbol, className }: QuoteWidgetProps) => {
         ) : null}
 
         {error ? (
-          <Alert variant="destructive">
-            <AlertCircle />
-            <AlertTitle>Could not load quote</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+            <AlertCircle className="text-destructive" />
+            <AlertTitle className="font-bold">Quote unavailable</AlertTitle>
+            <AlertDescription className="text-destructive/90">
+              Live market data for {symbol} is currently unavailable. Please try again in a few minutes.
+            </AlertDescription>
           </Alert>
         ) : null}
 
         {!isLoading && !error && data ? (
           <div className="space-y-4">
             <div>
-              <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+              <p className="text-muted-foreground text-xs font-medium">
                 Last
               </p>
-              <p className="text-3xl font-semibold tabular-nums tracking-tight">
+              <p className="text-4xl font-bold tabular-nums tracking-tight text-foreground">
                 {formatPrice(c)}
               </p>
               {change !== undefined && pctChange !== undefined ? (
                 <p
                   className={cn(
-                    "text-sm font-medium tabular-nums",
-                    change >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                    "text-sm font-bold tabular-nums",
+                    change >= 0 ? "text-finance-success" : "text-finance-danger"
                   )}
                 >
                   {change >= 0 ? "+" : ""}
@@ -107,27 +110,27 @@ export const QuoteWidget = ({ symbol, className }: QuoteWidgetProps) => {
               ) : (
                 <p className="text-muted-foreground text-sm">Change n/a</p>
               )}
-              <p className="text-muted-foreground mt-1 text-xs">
+              <p className="text-muted-foreground mt-1 text-xs font-medium">
                 As of {formatTime(data.t)}
               </p>
             </div>
 
             <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
-                <dt className="text-muted-foreground text-xs">Open</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.o)}</dd>
+              <div className="rounded-lg border border-border/20 bg-muted/50 px-3 py-2">
+                <dt className="text-muted-foreground text-xs font-medium">Open</dt>
+                <dd className="font-bold tabular-nums text-foreground">{formatPrice(data.o)}</dd>
               </div>
-              <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
-                <dt className="text-muted-foreground text-xs">High</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.h)}</dd>
+              <div className="rounded-lg border border-border/20 bg-muted/50 px-3 py-2">
+                <dt className="text-muted-foreground text-xs font-medium">High</dt>
+                <dd className="font-bold tabular-nums text-foreground">{formatPrice(data.h)}</dd>
               </div>
-              <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
-                <dt className="text-muted-foreground text-xs">Low</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.l)}</dd>
+              <div className="rounded-lg border border-border/20 bg-muted/50 px-3 py-2">
+                <dt className="text-muted-foreground text-xs font-medium">Low</dt>
+                <dd className="font-bold tabular-nums text-foreground">{formatPrice(data.l)}</dd>
               </div>
-              <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
-                <dt className="text-muted-foreground text-xs">Prev close</dt>
-                <dd className="font-medium tabular-nums">{formatPrice(data.pc)}</dd>
+              <div className="rounded-lg border border-border/20 bg-muted/50 px-3 py-2">
+                <dt className="text-muted-foreground text-xs font-medium">Prev close</dt>
+                <dd className="font-bold tabular-nums text-foreground">{formatPrice(data.pc)}</dd>
               </div>
             </dl>
           </div>

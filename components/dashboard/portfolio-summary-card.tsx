@@ -38,13 +38,13 @@ export const PortfolioSummaryCard = async ({ userId }: PortfolioSummaryCardProps
   }
 
   return (
-    <Card className="border-zinc-800 bg-zinc-950/80 text-zinc-100">
+    <Card className="border-border/20 bg-card text-foreground shadow-md shadow-foreground/5">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Paper portfolio</CardTitle>
-        <CardDescription className="text-zinc-500">
+        <CardTitle className="text-lg font-bold text-primary">Paper portfolio</CardTitle>
+        <CardDescription className="text-muted-foreground">
           <Link
             href="/portfolio"
-            className="font-medium text-zinc-300 underline-offset-4 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="font-bold text-primary underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             View full portfolio
           </Link>
@@ -52,20 +52,20 @@ export const PortfolioSummaryCard = async ({ userId }: PortfolioSummaryCardProps
       </CardHeader>
       <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Cash</p>
-          <p className="text-lg font-semibold tabular-nums">{formatUsd(snapshot.paperCashUsd)}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Cash</p>
+          <p className="text-lg font-bold tabular-nums text-foreground">{formatUsd(snapshot.paperCashUsd)}</p>
         </div>
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Positions</p>
-          <p className="text-lg font-semibold tabular-nums">{snapshot.holdings.length}</p>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Positions</p>
+          <p className="text-lg font-bold tabular-nums text-foreground">{snapshot.holdings.length}</p>
         </div>
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Realized P/L</p>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Realized P/L</p>
           <p
             className={
               snapshot.realizedPlUsd >= 0
-                ? "text-lg font-semibold tabular-nums text-emerald-400"
-                : "text-lg font-semibold tabular-nums text-red-400"
+                ? "text-lg font-bold tabular-nums text-emerald-600"
+                : "text-lg font-bold tabular-nums text-rose-600"
             }
           >
             {snapshot.realizedPlUsd >= 0 ? "+" : ""}
@@ -73,12 +73,12 @@ export const PortfolioSummaryCard = async ({ userId }: PortfolioSummaryCardProps
           </p>
         </div>
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Unrealized</p>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Unrealized</p>
           <p
             className={
               unrealizedUsd >= 0
-                ? "text-lg font-semibold tabular-nums text-emerald-400"
-                : "text-lg font-semibold tabular-nums text-red-400"
+                ? "text-lg font-bold tabular-nums text-emerald-600"
+                : "text-lg font-bold tabular-nums text-rose-600"
             }
           >
             {unrealizedUsd >= 0 ? "+" : ""}

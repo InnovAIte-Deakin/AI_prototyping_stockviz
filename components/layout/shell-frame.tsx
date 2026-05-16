@@ -5,7 +5,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
+import { UserNav } from '@/components/layout/user-nav'
 import { cn } from '@/lib/utils'
+import { Briefcase } from 'lucide-react'
+import { ThemeToggle } from '@/components/layout/theme-toggle'
+
 
 const SHELLLESS_ROUTES = new Set(['/login', '/register', '/forgot-password', '/reset-password'])
 
@@ -20,16 +24,13 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
   return (
     <>
       <header
-        className={cn(
-          'border-b border-border/50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80',
-          'font-[family-name:var(--font-geist-sans)]'
-        )}
+        className="sticky top-0 z-50 w-full border-b border-border/20 bg-card/80 backdrop-blur-md"
       >
-        <div className="flex h-14 items-center gap-4 px-4 sm:px-6">
+        <div className="flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8">
           <div className="flex min-w-[7rem] shrink-0 items-center">
             <Link
               href="/dashboard"
-              className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="text-xl font-bold tracking-tight text-foreground transition-colors hover:text-primary"
             >
               StockViz
             </Link>
@@ -39,13 +40,19 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
             <StockSymbolSearch />
           </div>
 
-          <div className="flex min-w-[7rem] shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-4">
             <Link
               href="/portfolio"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className={cn(
+                "hidden sm:flex items-center gap-1.5 text-sm font-bold transition-all hover:text-foreground",
+                pathname === "/portfolio" ? "text-foreground border-b-2 border-border pb-0.5" : "text-primary"
+              )}
             >
-              Portfolio
+              <Briefcase className="size-4" />
+              <span>Portfolio</span>
             </Link>
+            <ThemeToggle />
+            <UserNav />
           </div>
         </div>
       </header>

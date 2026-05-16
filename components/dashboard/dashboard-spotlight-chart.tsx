@@ -3,6 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+import { AlertCircle } from "lucide-react"
 
 import {
   Card,
@@ -24,7 +25,7 @@ import { cn } from "@/lib/utils"
 const chartConfig = {
   close: {
     label: "Close",
-    color: "hsl(142 71% 45%)",
+    color: "var(--color-finance-success)",
   },
 } satisfies ChartConfig
 
@@ -79,26 +80,26 @@ export const DashboardSpotlightChart = ({
   return (
     <Card
       className={cn(
-        "border-zinc-800 bg-zinc-950/80 text-zinc-100 shadow-lg shadow-black/20",
+        "border-border/20 bg-card text-foreground shadow-md shadow-foreground/5",
         className
       )}
     >
       <CardHeader className="flex flex-col gap-2 space-y-0 pb-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0 space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wider text-emerald-400/90">
-            Today&apos;s spotlight gainer
+          <p className="text-sm font-bold text-finance-success">
+            Today&apos;s Spotlight Gainer
           </p>
-          <CardTitle className="font-mono text-xl tracking-tight text-white sm:text-2xl">
+          <CardTitle className="font-mono text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             {symbol}
           </CardTitle>
-          <CardDescription className="line-clamp-2 text-zinc-400">{companyName}</CardDescription>
-          <p className="text-sm font-semibold tabular-nums text-emerald-400">
-            {formatPct(changePct)} <span className="text-xs font-normal text-zinc-500">session</span>
+          <CardDescription className="line-clamp-2 text-base text-muted-foreground">{companyName}</CardDescription>
+          <p className="text-sm font-bold tabular-nums text-finance-success">
+            {formatPct(changePct)} <span className="text-xs font-medium text-muted-foreground">session</span>
           </p>
         </div>
         <Link
           href={`/stock/${encodeURIComponent(symbol)}`}
-          className="shrink-0 text-sm font-medium text-sky-400 underline-offset-4 hover:text-sky-300 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="shrink-0 text-sm font-bold text-primary underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         >
           View {symbol} →
         </Link>
@@ -106,15 +107,23 @@ export const DashboardSpotlightChart = ({
       <CardContent className="pt-0">
         {isLoadingDaily ? (
           <div className="space-y-3 pt-2" aria-busy aria-live="polite">
-            <Skeleton className="h-[220px] w-full rounded-lg bg-zinc-900" />
-            <p className="text-center text-xs text-zinc-500">Loading price history…</p>
+            <Skeleton className="h-[220px] w-full rounded-lg bg-muted" />
+            <p className="text-center text-xs text-muted-foreground">Loading price history…</p>
           </div>
         ) : null}
 
         {!isLoadingDaily && errorDaily ? (
-          <p className="rounded-lg border border-amber-900/40 bg-amber-950/30 px-3 py-2 text-sm text-amber-200">
-            {errorDaily}
-          </p>
+          <div className="mt-2 space-y-3 rounded-lg border border-rose-200 bg-rose-50/50 p-3">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+              <div className="space-y-1.5">
+                <p className="text-xs font-bold text-rose-700">Unable to load chart</p>
+                <p className="line-clamp-3 text-[11px] leading-relaxed text-rose-600/90">
+                  Chart temporarily unavailable because the daily API limit has been reached. Please try again later.
+                </p>
+              </div>
+            </div>
+          </div>
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length > 0 ? (
@@ -127,7 +136,7 @@ export const DashboardSpotlightChart = ({
               data={chartRows}
               margin={{ left: 4, right: 8, top: 8, bottom: 4 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-zinc-800" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-[var(--border)]/30" />
               <XAxis
                 dataKey="period"
                 tickLine={false}
@@ -135,7 +144,7 @@ export const DashboardSpotlightChart = ({
                 tickMargin={8}
                 minTickGap={28}
                 tickFormatter={(v) => (typeof v === "string" ? formatPeriodLabel(v) : String(v))}
-                className="text-[10px] text-zinc-500"
+                className="text-[10px] font-medium text-muted-foreground"
               />
               <YAxis
                 tickLine={false}
@@ -144,7 +153,7 @@ export const DashboardSpotlightChart = ({
                 domain={["auto", "auto"]}
                 width={52}
                 tickFormatter={(v) => (typeof v === "number" ? formatUsd(v) : String(v))}
-                className="text-[10px] text-zinc-500"
+                className="text-[10px] font-medium text-muted-foreground"
               />
               <ChartTooltip
                 content={
@@ -174,10 +183,10 @@ export const DashboardSpotlightChart = ({
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length === 0 ? (
-          <p className="text-sm text-zinc-500">No intraday history available for this symbol.</p>
+          <p className="text-sm text-muted-foreground">No intraday history available for this symbol.</p>
         ) : null}
 
-        <p className="mt-3 text-[10px] leading-snug text-zinc-600">
+        <p className="mt-3 text-[10px] font-medium leading-snug text-muted-foreground">
           Daily closes via Alpha Vantage (compact). Not financial advice.
         </p>
       </CardContent>

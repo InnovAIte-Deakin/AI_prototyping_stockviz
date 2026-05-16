@@ -84,14 +84,14 @@ export const PaperTradeWidget = ({ symbol, initialPaperCashUsd }: PaperTradeWidg
   }
 
   return (
-    <Card>
+    <Card className="border-border/20 bg-card text-foreground shadow-md shadow-foreground/5">
       <CardHeader>
-        <CardTitle>Paper trade</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl font-bold text-primary">Paper trade</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Uses Finnhub last price when you trade. Cash and P/L are on your{" "}
           <Link
             href="/portfolio"
-            className="font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="font-bold text-primary underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
           >
             portfolio
           </Link>
@@ -101,25 +101,25 @@ export const PaperTradeWidget = ({ symbol, initialPaperCashUsd }: PaperTradeWidg
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-4 text-sm">
           <div>
-            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+            <p className="text-muted-foreground text-xs font-bold uppercase tracking-wide">
               Paper cash
             </p>
-            <p className="text-lg font-semibold tabular-nums">{formatUsd(initialPaperCashUsd)}</p>
+            <p className="text-lg font-bold tabular-nums text-foreground">{formatUsd(initialPaperCashUsd)}</p>
           </div>
           <div>
-            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+            <p className="text-muted-foreground text-xs font-bold uppercase tracking-wide">
               Last (Finnhub)
             </p>
-            <p className="text-lg font-semibold tabular-nums">
+            <p className="text-lg font-bold tabular-nums text-foreground">
               {isLoading ? "…" : lastPriceOk !== null ? formatUsd(lastPriceOk) : "—"}
             </p>
           </div>
           {estimatedNotional !== null ? (
             <div>
-              <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+              <p className="text-muted-foreground text-xs font-bold uppercase tracking-wide">
                 Est. notional
               </p>
-              <p className="text-lg font-semibold tabular-nums">{formatUsd(estimatedNotional)}</p>
+              <p className="text-lg font-bold tabular-nums text-foreground">{formatUsd(estimatedNotional)}</p>
             </div>
           ) : null}
         </div>
@@ -132,7 +132,7 @@ export const PaperTradeWidget = ({ symbol, initialPaperCashUsd }: PaperTradeWidg
         ) : null}
 
         <div className="space-y-2">
-          <Label htmlFor="paper-trade-shares">Shares</Label>
+          <Label htmlFor="paper-trade-shares" className="text-muted-foreground font-bold">Shares</Label>
           <Input
             id="paper-trade-shares"
             type="number"
@@ -144,6 +144,7 @@ export const PaperTradeWidget = ({ symbol, initialPaperCashUsd }: PaperTradeWidg
             onChange={(e) => setShareInput(e.target.value)}
             aria-invalid={shareInput.length > 0 && !sharesValid}
             autoComplete="off"
+            className="h-11 border-border/30 focus-visible:border-primary focus-visible:ring-0 rounded-lg text-base"
           />
         </div>
 
@@ -153,7 +154,7 @@ export const PaperTradeWidget = ({ symbol, initialPaperCashUsd }: PaperTradeWidg
             onClick={handleBuy}
             disabled={pending !== null || !sharesValid || lastPriceOk === null}
             aria-busy={pending === "buy"}
-            className={cn(pending === "buy" && "opacity-80")}
+            className={cn("h-11 px-8 font-bold bg-primary text-white hover:opacity-90 rounded-lg transition-all", pending === "buy" && "opacity-80")}
           >
             {pending === "buy" ? "Buying…" : "Buy"}
           </Button>
@@ -163,7 +164,7 @@ export const PaperTradeWidget = ({ symbol, initialPaperCashUsd }: PaperTradeWidg
             onClick={handleSell}
             disabled={pending !== null || !sharesValid || lastPriceOk === null}
             aria-busy={pending === "sell"}
-            className={cn(pending === "sell" && "opacity-80")}
+            className={cn("h-11 px-8 font-bold bg-muted text-foreground hover:bg-accent rounded-lg transition-all border border-border/20", pending === "sell" && "opacity-80")}
           >
             {pending === "sell" ? "Selling…" : "Sell"}
           </Button>

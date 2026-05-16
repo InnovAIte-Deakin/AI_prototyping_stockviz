@@ -1,11 +1,13 @@
-import { signOut } from "@/app/auth/actions"
+import { Suspense } from "react"
 import { DashboardSpotlightChart } from "@/components/dashboard/dashboard-spotlight-chart"
 import { MoversCarousel } from "@/components/dashboard/movers-carousel"
-import { PortfolioSummaryCard } from "@/components/dashboard/portfolio-summary-card"
+import { PortfolioSummaryRow, PortfolioSummarySkeleton } from "@/components/dashboard/portfolio-summary-row"
+import { PortfolioPerformanceChart } from "@/components/dashboard/portfolio-performance-chart"
+import { MarketStatusCard } from "@/components/dashboard/market-status-card"
 import { WishlistCard } from "@/components/dashboard/wishlist-card"
-import { Button } from "@/components/ui/button"
 import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
 import { createClient } from "@/lib/supabase/server"
+import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/data"
 import type { User } from "@supabase/supabase-js"
 
 const resolveFirstName = (
@@ -42,6 +44,18 @@ const DashboardPage = async () => {
     profileFullName = profile?.full_name
   }
 
+  const snapshot = user ? await loadPaperPortfolioSnapshot(user.id) : null
+  
+  let currentHoldingsValue = 0
+  if (snapshot) {
+    // Note: On the dashboard we use the avg_price for holdings value if mark prices aren't fetched yet
+    // to avoid an extra API call here, as PortfolioSummaryRow handles the live marks.
+    // However, for the chart to be accurate, we should ideally use the same logic.
+    currentHoldingsValue = snapshot.holdings.reduce((acc, h) => acc + (h.avg_price * h.shares), 0)
+  }
+  
+  const currentBalance = (snapshot?.paperCashUsd ?? 1000000) + currentHoldingsValue
+
   const firstName = resolveFirstName(user, profileFullName)
   const greetingName =
     firstName === "there" ? "there" : `${firstName.charAt(0).toUpperCase()}${firstName.slice(1)}`
@@ -49,69 +63,68 @@ const DashboardPage = async () => {
   const spotlightGainer = gainers.at(0) ?? null
 
   return (
-    <div className="min-h-screen bg-black text-zinc-100">
-      <section className="border-b border-zinc-900 bg-gradient-to-b from-zinc-950 to-black pb-6 pt-5">
+    <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
+      {/* Top Section: Market Movers */}
+      <section className="bg-card/50 border-b border-border/20 py-1">
         {error ? (
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <p
-              className="rounded-lg border border-amber-900/50 bg-amber-950/40 px-4 py-3 text-sm text-amber-200"
-              role="alert"
-            >
-              {error}
-            </p>
+          <div className="mx-auto max-w-7xl px-4 py-2 text-xs text-rose-600" role="alert">
+            {error}
           </div>
         ) : (
           <MoversCarousel gainers={gainers} losers={losers} />
         )}
       </section>
 
-      <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 sm:py-10">
-        <header className="flex flex-col gap-6 border-b border-zinc-900/80 pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mx-auto max-w-7xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+        {/* Header Section */}
+        <header className="space-y-8">
           <div className="space-y-2">
-            <h1 className="font-heading text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Hi {greetingName}, welcome back
             </h1>
-            <p className="max-w-xl text-sm leading-relaxed text-zinc-400">
-              Track your paper portfolio and wishlist, skim today&apos;s movers, and explore a
-              highlighted gainer below.
+            <p className="text-base font-medium text-muted-foreground max-w-2xl">
+              Everything you need to track your investment strategy in one place.
             </p>
           </div>
-          <form action={signOut} className="shrink-0">
-            <Button
-              type="submit"
-              variant="outline"
-              className="h-11 w-full rounded-xl border-zinc-700 bg-zinc-950 px-8 font-semibold text-zinc-100 hover:bg-zinc-900 sm:w-auto"
-            >
-              Sign out
-            </Button>
-          </form>
+          
+          <Suspense fallback={<PortfolioSummarySkeleton />}>
+            {user ? (
+              <div className="pt-2">
+                <PortfolioSummaryRow userId={user.id} />
+              </div>
+            ) : null}
+          </Suspense>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
-          <div className="space-y-6 lg:col-span-2">
-            {spotlightGainer ? (
-              <DashboardSpotlightChart
-                symbol={spotlightGainer.symbol}
-                companyName={spotlightGainer.name}
-                changePct={spotlightGainer.changePct}
-              />
-            ) : (
-              <div className="rounded-xl border border-dashed border-zinc-800 bg-zinc-950/40 px-4 py-10 text-center text-sm text-zinc-500">
-                {error
-                  ? "Mover data is unavailable, so no spotlight chart this session."
-                  : "No gainer data right now. Check back after the market updates."}
-              </div>
-            )}
-
-            {user ? (
-              <PortfolioSummaryCard userId={user.id} />
-            ) : null}
+        {/* Main Section: Row 1 - Performance & Status */}
+        <div className="grid gap-10 lg:grid-cols-3 lg:items-stretch">
+          {/* Performance Column - 2/3 Width */}
+          <div className="lg:col-span-2">
+            <PortfolioPerformanceChart 
+              currentBalance={currentBalance} 
+              history={snapshot?.history ?? []}
+              className="h-full" 
+            />
           </div>
 
-          <div className="lg:col-span-1">
-            <WishlistCard />
+          {/* Sidebar - 1/3 Width Stacked & Aligned */}
+          <div className="flex flex-col gap-8 lg:col-span-1">
+            <MarketStatusCard />
+            <WishlistCard className="flex-1" />
           </div>
         </div>
+
+        {/* Main Section: Row 2 - Spotlight (Wider) */}
+        <section className="pt-6">
+          {spotlightGainer && (
+            <DashboardSpotlightChart
+              symbol={spotlightGainer.symbol}
+              companyName={spotlightGainer.name}
+              changePct={spotlightGainer.changePct}
+              className="border-dashed"
+            />
+          )}
+        </section>
       </div>
     </div>
   )

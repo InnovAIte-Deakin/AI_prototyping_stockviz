@@ -82,8 +82,8 @@ export const StockSymbolSearch = ({
           <button
             type="button"
             className={cn(
-              'relative flex h-9 w-full items-center gap-2 rounded-md border border-border/60 bg-muted/40 pl-9 pr-3 text-left text-sm shadow-none outline-none',
-              'transition-colors hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50'
+              'relative flex h-9 w-full items-center gap-2 rounded-lg border border-border/20 bg-muted/50 pl-9 pr-3 text-left text-sm shadow-none outline-none',
+              'transition-all hover:bg-muted focus-visible:border-primary focus-visible:ring-0'
             )}
             aria-expanded={open}
             aria-haspopup="dialog"
@@ -93,37 +93,38 @@ export const StockSymbolSearch = ({
               className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden
             />
-            <span className="truncate text-muted-foreground">{PLACEHOLDER}</span>
+            <span className="truncate text-muted-foreground font-medium">{PLACEHOLDER}</span>
           </button>
         </PopoverTrigger>
 
         <PopoverContent
           align="center"
           sideOffset={8}
-          className="w-[var(--radix-popover-trigger-width)] max-w-xl p-0"
+          className="w-[var(--radix-popover-trigger-width)] max-w-xl p-0 border-border/20 bg-card shadow-xl shadow-foreground/10"
         >
           <PopoverTitle className="sr-only">Stock symbol search</PopoverTitle>
           <Command
             shouldFilter={false}
             label="Stock symbol search"
-            className="rounded-lg"
+            className="rounded-lg bg-card! text-foreground!"
           >
             <CommandInput
               placeholder={PLACEHOLDER}
               value={query}
               onValueChange={setQuery}
               autoFocus
+              className="text-foreground placeholder:text-muted-foreground"
             />
             <CommandList>
               {showHint ? (
-                <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                <div className="px-2 py-6 text-center text-sm text-muted-foreground font-medium">
                   Type at least 2 characters to search symbols, names, ISIN, or
                   CUSIP.
                 </div>
               ) : null}
 
               {showLoading ? (
-                <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                <div className="px-2 py-6 text-center text-sm text-muted-foreground font-medium">
                   Searching…
                 </div>
               ) : null}
@@ -135,7 +136,7 @@ export const StockSymbolSearch = ({
               ) : null}
 
               {showNoHits ? (
-                <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                <div className="px-2 py-6 text-center text-sm text-muted-foreground font-medium">
                   No matching symbols.
                 </div>
               ) : null}
@@ -153,12 +154,13 @@ export const StockSymbolSearch = ({
                         onSelect={() => {
                           handleSelectSymbol(item)
                         }}
+                        className="group transition-colors data-[selected=true]:bg-primary"
                       >
-                        <span className="shrink-0 font-medium tabular-nums">
+                        <span className="shrink-0 font-bold tabular-nums text-foreground group-data-[selected=true]:text-primary-foreground">
                           {label}
                         </span>
                         {description ? (
-                          <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                          <span className="min-w-0 flex-1 truncate text-muted-foreground font-medium group-data-[selected=true]:text-primary-foreground/90">
                             {description}
                           </span>
                         ) : null}
