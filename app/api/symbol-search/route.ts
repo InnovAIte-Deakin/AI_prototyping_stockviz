@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server"
 
-import { upsertStocks } from "@/lib/stocks/upsert-stock"
-
 const FINNHUB_API = "https://finnhub.io/api/v1/search"
 
 /** Proxies Finnhub symbol lookup (`/search`). */
@@ -42,22 +40,6 @@ export async function GET(request: Request) {
     )
   }
 
-  const data = (await upstream.json()) as {
-    count?: number
-    result?: Array<{ symbol?: string; displaySymbol?: string; description?: string }>
-  }
-
-  // Fire-and-forget: cache search results in the stocks table
-  if (Array.isArray(data?.result) && data.result.length > 0) {
-    void upsertStocks(
-      data.result
-        .filter((r): r is typeof r & { symbol: string } => Boolean(r.displaySymbol ?? r.symbol))
-        .map((r) => ({
-          symbol: (r.displaySymbol ?? r.symbol)!,
-          name: r.description,
-        }))
-    )
-  }
-
+  const data: unknown = await upstream.json()
   return NextResponse.json(data)
 }

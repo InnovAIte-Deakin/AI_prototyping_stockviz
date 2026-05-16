@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { resetPassword } from "@/app/auth/actions";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export default function ForgotPassword() {
   const [error, setError] = useState<string | null>(null);
@@ -40,14 +39,11 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-accent selection:text-accent-foreground relative">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen bg-[#f9f9f8] text-[#2d3433] flex flex-col selection:bg-[#e4e2e1] selection:text-[#525251]">
       <div className="flex-grow flex flex-col items-center justify-center p-6 md:p-12">
         {/* Brand Header */}
         <header className="mb-8 text-center shrink-0">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-primary">
+          <Link href="/" className="text-xl font-bold tracking-tighter text-[#5f5e5e]">
             StockViz
           </Link>
         </header>
@@ -66,15 +62,15 @@ export default function ForgotPassword() {
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
                 >
-                  <CheckCircle2 className="h-16 w-16 text-primary" strokeWidth={1.5} />
+                  <CheckCircle2 className="h-16 w-16 text-[#5f5e5e]" strokeWidth={1.5} />
                 </motion.div>
-                <h2 className="text-4xl font-bold tracking-tight text-primary">Check your email</h2>
-                <p className="text-muted-foreground text-base leading-relaxed max-w-sm">
+                <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e]">Check your email</h2>
+                <p className="text-[#5a6060] text-base leading-relaxed max-w-sm">
                   We sent a password reset link to your email. Click the link to set a new password.
                 </p>
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-2 text-base font-bold text-primary hover:text-foreground transition-colors mt-4"
+                  className="inline-flex items-center gap-2 text-sm font-bold text-[#5f5e5e] hover:text-[#2d3433] transition-colors mt-4"
                 >
                   <ArrowLeft size={16} />
                   Back to login
@@ -84,8 +80,8 @@ export default function ForgotPassword() {
               /* ── Form State ── */
               <>
                 <div className="text-center">
-                  <h2 className="text-4xl font-bold tracking-tight text-primary mb-4">Forgot password?</h2>
-                  <p className="text-muted-foreground text-base leading-relaxed">
+                  <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">Forgot password?</h2>
+                  <p className="text-[#5a6060] text-base leading-relaxed">
                     Enter your email and we&apos;ll send you a reset link.
                   </p>
                 </div>
@@ -95,14 +91,14 @@ export default function ForgotPassword() {
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="p-3 text-sm font-medium text-destructive bg-destructive/10 rounded-xl border border-destructive/30"
+                      className="p-3 text-sm font-medium text-[#752121] bg-[#fe8983]/20 rounded-xl border border-[#fe8983]/30"
                     >
                       {error}
                     </motion.div>
                   )}
                   <div className="space-y-1.5">
                     <Label
-                      className="block text-base font-semibold text-muted-foreground mb-1.5"
+                      className="block text-xs font-bold uppercase tracking-widest text-[#5a6060] mb-2.5"
                       htmlFor="email"
                     >
                       Email Address
@@ -112,9 +108,9 @@ export default function ForgotPassword() {
                       transition={{ duration: 0.4 }}
                       className="relative"
                     >
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
                       <Input
-                        className={`w-full pl-12 pr-4 h-[46px] bg-card text-foreground border ${fieldErrors.email ? "border-destructive" : "border-border/20"} focus-visible:border-primary focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-muted-foreground/50 outline-none`}
+                        className={`w-full pl-12 pr-4 h-[52px] bg-white text-[#2d3433] border ${fieldErrors.email ? "border-[#752121]" : "border-[#adb3b2]/20"} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
                         id="email"
                         name="email"
                         placeholder="name@example.com"
@@ -125,17 +121,17 @@ export default function ForgotPassword() {
                   </div>
                   <Button
                     disabled={isPending}
-                    className="w-full bg-primary text-primary-foreground h-[48px] px-4 rounded-lg font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-primary active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
+                    className="w-full bg-[#5f5e5e] text-white h-[56px] px-4 rounded-xl font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
                     type="submit"
                   >
                     {isPending ? "Sending..." : "Send Reset Link"}
                   </Button>
                 </form>
 
-                <p className="text-center text-base text-muted-foreground">
+                <p className="text-center text-sm text-[#5a6060]">
                   Remember your password?{" "}
                   <Link
-                    className="font-bold text-primary hover:text-foreground transition-colors underline underline-offset-4"
+                    className="font-bold text-[#5f5e5e] hover:text-[#525251] transition-colors underline underline-offset-4"
                     href="/login"
                   >
                     Sign in
@@ -147,7 +143,19 @@ export default function ForgotPassword() {
         </div>
       </div>
 
-
+      {/* Global Footer */}
+      <footer className="mt-auto w-full border-t border-[#adb3b2]/20 bg-[#f9f9f8]">
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center py-10 px-8 gap-4 text-[10px] tracking-widest uppercase text-[#5a6060]">
+          <div className="flex flex-col md:flex-row gap-6 items-center">
+            <span>© 2024 StockViz Editorial. All rights reserved.</span>
+          </div>
+          <nav className="flex gap-8">
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Privacy Policy</a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Terms of Service</a>
+            <a className="hover:text-[#5f5e5e] transition-colors" href="#">Legal Disclosures</a>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }
