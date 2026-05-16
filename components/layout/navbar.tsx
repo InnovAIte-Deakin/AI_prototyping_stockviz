@@ -17,7 +17,9 @@ import {
   Search,
   Activity,
   Sliders,
+  Star,
 } from 'lucide-react'
+import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,6 +60,12 @@ const navItems = [
     label: 'Indicators',
     icon: Activity,
     description: 'Technical indicators',
+  },
+  {
+    href: '/wishlist',
+    label: 'Wishlist',
+    icon: Star,
+    description: 'Your saved stocks',
   },
   {
     href: '/weights',
@@ -103,7 +111,7 @@ export default function Navbar() {
       className={cn(
         'sticky top-0 z-50 w-full transition-all duration-300',
         isScrolled
-          ? 'bg-background/95 backdrop-blur-md border-b border-border/40 shadow-lg'
+          ? 'bg-card/95 backdrop-blur-md border-b border-border/20 shadow-md'
           : 'bg-background/80 backdrop-blur-sm'
       )}
     >
@@ -112,14 +120,14 @@ export default function Navbar() {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-6">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <BarChart3 className="h-6 w-6 text-white" />
+              <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <BarChart3 className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="hidden sm:block">
-                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                <span className="text-xl font-bold text-foreground">
                   StockViz
                 </span>
-                <div className="text-xs text-muted-foreground -mt-1">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold -mt-1">
                   Analysis Platform
                 </div>
               </div>
@@ -134,32 +142,22 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative group',
+                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 relative group',
                       isActive(item.href)
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-primary hover:text-foreground hover:bg-muted'
                     )}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.label}</span>
-                    {isActive(item.href) && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-foreground rounded-full" />
-                    )}
                   </Link>
                 )
               })}
             </div>
           </div>
 
-          {/* Center Search Bar */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search stocks, companies..."
-                className="pl-10 bg-muted/50 border-border/50 focus:bg-background transition-all duration-200"
-              />
-            </div>
+            <StockSymbolSearch className="w-full" />
           </div>
 
           {/* Right Side Actions */}
@@ -209,7 +207,7 @@ export default function Navbar() {
               </Button>
               <Button
                 size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 Sign Up
               </Button>
@@ -248,7 +246,7 @@ export default function Navbar() {
                         href={item.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={cn(
-                          'flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200',
+                          'flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium transition-all duration-200',
                           isActive(item.href)
                             ? 'bg-primary text-primary-foreground'
                             : 'text-muted-foreground hover:text-foreground hover:bg-accent'
@@ -257,7 +255,7 @@ export default function Navbar() {
                         <Icon className="h-5 w-5" />
                         <div className="flex-1">
                           <div>{item.label}</div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-sm text-muted-foreground">
                             {item.description}
                           </div>
                         </div>
