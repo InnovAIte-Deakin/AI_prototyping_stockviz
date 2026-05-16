@@ -65,7 +65,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         ])
       }
 
-      const { error, isWishlisted: newStatus } = await toggleWishlistAction(symbol, name)
+      const { error } = await toggleWishlistAction(symbol, name)
 
       if (error) {
         if (error === "Not authenticated") {
@@ -73,16 +73,13 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         } else {
           toast.error("Failed to update wishlist.")
         }
-        
         // Revert optimistic update on error by reloading
         const { data } = await getWishlist()
         if (data) setItems(data)
       } else {
-        // If it was successfully added, we need real IDs, so reload.
-        if (newStatus && !alreadyWishlisted) {
-            const { data } = await getWishlist()
-            if (data) setItems(data)
-        }
+        // Always reload after any successful toggle to stay in sync with server
+        const { data } = await getWishlist()
+        if (data) setItems(data)
       }
     },
     [isWishlisted]
