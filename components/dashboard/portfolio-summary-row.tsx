@@ -17,12 +17,12 @@ export const PortfolioSummarySkeleton = () => (
     {[...Array(4)].map((_, i) => (
       <Card key={i} className="min-w-[160px] shrink-0 flex-1 border-border/20 bg-card shadow-sm md:min-w-0">
         <CardHeader className="p-4 pb-1 flex flex-row items-center justify-between space-y-0">
-          <div className="h-3 w-16 bg-muted rounded animate-pulse" />
-          <div className="h-3.5 w-3.5 bg-muted rounded animate-pulse" />
+          <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+          <div className="h-4 w-4 bg-muted rounded animate-pulse" />
         </CardHeader>
         <CardContent className="p-4 pt-0 space-y-2">
-          <div className="h-6 w-24 bg-muted rounded animate-pulse" />
-          <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+          <div className="h-7 w-28 bg-muted rounded animate-pulse" />
+          <div className="h-4 w-24 bg-muted rounded animate-pulse" />
         </CardContent>
       </Card>
     ))}
@@ -74,13 +74,13 @@ export const PortfolioSummaryRow = async ({ userId }: { userId: string }) => {
     <div className="flex w-full gap-4 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
       {stats.map((s) => (
         <Card key={s.label} className="group min-w-[160px] shrink-0 flex-1 border-border/20 bg-card shadow-sm hover:shadow-md transition-all duration-200 md:min-w-0">
-          <CardHeader className="p-4 pb-1 flex flex-row items-center justify-between space-y-0">
-            <span className="text-xs font-medium text-muted-foreground">{s.label}</span>
-            <s.icon className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-muted-foreground" />
+          <CardHeader className="p-4 pb-1.5 flex flex-row items-center justify-between space-y-0">
+            <span className="text-sm font-semibold text-muted-foreground">{s.label}</span>
+            <s.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
           </CardHeader>
           <CardContent className="p-4 pt-0">
             <p className={cn(
-              "text-lg font-bold tabular-nums text-foreground",
+              "text-xl font-bold tabular-nums text-foreground",
               s.label === "Today's Return" && (
               (s.trend ?? 0) > 0 ? "text-finance-success" : 
               (s.trend ?? 0) < 0 ? "text-finance-danger" : 
@@ -89,7 +89,7 @@ export const PortfolioSummaryRow = async ({ userId }: { userId: string }) => {
             )}>
               {s.value}
             </p>
-            <p className="text-[10px] text-muted-foreground font-medium">{s.sub}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground font-medium">{s.sub}</p>
           </CardContent>
         </Card>
       ))}

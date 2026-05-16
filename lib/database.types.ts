@@ -285,6 +285,53 @@ export type Database = {
           },
         ]
       }
+      price_triggers: {
+        Row: {
+          id: string
+          user_id: string
+          symbol: string
+          trigger_price: number
+          condition: "above" | "below"
+          type: "notify" | "buy" | "sell"
+          shares: number | null
+          status: "active" | "fired" | "cancelled"
+          created_at: string
+          fired_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          symbol: string
+          trigger_price: number
+          condition: "above" | "below"
+          type: "notify" | "buy" | "sell"
+          shares?: number | null
+          status?: "active" | "fired" | "cancelled"
+          created_at?: string
+          fired_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          symbol?: string
+          trigger_price?: number
+          condition?: "above" | "below"
+          type?: "notify" | "buy" | "sell"
+          shares?: number | null
+          status?: "active" | "fired" | "cancelled"
+          created_at?: string
+          fired_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_triggers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
