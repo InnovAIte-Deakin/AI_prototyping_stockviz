@@ -87,7 +87,7 @@ const WishlistSummary = ({
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {summaryData.map((s) => (
-        <Card key={s.label} className="group bg-card border-border/20 shadow-sm transition-all hover:shadow-md">
+        <Card key={s.label} className="group bg-card border-border/20 shadow-sm transition-all">
           <CardHeader className="p-4 pb-1.5 flex flex-row items-center justify-between space-y-0">
             <span className="text-sm font-semibold text-muted-foreground">{s.label}</span>
             <s.icon className={cn("h-4 w-4 transition-colors", s.color)} />
@@ -133,7 +133,7 @@ const WishlistRow = ({ item, quote, loading }: { item: WishlistItem, quote: Quot
       className="group border-b border-border/10 hover:bg-muted/30 transition-colors cursor-pointer"
       onClick={handleRowClick}
     >
-      <td className="py-4 pl-4 pr-3">
+      <td className="py-4 pl-6 pr-3">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 font-mono text-sm font-bold text-primary">
             {item.symbol.charAt(0)}
@@ -146,14 +146,14 @@ const WishlistRow = ({ item, quote, loading }: { item: WishlistItem, quote: Quot
           </div>
         </div>
       </td>
-      <td className="px-3 py-4 text-sm font-semibold tabular-nums text-foreground">
+      <td className="px-6 py-4 text-sm font-semibold tabular-nums text-foreground">
         {loading ? (
           <div className="h-4 w-16 animate-pulse rounded bg-muted" />
         ) : (
           formatUsd(currentPrice)
         )}
       </td>
-      <td className="px-3 py-4 text-sm font-bold tabular-nums">
+      <td className="px-6 py-4 text-sm font-bold tabular-nums">
         {loading ? (
           <div className="h-4 w-12 animate-pulse rounded bg-muted" />
         ) : (
@@ -163,13 +163,13 @@ const WishlistRow = ({ item, quote, loading }: { item: WishlistItem, quote: Quot
           </div>
         )}
       </td>
-      <td className="px-3 py-4 text-xs font-medium text-muted-foreground">
+      <td className="px-6 py-4 text-xs font-medium text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <Clock className="size-3" />
           {formatWhen(item.created_at)}
         </div>
       </td>
-      <td className="py-4 pl-3 pr-4 text-right">
+      <td className="py-4 pl-3 pr-6 text-right">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button 
@@ -392,21 +392,21 @@ export default function WishlistPage() {
                   <p className="text-sm text-muted-foreground">Search for a stock and tap the star to add it here.</p>
                 </div>
                 <Link href="/dashboard">
-                  <Button className="mt-4 font-bold shadow-lg shadow-primary/20">
+                  <Button className="mt-4 font-bold">
                     Go to Dashboard
                   </Button>
                 </Link>
               </CardContent>
             </Card>
           ) : (
-            <Card className="overflow-hidden border-border/10 bg-card shadow-xl shadow-foreground/5">
+            <Card className="overflow-hidden border-border/10 bg-card shadow-md shadow-foreground/5">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse text-left">
                     <thead>
-                      <tr className="border-b border-border/10 bg-muted/20 text-sm font-semibold text-muted-foreground">
+                      <tr className="border-b border-border/10 bg-muted/5 text-sm font-semibold text-muted-foreground">
                         <th 
-                          className="px-4 py-4 font-bold cursor-pointer hover:text-primary transition-colors"
+                          className="px-6 py-4 font-semibold cursor-pointer hover:text-primary transition-colors text-sm"
                           onClick={() => toggleSort("symbol")}
                         >
                           <div className="flex items-center gap-1">
@@ -415,7 +415,7 @@ export default function WishlistPage() {
                           </div>
                         </th>
                         <th 
-                          className="px-3 py-4 font-bold cursor-pointer hover:text-primary transition-colors"
+                          className="px-6 py-4 font-semibold cursor-pointer hover:text-primary transition-colors text-sm"
                           onClick={() => toggleSort("price")}
                         >
                           <div className="flex items-center gap-1">
@@ -424,7 +424,7 @@ export default function WishlistPage() {
                           </div>
                         </th>
                         <th 
-                          className="px-3 py-4 font-bold cursor-pointer hover:text-primary transition-colors"
+                          className="px-6 py-4 font-semibold cursor-pointer hover:text-primary transition-colors text-sm"
                           onClick={() => toggleSort("change")}
                         >
                           <div className="flex items-center gap-1">
@@ -433,7 +433,7 @@ export default function WishlistPage() {
                           </div>
                         </th>
                         <th 
-                          className="px-3 py-4 font-bold cursor-pointer hover:text-primary transition-colors"
+                          className="px-6 py-4 font-semibold cursor-pointer hover:text-primary transition-colors text-sm"
                           onClick={() => toggleSort("date")}
                         >
                           <div className="flex items-center gap-1">
@@ -441,7 +441,7 @@ export default function WishlistPage() {
                             <SortIndicator column="date" currentKey={sortConfig.key} currentDir={sortConfig.dir} />
                           </div>
                         </th>
-                        <th className="px-4 py-4 text-right font-bold">Action</th>
+                        <th className="px-6 py-4 text-right font-semibold text-sm">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/10">
