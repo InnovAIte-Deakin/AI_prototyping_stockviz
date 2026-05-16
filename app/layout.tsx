@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
-import { Geist_Mono, Inter } from 'next/font/google'
+import { Geist, Geist_Mono, Inter } from 'next/font/google'
 import ShellFrame from '@/components/layout/shell-frame'
 import { ThemeProvider } from '@/components/providers/theme-provider'
-import { WishlistProvider } from '@/components/providers/wishlist-provider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -52,10 +54,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistMono.variable} ${inter.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className={`${inter.className} min-h-full flex flex-col bg-background`}>
+      <body className="min-h-full flex flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -63,9 +65,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <WishlistProvider>
-            <ShellFrame>{children}</ShellFrame>
-          </WishlistProvider>
+          <ShellFrame>{children}</ShellFrame>
           <Toaster richColors position="bottom-right" />
         </ThemeProvider>
       </body>
