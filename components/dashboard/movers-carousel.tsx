@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, AlertCircle } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import { WishlistStar } from "@/components/ui/wishlist-star"
 import type { MoverRow } from "@/lib/fmp/biggest-movers"
 import type { ExplainMoveResponse } from "@/lib/stocks/explain-move-schema"
 import { cn } from "@/lib/utils"
@@ -74,47 +75,50 @@ type MoverCardFaceProps = {
 
 const MoverCardFace = ({ row, duplicate = false }: MoverCardFaceProps) => {
   const isGainer = row.kind === "gainer"
-  const accent = isGainer ? "text-emerald-400" : "text-rose-400"
+  const accent = isGainer ? "text-emerald-600" : "text-rose-600"
   const badgeBg = isGainer
-    ? "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30"
-    : "bg-rose-500/15 text-rose-300 ring-rose-500/30"
+    ? "bg-emerald-100 text-emerald-700 ring-emerald-500/20"
+    : "bg-rose-100 text-rose-700 ring-rose-500/20"
 
   return (
     <>
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate font-mono text-lg font-semibold tracking-tight text-white">
+          <p className="truncate font-mono text-lg font-bold tracking-tight text-[#2d3433]">
             {row.symbol}
           </p>
-          <p className="line-clamp-2 text-xs leading-snug text-zinc-400">{row.name}</p>
+          <p className="line-clamp-2 text-xs leading-snug text-[#5a6060]">{row.name}</p>
         </div>
-        <span
-          className={cn(
-            "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ring-inset",
-            badgeBg
-          )}
-        >
-          {isGainer ? "Gainer" : "Loser"}
-        </span>
+        <div className="flex flex-col items-end gap-1.5">
+          <WishlistStar symbol={row.symbol} name={row.name} />
+          <span
+            className={cn(
+              "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-medium border border-[#adb3b2]/20",
+              badgeBg
+            )}
+          >
+            {isGainer ? "Gainer" : "Loser"}
+          </span>
+        </div>
       </div>
-      <div className="mt-auto flex flex-wrap items-end justify-between gap-2 border-t border-zinc-800/80 pt-2">
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-2 border-t border-[#adb3b2]/20 pt-2">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Last</p>
-          <p className="text-sm font-medium tabular-nums text-zinc-100">${formatPrice(row.price)}</p>
+          <p className="text-[10px] font-medium text-[#5a6060]">Last</p>
+          <p className="text-sm font-semibold tabular-nums text-[#2d3433]">${formatPrice(row.price)}</p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Chg / %</p>
-          <p className={cn("text-sm font-semibold tabular-nums", accent)}>
+          <p className="text-[10px] font-medium text-[#5a6060]">Chg / %</p>
+          <p className={cn("text-sm font-bold tabular-nums", accent)}>
             {formatDollarChange(row.change)}{" "}
             <span className="text-xs font-medium">({formatPct(row.changePct)})</span>
           </p>
         </div>
       </div>
       {row.exchange ? (
-        <p className="mt-2 truncate text-[10px] text-zinc-600">{row.exchange}</p>
+        <p className="mt-2 truncate text-[10px] font-medium text-[#adb3b2]">{row.exchange}</p>
       ) : null}
       {!duplicate ? (
-        <p className="mt-2 text-[10px] text-zinc-500">Hover or tap for AI context</p>
+        <p className="mt-2 text-[10px] font-medium text-[#5a6060]">Hover or tap for AI context</p>
       ) : null}
     </>
   )
@@ -148,7 +152,7 @@ const MoverExplainBody = ({
       sideOffset={10}
       collisionPadding={16}
       className={cn(
-        "w-[min(24rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] gap-0 border-zinc-800 bg-zinc-950 p-4 text-zinc-100 shadow-xl ring-1 ring-zinc-800",
+        "w-[min(24rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] gap-0 border-[#adb3b2]/20 bg-white p-4 text-[#2d3433] shadow-xl ring-1 ring-[#adb3b2]/20",
         "max-h-[min(70vh,32rem)] overflow-y-auto"
       )}
       onOpenAutoFocus={(e) => e.preventDefault()}
@@ -157,42 +161,50 @@ const MoverExplainBody = ({
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-mono text-lg font-semibold tracking-tight">{row.symbol}</p>
-          <p className="text-sm text-zinc-400">{row.name}</p>
+          <p className="font-mono text-lg font-bold tracking-tight text-[#2d3433]">{row.symbol}</p>
+          <p className="text-sm font-medium text-[#5a6060]">{row.name}</p>
         </div>
         <Badge
           variant="outline"
           className={
             isGainer
-              ? "border-emerald-500/40 text-emerald-300"
-              : "border-rose-500/40 text-rose-300"
+              ? "border-emerald-500/40 text-emerald-600 font-bold bg-emerald-50"
+              : "border-rose-500/40 text-rose-600 font-bold bg-rose-50"
           }
         >
           {isGainer ? "Top gainer" : "Top loser"}
         </Badge>
       </div>
-      <p className="mt-1 text-sm tabular-nums text-zinc-300">
-        Today: <span className="font-medium text-white">{formatPct(row.changePct)}</span>
+      <p className="mt-1 text-sm tabular-nums text-[#5a6060]">
+        Today: <span className="font-bold text-[#2d3433]">{formatPct(row.changePct)}</span>
       </p>
 
-      <Separator className="my-3 bg-zinc-800" />
+      <Separator className="my-3 bg-[#adb3b2]/20" />
 
       {loading ? (
         <div className="space-y-2" aria-busy aria-live="polite">
-          <Skeleton className="h-4 w-full bg-zinc-800" />
-          <Skeleton className="h-4 w-full bg-zinc-800" />
-          <Skeleton className="h-4 w-3/4 bg-zinc-800" />
+          <Skeleton className="h-4 w-full bg-[#f2f4f3]" />
+          <Skeleton className="h-4 w-full bg-[#f2f4f3]" />
+          <Skeleton className="h-4 w-3/4 bg-[#f2f4f3]" />
         </div>
       ) : null}
 
       {error && !loading ? (
-        <div className="space-y-3">
-          <p className="text-sm text-rose-300">{error}</p>
+        <div className="space-y-3 rounded-lg border border-rose-200 bg-rose-50/50 p-3">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold text-rose-700">Unable to explain move</p>
+              <p className="line-clamp-3 text-[11px] leading-relaxed text-rose-600/90">
+                AI analysis is temporarily unavailable. This usually happens when the daily API limit is reached.
+              </p>
+            </div>
+          </div>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="border-zinc-600"
+            className="h-8 border-rose-200 bg-white px-3 text-[11px] font-bold text-rose-700 hover:bg-rose-50 hover:text-rose-800 transition-colors"
             onClick={onRetry}
           >
             Try again
@@ -203,28 +215,28 @@ const MoverExplainBody = ({
       {explanation && !loading ? (
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary" className="bg-zinc-800 text-zinc-200">
+            <Badge variant="secondary" className="bg-[#f2f4f3] text-[#5a6060]">
               {formatCategoryLabel(explanation.category)}
             </Badge>
-            <Badge variant="outline" className="border-zinc-600 text-zinc-300">
+            <Badge variant="outline" className="border-[#adb3b2]/30 text-[#5a6060]">
               Confidence: {explanation.confidence}
             </Badge>
           </div>
-          <p className="text-sm leading-relaxed text-zinc-200">{explanation.likelyReason}</p>
+          <p className="text-sm leading-relaxed text-[#2d3433]">{explanation.likelyReason}</p>
           {explanation.evidence.length > 0 ? (
             <div>
-              <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500">
+              <p className="mb-1.5 text-xs font-medium text-[#5a6060]">
                 Evidence
               </p>
               <ul className="space-y-2">
                 {explanation.evidence.map((ev, i) => (
-                  <li key={`${ev.headline}-${i}`} className="text-xs text-zinc-400">
+                  <li key={`${ev.headline}-${i}`} className="text-xs text-[#5a6060]">
                     {ev.url ? (
                       <a
                         href={ev.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex gap-1.5 text-zinc-200 underline-offset-2 hover:text-white hover:underline"
+                        className="group flex gap-1.5 text-[#2d3433] underline-offset-2 hover:text-[#5f5e5e] hover:underline font-bold"
                       >
                         <span className="min-w-0 flex-1">{ev.headline}</span>
                         <ExternalLink
@@ -233,30 +245,30 @@ const MoverExplainBody = ({
                         />
                       </a>
                     ) : (
-                      <span className="text-zinc-200">{ev.headline}</span>
+                      <span className="text-[#2d3433] font-bold">{ev.headline}</span>
                     )}
                     {ev.source ? (
-                      <span className="mt-0.5 block text-[10px] text-zinc-500">{ev.source}</span>
+                      <span className="mt-0.5 block text-[10px] text-[#adb3b2] font-medium">{ev.source}</span>
                     ) : null}
-                    <span className="mt-0.5 block text-zinc-500">{ev.relevance}</span>
+                    <span className="mt-0.5 block text-[#adb3b2] font-medium">{ev.relevance}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ) : null}
-          <p className="text-xs text-zinc-500">{explanation.caveat}</p>
+          <p className="text-xs text-[#adb3b2] font-medium">{explanation.caveat}</p>
         </div>
       ) : null}
 
-      <Separator className="my-3 bg-zinc-800" />
+      <Separator className="my-3 bg-[#adb3b2]/20" />
 
-      <p className="text-[10px] leading-snug text-zinc-500">
+      <p className="text-[10px] leading-snug text-[#adb3b2]">
         AI-generated explanation. Not financial advice.
       </p>
 
       <Link
         href={`/stock/${encodeURIComponent(row.symbol)}`}
-        className="mt-3 inline-flex text-xs font-medium text-sky-400 hover:text-sky-300 hover:underline"
+        className="mt-3 inline-flex text-xs font-bold text-[#5f5e5e] hover:text-[#2d3433] hover:underline"
       >
         Open {row.symbol} page →
       </Link>
@@ -294,9 +306,9 @@ const InteractiveMoverCard = ({
   onRetry,
 }: InteractiveMoverCardProps) => {
   const shellClass = cn(
-    "flex h-full min-h-[132px] shrink-0 flex-col rounded-xl border border-zinc-800 bg-zinc-950/90 p-4",
-    "shadow-sm shadow-black/40 transition-colors",
-    "hover:border-zinc-600 hover:bg-zinc-900/90 focus-visible:border-zinc-600 focus-visible:bg-zinc-900/90"
+    "flex h-full min-h-[132px] shrink-0 flex-col rounded-xl border border-[#adb3b2]/20 bg-white p-4",
+    "shadow-sm shadow-[#2d3433]/5 transition-colors",
+    "hover:border-[#adb3b2]/40 hover:bg-[#f2f4f3] focus-visible:border-[#adb3b2]/40 focus-visible:bg-[#f2f4f3]"
   )
 
   const handleRetry = () => {
@@ -307,12 +319,13 @@ const InteractiveMoverCard = ({
     return (
       <Popover open={popoverOpen} onOpenChange={onOpenChange} modal={false}>
         <PopoverAnchor asChild>
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className={cn(
               CARD_WIDTH_CLASS,
               shellClass,
-              "cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              "cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f5e5e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f9f9f8]"
             )}
             aria-expanded={popoverOpen}
             aria-haspopup="dialog"
@@ -326,9 +339,17 @@ const InteractiveMoverCard = ({
                 onCancelPendingExplain()
               }
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                const next = !popoverOpen
+                onOpenChange(next)
+                if (next) onRequestExplain(row)
+              }
+            }}
           >
             <MoverCardFace row={row} />
-          </button>
+          </div>
         </PopoverAnchor>
         <MoverExplainBody
           row={row}
@@ -351,7 +372,7 @@ const InteractiveMoverCard = ({
           className={cn(
             CARD_WIDTH_CLASS,
             shellClass,
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f5e5e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f9f9f8]"
           )}
           aria-label={`${row.kind === "gainer" ? "Gainer" : "Loser"} ${row.symbol}, ${row.name}`}
           onPointerEnter={() => {
@@ -400,8 +421,8 @@ type MoversCarouselProps = {
 
 const MoverCardDuplicate = ({ row }: { row: MoverRow }) => {
   const shellClass = cn(
-    "flex h-full min-h-[132px] shrink-0 flex-col rounded-xl border border-zinc-800 bg-zinc-950/90 p-4",
-    "shadow-sm shadow-black/40 transition-colors",
+    "flex h-full min-h-[132px] shrink-0 flex-col rounded-xl border border-[#adb3b2]/20 bg-white p-4",
+    "shadow-sm shadow-[#2d3433]/5 transition-colors",
     "select-none"
   )
   return (
@@ -657,11 +678,11 @@ export const MoversCarousel = ({ gainers, losers }: MoversCarouselProps) => {
   const edgeFade = (
     <>
       <div
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-black via-black/85 to-transparent sm:w-24 md:w-32"
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#f9f9f8] via-[#f9f9f8]/85 to-transparent sm:w-24 md:w-32"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-black via-black/85 to-transparent sm:w-24 md:w-32"
+        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#f9f9f8] via-[#f9f9f8]/85 to-transparent sm:w-24 md:w-32"
         aria-hidden
       />
     </>

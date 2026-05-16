@@ -193,20 +193,20 @@ const ExplainRangePopoverBody = ({
   const dir = rangeStats.direction
   const badgeVariant =
     dir === "up"
-      ? "text-emerald-600 dark:text-emerald-400"
+      ? "text-emerald-700"
       : dir === "down"
-        ? "text-red-600 dark:text-red-400"
-        : "text-muted-foreground"
+        ? "text-rose-700"
+        : "text-[#5a6060]"
 
   return (
     <div className="flex max-h-[min(70vh,520px)] flex-col gap-3 overflow-y-auto">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-heading text-sm font-semibold">{symbol}</p>
+          <p className="font-heading text-sm font-bold text-[#2d3433]">{symbol}</p>
           {companyName ? (
-            <p className="text-muted-foreground text-xs">{companyName}</p>
+            <p className="text-[#5a6060] text-xs font-medium">{companyName}</p>
           ) : null}
-          <p className="text-muted-foreground mt-1 text-xs">
+          <p className="text-[#adb3b2] mt-1 text-xs font-medium">
             {formatShortRange(rangeStats.from, rangeStats.to)}
           </p>
         </div>
@@ -246,7 +246,7 @@ const ExplainRangePopoverBody = ({
       </div>
 
       {tab === "yearly" ? (
-        <p className="text-muted-foreground text-xs">
+        <p className="text-[#5a6060] text-xs font-medium">
           Yearly bars span a full calendar year; explanations may be less precise than daily
           or monthly views.
         </p>
@@ -287,7 +287,7 @@ const ExplainRangePopoverBody = ({
 
           {explanation.mainDrivers.length > 0 ? (
             <div>
-              <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wide">
+              <p className="text-[#5a6060] mb-1 text-xs font-medium">
                 Main drivers
               </p>
               <ul className="list-inside list-disc space-y-1.5 text-xs">
@@ -304,16 +304,16 @@ const ExplainRangePopoverBody = ({
 
           {explanation.importantDates.length > 0 ? (
             <div>
-              <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wide">
+              <p className="text-[#5a6060] mb-1 text-xs font-medium">
                 Important dates
               </p>
               <ul className="space-y-2 text-xs">
                 {explanation.importantDates.map((e, i) => (
-                  <li key={i} className="rounded-md border border-border/60 bg-muted/20 p-2">
-                    <p className="font-medium">{e.date}</p>
-                    <p>{e.event}</p>
-                    <p className="text-muted-foreground">{e.priceAction}</p>
-                    <p className="text-muted-foreground">{e.relevance}</p>
+                  <li key={i} className="rounded-md border border-[#adb3b2]/20 bg-[#f2f4f3]/30 p-2">
+                    <p className="font-bold text-[#2d3433]">{e.date}</p>
+                    <p className="text-[#2d3433]">{e.event}</p>
+                    <p className="text-[#5a6060]">{e.priceAction}</p>
+                    <p className="text-[#5a6060]">{e.relevance}</p>
                   </li>
                 ))}
               </ul>
@@ -322,7 +322,7 @@ const ExplainRangePopoverBody = ({
 
           {explanation.evidence.length > 0 ? (
             <div>
-              <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wide">
+              <p className="text-[#5a6060] mb-1 text-xs font-medium">
                 Evidence
               </p>
               <ul className="space-y-2 text-xs">
@@ -369,7 +369,6 @@ const SelectableChartSection = ({
   companyName,
   showLoading,
   showError,
-  errorMessage,
 }: {
   tab: PriceHistoryTab
   chartRows: ChartBarForRange[]
@@ -377,7 +376,6 @@ const SelectableChartSection = ({
   companyName?: string
   showLoading: boolean
   showError: boolean
-  errorMessage: string | null
 }) => {
   const [isSelecting, setIsSelecting] = React.useState(false)
   const isSelectingRef = React.useRef(false)
@@ -638,12 +636,14 @@ const SelectableChartSection = ({
     )
   }
 
-  if (showError && errorMessage) {
+  if (showError) {
     return (
-      <Alert variant="destructive">
-        <AlertCircle />
-        <AlertTitle>Could not load price history</AlertTitle>
-        <AlertDescription>{errorMessage}</AlertDescription>
+      <Alert className="border-[#fe8983]/30 bg-[#fe8983]/10 text-[#752121]">
+        <AlertCircle className="text-[#752121]" />
+        <AlertTitle className="font-bold">Price history unavailable</AlertTitle>
+        <AlertDescription className="text-[#752121]/90">
+          The daily API limit has been reached. Historical price data for {symbol} will be available again shortly.
+        </AlertDescription>
       </Alert>
     )
   }
@@ -678,7 +678,7 @@ const SelectableChartSection = ({
           onMouseDown={handleChartMouseDown}
           onMouseMove={handleChartMouseMove}
         >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#adb3b2" strokeOpacity={0.2} />
           <XAxis
             dataKey="period"
             tickLine={false}
@@ -908,20 +908,20 @@ export const PriceHistoryChart = ({
   )
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5", className)}>
       <CardHeader>
-        <CardTitle>Price history</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl font-bold text-[#5f5e5e]">Price history</CardTitle>
+        <CardDescription className="text-[#5a6060]">
           Historical OHLC from Alpha Vantage (daily compact, monthly; yearly aggregated from
           monthly). Drag a range to get an AI explanation using FMP news (server-side).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs value={tab} onValueChange={handleTabChange}>
-          <TabsList aria-label="Price history range">
-            <TabsTrigger value="daily">Daily</TabsTrigger>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="yearly">Yearly</TabsTrigger>
+          <TabsList aria-label="Price history range" className="bg-[#f2f4f3] p-1">
+            <TabsTrigger value="daily" className="data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] font-bold hover:text-[#2d3433] transition-all">Daily</TabsTrigger>
+            <TabsTrigger value="monthly" className="data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] font-bold hover:text-[#2d3433] transition-all">Monthly</TabsTrigger>
+            <TabsTrigger value="yearly" className="data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] font-bold hover:text-[#2d3433] transition-all">Yearly</TabsTrigger>
           </TabsList>
 
           <TabsContent value="daily" className="mt-4 min-h-[320px]">
@@ -932,7 +932,6 @@ export const PriceHistoryChart = ({
               companyName={companyName}
               showLoading={isLoadingDaily}
               showError={Boolean(errorDaily)}
-              errorMessage={errorDaily}
             />
           </TabsContent>
           <TabsContent value="monthly" className="mt-4 min-h-[320px]">
@@ -943,7 +942,6 @@ export const PriceHistoryChart = ({
               companyName={companyName}
               showLoading={isLoadingMonthly}
               showError={Boolean(errorMonthly)}
-              errorMessage={errorMonthly}
             />
           </TabsContent>
           <TabsContent value="yearly" className="mt-4 min-h-[320px]">
@@ -954,7 +952,6 @@ export const PriceHistoryChart = ({
               companyName={companyName}
               showLoading={isLoadingMonthly}
               showError={Boolean(errorMonthly)}
-              errorMessage={errorMonthly}
             />
           </TabsContent>
         </Tabs>

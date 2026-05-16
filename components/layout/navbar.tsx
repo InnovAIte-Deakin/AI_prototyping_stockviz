@@ -18,6 +18,7 @@ import {
   Activity,
   Sliders,
 } from 'lucide-react'
+import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -103,8 +104,8 @@ export default function Navbar() {
       className={cn(
         'sticky top-0 z-50 w-full transition-all duration-300',
         isScrolled
-          ? 'bg-background/95 backdrop-blur-md border-b border-border/40 shadow-lg'
-          : 'bg-background/80 backdrop-blur-sm'
+          ? 'bg-white/95 backdrop-blur-md border-b border-[#adb3b2]/20 shadow-md'
+          : 'bg-[#f9f9f8]/80 backdrop-blur-sm'
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,14 +113,14 @@ export default function Navbar() {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-6">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <div className="flex items-center justify-center w-10 h-10 bg-[#7a7c7b] rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
               <div className="hidden sm:block">
-                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                <span className="text-xl font-bold text-[#2d3433]">
                   StockViz
                 </span>
-                <div className="text-sm text-muted-foreground -mt-1">
+                <div className="text-[10px] uppercase tracking-wider text-[#5a6060] font-bold -mt-1">
                   Analysis Platform
                 </div>
               </div>
@@ -134,32 +135,22 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-base font-medium transition-all duration-200 relative group',
+                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 relative group',
                       isActive(item.href)
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                        ? 'bg-[#7a7c7b] text-white shadow-sm'
+                        : 'text-[#5f5e5e] hover:text-[#2d3433] hover:bg-[#f2f4f3]'
                     )}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.label}</span>
-                    {isActive(item.href) && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-foreground rounded-full" />
-                    )}
                   </Link>
                 )
               })}
             </div>
           </div>
 
-          {/* Center Search Bar */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search stocks, companies..."
-                className="pl-10 bg-muted/50 border-border/50 focus:bg-background transition-all duration-200"
-              />
-            </div>
+            <StockSymbolSearch className="w-full" />
           </div>
 
           {/* Right Side Actions */}
@@ -209,7 +200,7 @@ export default function Navbar() {
               </Button>
               <Button
                 size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="bg-[#7a7c7b] hover:bg-[#5f5e5e] text-white"
               >
                 Sign Up
               </Button>

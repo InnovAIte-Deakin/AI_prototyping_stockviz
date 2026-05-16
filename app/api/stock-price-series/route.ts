@@ -73,8 +73,10 @@ export async function GET(request: Request) {
 
   if (!upstream.ok) {
     const body = await upstream.text()
+    // Sanitize body to remove API key mentions
+    const sanitized = body.replace(/[a-z0-9]{15,}/gi, "***")
     return NextResponse.json(
-      { error: "Alpha Vantage time series request failed", details: body },
+      { error: "Alpha Vantage time series request failed", details: sanitized },
       { status: upstream.status }
     )
   }

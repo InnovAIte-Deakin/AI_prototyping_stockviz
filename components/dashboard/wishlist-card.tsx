@@ -5,44 +5,59 @@ import Link from "next/link"
 import { useWishlist } from "@/components/providers/wishlist-provider"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { WishlistStar } from "@/components/ui/wishlist-star"
+import { cn } from "@/lib/utils"
 
-export function WishlistCard() {
+export function WishlistCard({ className }: { className?: string }) {
   const { items, isLoading } = useWishlist()
 
   return (
-    <Card className="flex h-full flex-col bg-zinc-950/50 border-zinc-800">
-      <CardHeader>
-        <CardTitle className="text-lg text-zinc-100">Your Wishlist</CardTitle>
+    <Card className={cn("flex flex-col bg-white border-[#adb3b2]/20 shadow-md shadow-[#2d3433]/5 overflow-hidden", className)}>
+      <CardHeader className="p-4 pb-2">
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-sm font-bold text-[#5f5e5e]">Your Wishlist</CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="flex-1">
+      <CardContent className={cn("p-4 pt-0", items.length > 0 && "flex-1 min-h-0")}>
         {isLoading ? (
-          <div className="flex h-full items-center justify-center text-base text-zinc-500">
-            Loading...
+          <div className="space-y-2">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex items-center justify-between rounded-lg border border-[#adb3b2]/10 bg-[#f2f4f3]/10 p-2">
+                <div className="flex gap-2 items-center flex-1">
+                  <div className="h-4 w-8 rounded bg-[#f2f4f3] animate-pulse" />
+                  <div className="h-3 w-20 rounded bg-[#f2f4f3] animate-pulse" />
+                </div>
+                <div className="h-4 w-4 rounded-full bg-[#f2f4f3] animate-pulse" />
+              </div>
+            ))}
           </div>
         ) : items.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center space-y-3 text-center text-base text-zinc-500 py-6">
-            <p>Your wishlist is empty.</p>
-            <p>Search for a stock and click the star to add it here.</p>
+          <div className="flex flex-col items-center justify-center space-y-2 text-center py-8">
+            <p className="text-xs font-medium text-[#5a6060]">No stocks in your wishlist yet.</p>
+            <p className="text-xs font-medium text-[#adb3b2] max-w-[180px] leading-relaxed">
+              Search for a stock and tap the star to save it.
+            </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-1.5 overflow-y-auto pr-1 max-h-[320px]">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 transition-colors hover:bg-zinc-800/80"
+                className="flex items-center justify-between rounded-lg border border-[#adb3b2]/10 bg-[#f2f4f3]/30 p-2 transition-colors hover:bg-[#f2f4f3]"
               >
                 <Link
                   href={`/stock/${item.symbol}`}
-                  className="flex flex-1 flex-col truncate hover:underline mr-4"
+                  className="flex flex-1 items-center gap-2 truncate"
                 >
-                  <span className="font-semibold text-zinc-100">{item.symbol}</span>
+                  <span className="font-bold text-xs text-[#2d3433]">{item.symbol}</span>
                   {item.name && (
-                    <span className="truncate text-sm text-zinc-400">
+                    <span className="truncate text-[10px] font-medium text-[#5a6060]">
                       {item.name}
                     </span>
                   )}
                 </Link>
-                <WishlistStar symbol={item.symbol} name={item.name || undefined} />
+                <div className="scale-75 origin-right">
+                  <WishlistStar symbol={item.symbol} name={item.name || undefined} />
+                </div>
               </div>
             ))}
           </div>

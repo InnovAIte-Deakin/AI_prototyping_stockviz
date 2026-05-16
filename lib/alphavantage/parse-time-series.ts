@@ -43,17 +43,32 @@ const mapEntry = (date: string, bar: unknown): AlphaVantageOhlcPoint | null => {
 }
 
 const extractAlphaVantageError = (data: Record<string, unknown>): string | null => {
+  const sanitize = (msg: string): string => {
+    // Check for rate limit keywords
+    const lower = msg.toLowerCase()
+    if (lower.includes("rate limit") || lower.includes("api limit") || lower.includes("subscribe to any of the premium plans")) {
+      return "Chart temporarily unavailable because the daily API limit has been reached. Please try again later."
+    }
+    
+    // Remove anything that looks like an API key (long hex/alphanumeric strings)
+    // and generic "We detected your key" messages
+    return msg
+      .replace(/your api key \([a-z0-9]+\)/gi, "your API key")
+      .replace(/key=[a-z0-9]+/gi, "key=***")
+      .replace(/[a-z0-9]{15,}/gi, "***")
+  }
+
   const note = data.Note
   if (typeof note === "string" && note.trim()) {
-    return note.trim()
+    return sanitize(note.trim())
   }
   const info = data.Information
   if (typeof info === "string" && info.trim()) {
-    return info.trim()
+    return sanitize(info.trim())
   }
   const err = data["Error Message"]
   if (typeof err === "string" && err.trim()) {
-    return err.trim()
+    return sanitize(err.trim())
   }
   return null
 }

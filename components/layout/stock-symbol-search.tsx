@@ -82,48 +82,49 @@ export const StockSymbolSearch = ({
           <button
             type="button"
             className={cn(
-              'relative flex h-9 w-full items-center gap-2 rounded-md border border-border/60 bg-muted/40 pl-9 pr-3 text-left text-sm shadow-none outline-none',
-              'transition-colors hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50'
+              'relative flex h-9 w-full items-center gap-2 rounded-lg border border-[#adb3b2]/20 bg-[#f2f4f3]/50 pl-9 pr-3 text-left text-sm shadow-none outline-none',
+              'transition-all hover:bg-[#f2f4f3] focus-visible:border-[#5f5e5e] focus-visible:ring-0'
             )}
             aria-expanded={open}
             aria-haspopup="dialog"
             aria-label="Search stocks"
           >
             <Search
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#adb3b2]"
               aria-hidden
             />
-            <span className="truncate text-muted-foreground">{PLACEHOLDER}</span>
+            <span className="truncate text-[#5a6060] font-medium">{PLACEHOLDER}</span>
           </button>
         </PopoverTrigger>
 
         <PopoverContent
           align="center"
           sideOffset={8}
-          className="w-[var(--radix-popover-trigger-width)] max-w-xl p-0"
+          className="w-[var(--radix-popover-trigger-width)] max-w-xl p-0 border-[#adb3b2]/20 bg-white shadow-xl shadow-[#2d3433]/10"
         >
           <PopoverTitle className="sr-only">Stock symbol search</PopoverTitle>
           <Command
             shouldFilter={false}
             label="Stock symbol search"
-            className="rounded-lg"
+            className="rounded-lg bg-white! text-[#2d3433]!"
           >
             <CommandInput
               placeholder={PLACEHOLDER}
               value={query}
               onValueChange={setQuery}
               autoFocus
+              className="text-[#2d3433] placeholder:text-[#adb3b2]"
             />
             <CommandList>
               {showHint ? (
-                <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                <div className="px-2 py-6 text-center text-sm text-[#5a6060] font-medium">
                   Type at least 2 characters to search symbols, names, ISIN, or
                   CUSIP.
                 </div>
               ) : null}
 
               {showLoading ? (
-                <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                <div className="px-2 py-6 text-center text-sm text-[#5a6060] font-medium">
                   Searching…
                 </div>
               ) : null}
@@ -135,7 +136,7 @@ export const StockSymbolSearch = ({
               ) : null}
 
               {showNoHits ? (
-                <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                <div className="px-2 py-6 text-center text-sm text-[#5a6060] font-medium">
                   No matching symbols.
                 </div>
               ) : null}
@@ -153,12 +154,13 @@ export const StockSymbolSearch = ({
                         onSelect={() => {
                           handleSelectSymbol(item)
                         }}
+                        className="group transition-colors data-[selected=true]:bg-[#7a7c7b]"
                       >
-                        <span className="shrink-0 font-medium tabular-nums">
+                        <span className="shrink-0 font-bold tabular-nums text-[#2d3433] group-data-[selected=true]:text-white">
                           {label}
                         </span>
                         {description ? (
-                          <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                          <span className="min-w-0 flex-1 truncate text-[#5a6060] font-medium group-data-[selected=true]:text-white/90">
                             {description}
                           </span>
                         ) : null}

@@ -34,6 +34,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useFinnhubMetric } from "@/hooks/use-finnhub-stock-data"
 import {
   buildRowsForKeys,
@@ -69,7 +70,7 @@ const TAB_IDS: Array<MetricGroupId | "all"> = [
 const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) => {
   if (rows.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center text-sm">
+      <p className="text-[#adb3b2] py-8 text-center text-sm font-medium">
         No metrics in this category for this symbol.
       </p>
     )
@@ -80,7 +81,7 @@ const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) =>
   const chartHeight = Math.min(440, Math.max(148, 36 * rows.length + 72))
 
   return (
-    <div className="space-y-2">
+    <div className="mt-2">
       <ChartContainer
         config={barChartConfig}
         className="aspect-auto w-full [&_.recharts-surface]:outline-none"
@@ -90,15 +91,16 @@ const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) =>
           accessibilityLayer
           layout="vertical"
           data={rows}
-          margin={{ left: 4, right: 12, top: 4, bottom: 4 }}
+          margin={{ left: -12, right: 12, top: 4, bottom: 4 }}
         >
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#adb3b2" strokeOpacity={0.2} />
           <XAxis
             type="number"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
             domain={[0, "auto"]}
+            tick={{ fontSize: 10, fill: "#adb3b2" }}
           />
           <YAxis
             type="category"
@@ -106,17 +108,17 @@ const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) =>
             width={yAxisWidth}
             tickLine={false}
             axisLine={false}
-            tickMargin={4}
-            tick={{ fontSize: 11 }}
+            tickMargin={8}
+            tick={{ fontSize: 11, fill: "#5a6060", fontWeight: 500 }}
           />
           <ChartTooltip
-            cursor={{ fill: "hsl(var(--muted) / 0.35)" }}
+            cursor={{ fill: "#adb3b2", fillOpacity: 0.1 }}
             content={
               <ChartTooltipContent
                 formatter={(_value, _name, item) => {
                   const row = item?.payload as FundamentalChartRow | undefined
                   return (
-                    <span className="text-foreground tabular-nums">
+                    <span className="font-bold text-[#2d3433] tabular-nums">
                       {row?.tooltip ?? "—"}
                     </span>
                   )
@@ -126,9 +128,9 @@ const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) =>
           />
           <Bar
             dataKey="display"
-            fill="var(--color-display)"
+            fill="#7a7c7b"
             radius={[0, 4, 4, 0]}
-            maxBarSize={28}
+            maxBarSize={24}
             isAnimationActive={false}
           />
         </BarChart>
@@ -186,12 +188,12 @@ export const BasicFinancialsWidget = ({
   }, [metricFromApi])
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5", className)}>
       <CardHeader>
-        <CardTitle>Basic financials</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl font-bold text-[#5f5e5e]">Basic financials</CardTitle>
+        <CardDescription className="text-[#5a6060]">
           Key ratios from Finnhub, grouped into comparable charts. Open{" "}
-          <span className="font-medium">All metrics</span> for the complete
+          <span className="font-bold">All metrics</span> for the complete
           table.
         </CardDescription>
       </CardHeader>
@@ -205,10 +207,12 @@ export const BasicFinancialsWidget = ({
         ) : null}
 
         {error ? (
-          <Alert variant="destructive">
-            <AlertCircle />
-            <AlertTitle>Could not load metrics</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="border-[#fe8983]/30 bg-[#fe8983]/10 text-[#752121]">
+            <AlertCircle className="text-[#752121]" />
+            <AlertTitle className="font-bold">Financials unavailable</AlertTitle>
+            <AlertDescription className="text-[#752121]/90">
+              We couldn&apos;t load the financial ratios for this company. This is usually due to API limits.
+            </AlertDescription>
           </Alert>
         ) : null}
 
@@ -219,12 +223,12 @@ export const BasicFinancialsWidget = ({
                 {highlights.map((h) => (
                   <div
                     key={h.key}
-                    className="bg-muted/40 rounded-lg border px-3 py-2.5"
+                    className="bg-[#f2f4f3]/50 rounded-lg border border-[#adb3b2]/20 px-3 py-2.5"
                   >
-                    <p className="text-muted-foreground text-xs font-medium">
+                    <p className="text-[#5a6060] text-xs font-bold">
                       {h.label}
                     </p>
-                    <p className="font-heading text-lg font-semibold tabular-nums tracking-tight">
+                    <p className="font-heading text-lg font-bold tabular-nums tracking-tight text-[#2d3433]">
                       {h.text}
                     </p>
                   </div>
@@ -235,58 +239,75 @@ export const BasicFinancialsWidget = ({
             {highlights.length > 0 ? <Separator /> : null}
 
             <Tabs defaultValue="valuation" className="w-full">
-              <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-                {TAB_IDS.filter((id) => id !== "all").map((id) => (
-                  <TabsTrigger key={id} value={id} className="text-xs sm:text-sm">
-                    {METRIC_GROUPS[id].title}
-                  </TabsTrigger>
-                ))}
-                <TabsTrigger value="all" className="text-xs sm:text-sm">
-                  All metrics
-                </TabsTrigger>
-              </TabsList>
+              <div className="mb-6">
+                <ScrollArea className="w-full whitespace-nowrap rounded-lg bg-[#f2f4f3] p-1 shadow-inner">
+                  <TabsList aria-label="Financial metric categories" className="inline-flex h-9 w-max items-center justify-start gap-1 bg-transparent p-0">
+                    {TAB_IDS.map((id) => (
+                      <TabsTrigger 
+                        key={id} 
+                        value={id} 
+                        className="h-7 shrink-0 px-4 text-xs font-bold transition-all data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] hover:text-[#2d3433] sm:text-sm"
+                      >
+                        {id === "all" ? "All metrics" : METRIC_GROUPS[id].title}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  <ScrollBar orientation="horizontal" className="invisible" />
+                </ScrollArea>
+              </div>
 
-              {(Object.keys(METRIC_GROUPS) as MetricGroupId[]).map((id) => {
-                const g = METRIC_GROUPS[id]
-                const rows = buildRowsForKeys(metricFromApi ?? {}, g.keys)
-                return (
-                  <TabsContent key={id} value={id} className="mt-4 space-y-2">
-                    <p className="text-muted-foreground text-xs">{g.description}</p>
-                    <FundamentalMetricBarChart rows={rows} />
-                  </TabsContent>
-                )
-              })}
+              <div className="pt-2">
+                {TAB_IDS.map((id) => {
+                  if (id === "all") {
+                    return (
+                      <TabsContent key="all" value="all" className="mt-0">
+                        <div className="max-h-[min(420px,55vh)] overflow-auto rounded-md border border-[#adb3b2]/20">
+                          <Table>
+                            <TableHeader className="bg-[#f2f4f3]/50">
+                              <TableRow className="hover:bg-transparent">
+                                <TableHead className="w-[42%] font-bold text-[#5f5e5e]">Metric</TableHead>
+                                <TableHead className="font-bold text-[#5f5e5e]">Value</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {tableEntries.map(([key, value]) => (
+                                <TableRow key={key} className="hover:bg-[#f2f4f3]/50">
+                                  <TableCell className="text-[#5a6060] align-top text-sm font-medium">
+                                    {labelForMetricKey(key)}
+                                  </TableCell>
+                                  <TableCell className="font-bold tabular-nums text-[#2d3433]">
+                                    {formatMetricValue(value)}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </TabsContent>
+                    )
+                  }
 
-              <TabsContent value="all" className="mt-4">
-                <div className="max-h-[min(420px,55vh)] overflow-auto rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[42%]">Metric</TableHead>
-                        <TableHead>Value</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {tableEntries.map(([key, value]) => (
-                        <TableRow key={key}>
-                          <TableCell className="text-muted-foreground align-top text-sm">
-                            {labelForMetricKey(key)}
-                          </TableCell>
-                          <TableCell className="font-medium tabular-nums">
-                            {formatMetricValue(value)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
+                  const g = METRIC_GROUPS[id]
+                  const rows = buildRowsForKeys(metricFromApi ?? {}, g.keys)
+                  return (
+                    <TabsContent key={id} value={id} className="mt-0 space-y-5">
+                      <p className="text-[#5a6060] text-sm font-medium leading-relaxed border-l-2 border-[#adb3b2]/30 pl-3">
+                        {g.description}
+                      </p>
+                      <FundamentalMetricBarChart rows={rows} />
+                    </TabsContent>
+                  )
+                })}
+              </div>
             </Tabs>
           </>
         ) : null}
 
         {!isLoading && !error && tableEntries.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No metric data.</p>
+          <div className="rounded-lg border border-[#adb3b2]/10 bg-[#f9f9f8] p-6 text-center">
+            <p className="text-sm font-bold text-[#5a6060]">No financial data</p>
+            <p className="text-xs text-[#adb3b2] mt-1">Detailed metrics for this symbol are not available at this time.</p>
+          </div>
         ) : null}
       </CardContent>
     </Card>

@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
+import { UserNav } from '@/components/layout/user-nav'
+import { cn } from '@/lib/utils'
+import { Briefcase } from 'lucide-react'
 
 
 const SHELLLESS_ROUTES = new Set(['/login', '/register', '/forgot-password', '/reset-password'])
@@ -20,14 +23,13 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
   return (
     <>
       <header
-        className='border-b border-border/50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80'
-
+        className="sticky top-0 z-50 w-full border-b border-[#adb3b2]/20 bg-white/80 backdrop-blur-md"
       >
         <div className="flex h-14 items-center gap-4 px-4 sm:px-6">
           <div className="flex min-w-[7rem] shrink-0 items-center">
             <Link
               href="/dashboard"
-              className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="text-xl font-bold tracking-tight text-[#2d3433] transition-colors hover:text-[#5f5e5e]"
             >
               StockViz
             </Link>
@@ -37,13 +39,18 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
             <StockSymbolSearch />
           </div>
 
-          <div className="flex min-w-[7rem] shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-4">
             <Link
               href="/portfolio"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className={cn(
+                "hidden sm:flex items-center gap-1.5 text-sm font-bold transition-all hover:text-[#2d3433]",
+                pathname === "/portfolio" ? "text-[#2d3433] border-b-2 border-[#adb3b2] pb-0.5" : "text-[#5f5e5e]"
+              )}
             >
-              Portfolio
+              <Briefcase className="size-4" />
+              <span>Portfolio</span>
             </Link>
+            <UserNav />
           </div>
         </div>
       </header>

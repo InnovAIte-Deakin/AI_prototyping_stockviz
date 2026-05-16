@@ -164,10 +164,10 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
   const trending = aggregate?.trend?.trending
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5", className)}>
       <CardHeader>
-        <CardTitle>Technical analysis</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl font-bold text-[#5f5e5e]">Technical analysis</CardTitle>
+        <CardDescription className="text-[#5a6060]">
           SMA / Bollinger / MACD / RSI / ATR / OBV computed from Alpha Vantage daily OHLC
           (same series as price history). Finnhub aggregate indicator scan is shown when your API
           plan allows it (see docs Technical Analysis).
@@ -176,27 +176,27 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
       <CardContent className="space-y-6">
         {aggregate || aggregateError ? (
           <div
-            className="flex flex-wrap items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2"
+            className="flex flex-wrap items-center gap-2 rounded-lg border border-[#adb3b2]/20 bg-[#f2f4f3]/50 px-3 py-2"
             role="region"
             aria-label="Finnhub aggregate technical scan"
           >
             {aggregateError ? (
-              <p className="text-xs text-muted-foreground">{aggregateError}</p>
+              <p className="text-xs text-[#adb3b2] font-medium">Indicator scan temporarily unavailable.</p>
             ) : (
               <>
                 {signalLabel ? (
-                  <Badge variant="outline" className="font-medium capitalize">
+                  <Badge variant="outline" className="font-bold capitalize border-[#adb3b2]/30 bg-white text-[#5f5e5e]">
                     Finnhub signal: {signalLabel}
                   </Badge>
                 ) : null}
                 {counts ? (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-[#5a6060] font-bold">
                     Buy {counts.buy ?? "—"} · Neutral {counts.neutral ?? "—"} · Sell{" "}
                     {counts.sell ?? "—"}
                   </span>
                 ) : null}
                 {adx !== undefined && Number.isFinite(adx) ? (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-[#5a6060] font-bold">
                     ADX {adx.toFixed(1)}
                     {trending !== undefined ? (
                       <span className="ml-1">({trending ? "trending" : "range"})</span>
@@ -210,46 +210,52 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
 
         {isLoadingDaily ? (
           <div className="space-y-3" aria-busy aria-live="polite">
-            <Skeleton className="h-[280px] w-full" />
-            <Skeleton className="h-[120px] w-full" />
-            <Skeleton className="h-[140px] w-full" />
+            <Skeleton className="h-[280px] w-full bg-[#f2f4f3]" />
+            <Skeleton className="h-[120px] w-full bg-[#f2f4f3]" />
+            <Skeleton className="h-[140px] w-full bg-[#f2f4f3]" />
           </div>
         ) : null}
 
         {!isLoadingDaily && errorDaily ? (
-          <p className="text-sm text-destructive">{errorDaily}</p>
+          <div className="rounded-lg border border-rose-200 bg-rose-50/50 p-4 text-center">
+            <p className="text-sm font-bold text-rose-700">Indicators unavailable</p>
+            <p className="text-xs text-rose-600 mt-1">Unable to compute technicals due to API limits. Please try again later.</p>
+          </div>
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Not enough daily bars to plot indicators.</p>
+          <div className="rounded-lg border border-[#adb3b2]/10 bg-[#f9f9f8] p-6 text-center">
+            <p className="text-sm font-bold text-[#5a6060]">No indicators found</p>
+            <p className="text-xs text-[#adb3b2] mt-1">Not enough daily price bars available to plot technical indicators for this symbol.</p>
+          </div>
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length > 0 ? (
           <>
             {latest ? (
-              <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-2 text-xs font-medium text-[#5a6060] sm:grid-cols-2 lg:grid-cols-4">
                 <p>
                   RSI (14):{" "}
-                  <span className="font-medium tabular-nums text-foreground">
+                  <span className="font-bold tabular-nums text-[#2d3433]">
                     {latest.rsi14?.toFixed(2) ?? "—"}
                   </span>
                 </p>
                 <p>
                   MACD / Sig / Hist:{" "}
-                  <span className="font-medium tabular-nums text-foreground">
+                  <span className="font-bold tabular-nums text-[#2d3433]">
                     {latest.macdLine?.toFixed(3) ?? "—"} / {latest.macdSignal?.toFixed(3) ?? "—"} /{" "}
                     {latest.macdHist?.toFixed(3) ?? "—"}
                   </span>
                 </p>
                 <p>
                   ATR (14):{" "}
-                  <span className="font-medium tabular-nums text-foreground">
+                  <span className="font-bold tabular-nums text-[#2d3433]">
                     {latest.atr14?.toFixed(3) ?? "—"}
                   </span>
                 </p>
                 <p>
                   Close vs SMA50:{" "}
-                  <span className="font-medium tabular-nums text-foreground">
+                  <span className="font-bold tabular-nums text-[#2d3433]">
                     {latest.sma50 !== null
                       ? `${(((latest.close - latest.sma50) / latest.sma50) * 100).toFixed(2)}%`
                       : "—"}
@@ -259,7 +265,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
             ) : null}
 
             <div className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-medium text-[#5a6060]">
                 Price &amp; bands
               </p>
               <ChartContainer
@@ -271,7 +277,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
                   margin={{ left: 8, right: 8, top: 8, bottom: 4 }}
                   accessibilityLayer
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#adb3b2" strokeOpacity={0.2} />
                   <XAxis
                     dataKey="date"
                     tickLine={false}
@@ -342,7 +348,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
             </div>
 
             <div className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-medium text-[#5a6060]">
                 RSI (14)
               </p>
               <ChartContainer
@@ -354,13 +360,13 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
                   margin={{ left: 8, right: 8, top: 4, bottom: 0 }}
                   accessibilityLayer
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#adb3b2" strokeOpacity={0.2} />
                   <XAxis dataKey="date" hide />
                   <YAxis domain={[0, 100]} width={36} tickLine={false} axisLine={false} />
-                  <ReferenceArea y1={70} y2={100} fill="hsl(var(--destructive) / 0.12)" />
-                  <ReferenceArea y1={0} y2={30} fill="hsl(142 71% 45% / 0.12)" />
-                  <ReferenceLine y={70} stroke="hsl(var(--muted-foreground) / 0.5)" strokeDasharray="4 4" />
-                  <ReferenceLine y={30} stroke="hsl(var(--muted-foreground) / 0.5)" strokeDasharray="4 4" />
+                  <ReferenceArea y1={70} y2={100} fill="#fe8983" fillOpacity={0.15} />
+                  <ReferenceArea y1={0} y2={30} fill="#10b981" fillOpacity={0.15} />
+                  <ReferenceLine y={70} stroke="#adb3b2" strokeOpacity={0.5} strokeDasharray="4 4" />
+                  <ReferenceLine y={30} stroke="#adb3b2" strokeOpacity={0.5} strokeDasharray="4 4" />
                   <ChartTooltip
                     content={
                       <ChartTooltipContent
@@ -384,7 +390,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
             </div>
 
             <div className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">MACD</p>
+              <p className="text-xs font-medium text-[#5a6060]">MACD</p>
               <ChartContainer
                 config={macdConfig}
                 className="aspect-auto h-[160px] w-full [&_.recharts-surface]:outline-none"
@@ -394,7 +400,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
                   margin={{ left: 8, right: 8, top: 4, bottom: 0 }}
                   accessibilityLayer
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#adb3b2" strokeOpacity={0.2} />
                   <XAxis dataKey="date" hide />
                   <YAxis tickLine={false} axisLine={false} width={48} domain={["auto", "auto"]} />
                   <ChartTooltip
@@ -443,7 +449,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
             </div>
 
             <div className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-medium text-[#5a6060]">
                 On-balance volume
               </p>
               <ChartContainer
@@ -455,7 +461,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
                   margin={{ left: 8, right: 8, top: 2, bottom: 0 }}
                   accessibilityLayer
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#adb3b2" strokeOpacity={0.2} />
                   <XAxis dataKey="date" hide />
                   <YAxis tickLine={false} axisLine={false} width={52} domain={["auto", "auto"]} />
                   <ChartTooltip
@@ -480,7 +486,7 @@ export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisP
               </ChartContainer>
             </div>
 
-            <p className="text-[10px] leading-snug text-muted-foreground">
+            <p className="text-[10px] font-medium leading-snug text-[#adb3b2]">
               For education only. Alpha Vantage uses TIME_SERIES_DAILY (compact). Indicator math
               follows common textbook definitions; values may differ slightly from other platforms.
             </p>
