@@ -25,7 +25,7 @@ export const loadPaperPortfolioSnapshot = async (
     .eq("id", userId)
     .maybeSingle()
 
-  const paperCashUsd = profile?.paper_cash_usd ?? 100000
+  const paperCashUsd = profile?.paper_cash_usd ?? 1000000
 
   const { data: holdings } = await supabase
     .from("portfolio_holdings")
@@ -53,13 +53,12 @@ export const loadPaperPortfolioSnapshot = async (
     .order("executed_at", { ascending: false })
     .limit(200)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: history } = (await (supabase as any)
+  const { data: history } = await supabase
     .from("portfolio_history")
     .select("total_value_usd, recorded_at")
     .eq("user_id", userId)
     .order("recorded_at", { ascending: true })
-    .limit(30)) as { data: PortfolioHistoryPoint[] | null }
+    .limit(30)
 
   return {
     paperCashUsd: paperCashUsd,

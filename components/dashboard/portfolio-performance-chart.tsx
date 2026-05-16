@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 import { TrendingUp, TrendingDown } from "lucide-react"
 
 import {
@@ -67,7 +67,7 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
     )
   }
 
-  const firstValue = chartData.length > 0 ? chartData[0].value : 100000
+  const firstValue = chartData.length > 0 ? chartData[0].value : 1000000
   const totalChange = currentBalance - firstValue
   const totalChangePct = firstValue !== 0 ? (totalChange / firstValue) * 100 : 0
   const isPositive = totalChange >= 0
@@ -90,17 +90,12 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[320px] w-full">
-          <AreaChart
+        <ChartContainer config={chartConfig} className="h-[320px] w-full [&_.recharts-surface]:outline-none">
+          <LineChart
+            accessibilityLayer
             data={chartData}
-            margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+            margin={{ left: 8, right: 8, top: 8, bottom: 8 }}
           >
-            <defs>
-              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={isPositive ? "var(--color-finance-success)" : "var(--color-primary)"} stopOpacity={0.1}/>
-                <stop offset="95%" stopColor={isPositive ? "var(--color-finance-success)" : "var(--color-primary)"} stopOpacity={0}/>
-              </linearGradient>
-            </defs>
             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="var(--border)" strokeOpacity={0.2} />
             <XAxis 
               dataKey="date" 
@@ -134,22 +129,21 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
                 />
               }
             />
-            <Area
+            <Line
               type="monotone"
               dataKey="value"
               stroke={isPositive ? "var(--color-finance-success)" : "var(--color-primary)"}
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorValue)"
+              strokeWidth={2.5}
+              dot={false}
               isAnimationActive={false}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: "#fff" }}
+              activeDot={{ r: 5, strokeWidth: 2, stroke: "#fff" }}
             />
-          </AreaChart>
+          </LineChart>
         </ChartContainer>
         <div className="mt-6 flex items-center justify-between text-xs font-medium text-muted-foreground border-t border-border/10 pt-5">
           <div className="flex flex-col gap-0.5">
             <span className="text-xs font-medium text-muted-foreground">Starting Balance</span>
-            <span className="text-foreground text-sm font-bold">$100,000.00</span>
+            <span className="text-foreground text-sm font-bold">{new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(firstValue)}</span>
           </div>
           <div className="flex flex-col gap-0.5 text-right">
             <span className="text-xs font-medium text-muted-foreground">Total Return</span>

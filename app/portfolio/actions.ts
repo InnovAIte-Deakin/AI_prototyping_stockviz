@@ -11,6 +11,8 @@ import {
 import { createServiceRoleClient } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
 
+import { recordCurrentPortfolioSnapshot } from "@/lib/portfolio/history"
+
 const tradeInputSchema = z.object({
   symbol: z.string().trim().min(1).max(32),
   shares: z.number().int().positive().finite().max(1e12),
@@ -109,6 +111,10 @@ export const buyPaperShares = async (symbol: string, shares: number): Promise<Pa
   }
 
   revalidatePortfolioSurfaces(normalized.toUpperCase())
+  
+  // Record snapshot for history chart
+  recordCurrentPortfolioSnapshot(user.id).catch(console.error)
+
   return { ok: true }
 }
 
@@ -163,5 +169,9 @@ export const sellPaperShares = async (symbol: string, shares: number): Promise<P
   }
 
   revalidatePortfolioSurfaces(normalized.toUpperCase())
+  
+  // Record snapshot for history chart
+  recordCurrentPortfolioSnapshot(user.id).catch(console.error)
+
   return { ok: true }
 }

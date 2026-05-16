@@ -250,6 +250,41 @@ export type Database = {
           },
         ]
       }
+      portfolio_history: {
+        Row: {
+          id: string
+          user_id: string
+          total_value_usd: number
+          paper_cash_usd: number
+          holdings_value_usd: number
+          recorded_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          total_value_usd: number
+          paper_cash_usd: number
+          holdings_value_usd: number
+          recorded_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          total_value_usd?: number
+          paper_cash_usd?: number
+          holdings_value_usd?: number
+          recorded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -270,6 +305,15 @@ export type Database = {
           p_symbol: string
           p_unit_price_usd: number
           p_user_id: string
+        }
+        Returns: undefined
+      }
+      record_portfolio_snapshot: {
+        Args: {
+          p_user_id: string
+          p_total_value: number
+          p_cash: number
+          p_holdings_value: number
         }
         Returns: undefined
       }

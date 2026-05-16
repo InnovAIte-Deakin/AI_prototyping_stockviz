@@ -37,7 +37,7 @@ export const PortfolioSummaryRow = async ({ userId }: { userId: string }) => {
     
     // If no snapshot, use default values for a new account
     const safeSnapshot = snapshot ?? {
-      paperCashUsd: 100000,
+      paperCashUsd: 1000000,
       holdings: [],
       realizedPlUsd: 0,
       history: []
@@ -50,10 +50,14 @@ export const PortfolioSummaryRow = async ({ userId }: { userId: string }) => {
       return acc + (mark ?? h.avg_price) * h.shares
     }, 0))
 
+    const lastPoint = safeSnapshot.history[safeSnapshot.history.length - 1]
+    const todayReturnUsd = lastPoint ? totalValue - lastPoint.total_value_usd : 0
+    const todayReturnPct = lastPoint ? (todayReturnUsd / lastPoint.total_value_usd) * 100 : 0
+
     stats = [
       { label: "Total Value", value: formatUsd(totalValue), sub: "Total equity + cash", icon: Wallet },
       { label: "Cash Balance", value: formatUsd(safeSnapshot.paperCashUsd), sub: "Available capital", icon: Banknote },
-      { label: "Today's Return", value: "+0.00%", sub: "Since market open", trend: 0, icon: LineChart },
+      { label: "Today's Return", value: `${todayReturnPct >= 0 ? "+" : ""}${todayReturnPct.toFixed(2)}%`, sub: "Since market open", trend: todayReturnUsd, icon: LineChart },
       { label: "Holdings", value: `${safeSnapshot.holdings.length} stocks`, sub: "Active positions", icon: PieChart },
     ]
   } catch (error) {

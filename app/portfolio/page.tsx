@@ -23,6 +23,7 @@ import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/data"
 import { createClient } from "@/lib/supabase/server"
 import { cn } from "@/lib/utils"
 import { PortfolioPerformanceChart } from "@/components/dashboard/portfolio-performance-chart"
+import { Badge } from "@/components/ui/badge"
 
 const formatUsd = (n: number): string =>
   new Intl.NumberFormat(undefined, {
@@ -106,7 +107,7 @@ export default async function PortfolioPage() {
               <CardContent className="p-4 pt-0">
                 <p className={cn(
                   "text-lg font-bold tabular-nums",
-                  s.trend !== undefined ? (s.trend >= 0 ? "text-emerald-600" : "text-rose-600") : "text-foreground"
+                  s.trend !== undefined ? (s.trend >= 0 ? "text-finance-success" : "text-finance-danger") : "text-foreground"
                 )}>
                   {s.value}
                 </p>
@@ -178,7 +179,7 @@ export default async function PortfolioPage() {
                         <TableCell className="text-right tabular-nums font-bold text-foreground">{formatUsd(value)}</TableCell>
                         <TableCell className={cn(
                           "text-right tabular-nums font-bold",
-                          pl >= 0 ? "text-emerald-600" : "text-rose-600"
+                          pl >= 0 ? "text-finance-success" : "text-finance-danger"
                         )}>
                           {pl >= 0 ? "+" : ""}{formatUsd(pl)}
                           <span className="block text-[10px] font-medium">
@@ -233,12 +234,12 @@ export default async function PortfolioPage() {
                         {formatWhen(t.executed_at)}
                       </TableCell>
                       <TableCell>
-                        <span className={cn(
-                          "inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
-                          t.side === "buy" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"
-                        )}>
+                        <Badge 
+                          variant={t.side === "buy" ? "success" : "destructive"}
+                          className="font-bold uppercase tracking-wider"
+                        >
                           {t.side}
-                        </span>
+                        </Badge>
                       </TableCell>
                       <TableCell className="font-bold text-foreground">{t.symbol}</TableCell>
                       <TableCell className="text-right tabular-nums font-medium">{formatShares(t.shares)}</TableCell>

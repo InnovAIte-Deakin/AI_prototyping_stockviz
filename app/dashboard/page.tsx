@@ -45,7 +45,16 @@ const DashboardPage = async () => {
   }
 
   const snapshot = user ? await loadPaperPortfolioSnapshot(user.id) : null
-  const currentBalance = (snapshot?.paperCashUsd ?? 100000) + (snapshot?.realizedPlUsd ?? 0)
+  
+  let currentHoldingsValue = 0
+  if (snapshot) {
+    // Note: On the dashboard we use the avg_price for holdings value if mark prices aren't fetched yet
+    // to avoid an extra API call here, as PortfolioSummaryRow handles the live marks.
+    // However, for the chart to be accurate, we should ideally use the same logic.
+    currentHoldingsValue = snapshot.holdings.reduce((acc, h) => acc + (h.avg_price * h.shares), 0)
+  }
+  
+  const currentBalance = (snapshot?.paperCashUsd ?? 1000000) + currentHoldingsValue
 
   const firstName = resolveFirstName(user, profileFullName)
   const greetingName =
