@@ -17,6 +17,7 @@ import {
   Search,
   Activity,
   Sliders,
+  Star,
 } from 'lucide-react'
 import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
 import {
@@ -59,6 +60,12 @@ const navItems = [
     label: 'Indicators',
     icon: Activity,
     description: 'Technical indicators',
+  },
+  {
+    href: '/wishlist',
+    label: 'Wishlist',
+    icon: Star,
+    description: 'Your saved stocks',
   },
   {
     href: '/weights',

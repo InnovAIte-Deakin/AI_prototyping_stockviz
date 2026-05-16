@@ -8,6 +8,7 @@ import { WishlistCard } from "@/components/dashboard/wishlist-card"
 import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
 import { createClient } from "@/lib/supabase/server"
 import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/data"
+import { checkAndExecuteTriggers } from "@/lib/triggers/execution"
 import type { User } from "@supabase/supabase-js"
 
 const resolveFirstName = (
@@ -28,6 +29,7 @@ const resolveFirstName = (
 }
 
 const DashboardPage = async () => {
+  await checkAndExecuteTriggers()
   const { gainers, losers, error } = await fetchBiggestMovers()
   const supabase = await createClient()
   const {

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { TrendingUp, TrendingDown } from "lucide-react"
 import { TradeStockDialog } from "@/components/stock/trade-stock-dialog"
 import { useFinnhubQuote } from "@/hooks/use-finnhub-stock-data"
+import { PriceTriggerPanel } from "@/components/stock/price-trigger-panel"
 
 type StockSymbolViewProps = {
   symbol: string
@@ -79,6 +80,8 @@ export const StockSymbolView = ({
       <TechnicalAnalysisPanel symbol={symbol} />
 
       <PriceHistoryChart symbol={symbol} />
+
+      <PriceTriggerPanel symbol={symbol} currentPrice={currentPrice} />
 
       <div className="grid gap-6 md:grid-cols-2">
         <BasicFinancialsWidget symbol={symbol} className="min-h-0 md:col-span-1" />

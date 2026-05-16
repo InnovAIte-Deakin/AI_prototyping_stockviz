@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 
 import { StockSymbolView } from "@/components/stock/stock-symbol-view"
 import { createClient } from "@/lib/supabase/server"
+import { checkAndExecuteTriggers } from "@/lib/triggers/execution"
 
 const decodeSymbol = (raw: string): string => {
   try {
@@ -16,6 +17,7 @@ export default async function StockSymbolPage({
 }: {
   params: Promise<{ symbol: string }>
 }) {
+  await checkAndExecuteTriggers()
   const { symbol: raw } = await params
   const symbol = decodeSymbol(raw)
   if (!symbol) {

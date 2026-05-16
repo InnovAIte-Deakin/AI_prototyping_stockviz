@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
 import { UserNav } from '@/components/layout/user-nav'
 import { cn } from '@/lib/utils'
-import { Briefcase } from 'lucide-react'
+import { Briefcase, Star, BookOpen } from 'lucide-react'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
 
 
@@ -40,7 +40,17 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
             <StockSymbolSearch />
           </div>
 
-          <div className="flex shrink-0 items-center gap-4">
+          <div className="flex shrink-0 items-center gap-10">
+            <Link
+              href="/wishlist"
+              className={cn(
+                "hidden sm:flex items-center gap-1.5 text-sm font-bold transition-all hover:text-foreground",
+                pathname === "/wishlist" ? "text-foreground border-b-2 border-border pb-0.5" : "text-primary"
+              )}
+            >
+              <Star className="size-4" />
+              <span>Wishlist</span>
+            </Link>
             <Link
               href="/portfolio"
               className={cn(
@@ -50,6 +60,16 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
             >
               <Briefcase className="size-4" />
               <span>Portfolio</span>
+            </Link>
+            <Link
+              href="/learn"
+              className={cn(
+                "hidden sm:flex items-center gap-1.5 text-sm font-bold transition-all hover:text-foreground",
+                pathname === "/learn" ? "text-foreground border-b-2 border-border pb-0.5" : "text-primary"
+              )}
+            >
+              <BookOpen className="size-4" />
+              <span>Learn</span>
             </Link>
             <ThemeToggle />
             <UserNav />
