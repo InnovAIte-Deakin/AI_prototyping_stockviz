@@ -107,12 +107,57 @@ export type Database = {
           },
         ]
       }
+      portfolio_transactions: {
+        Row: {
+          executed_at: string
+          id: string
+          realized_pl_usd: number | null
+          shares: number
+          side: string
+          symbol: string
+          total_cash_delta_usd: number
+          unit_price_usd: number
+          user_id: string
+        }
+        Insert: {
+          executed_at?: string
+          id?: string
+          realized_pl_usd?: number | null
+          shares: number
+          side: string
+          symbol: string
+          total_cash_delta_usd: number
+          unit_price_usd: number
+          user_id: string
+        }
+        Update: {
+          executed_at?: string
+          id?: string
+          realized_pl_usd?: number | null
+          shares?: number
+          side?: string
+          symbol?: string
+          total_cash_delta_usd?: number
+          unit_price_usd?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
           full_name: string | null
           id: string
+          paper_cash_usd: number
           preferences: Json | null
           updated_at: string
         }
@@ -121,6 +166,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          paper_cash_usd?: number
           preferences?: Json | null
           updated_at?: string
         }
@@ -129,6 +175,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          paper_cash_usd?: number
           preferences?: Json | null
           updated_at?: string
         }
@@ -139,6 +186,7 @@ export type Database = {
           created_at: string
           exchange_mic: string | null
           id: string
+          last_price: number | null
           name: string | null
           symbol: string
           updated_at: string
@@ -147,6 +195,7 @@ export type Database = {
           created_at?: string
           exchange_mic?: string | null
           id?: string
+          last_price?: number | null
           name?: string | null
           symbol: string
           updated_at?: string
@@ -155,6 +204,7 @@ export type Database = {
           created_at?: string
           exchange_mic?: string | null
           id?: string
+          last_price?: number | null
           name?: string | null
           symbol?: string
           updated_at?: string
@@ -200,12 +250,73 @@ export type Database = {
           },
         ]
       }
+      portfolio_history: {
+        Row: {
+          id: string
+          user_id: string
+          total_value_usd: number
+          paper_cash_usd: number
+          holdings_value_usd: number
+          recorded_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          total_value_usd: number
+          paper_cash_usd: number
+          holdings_value_usd: number
+          recorded_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          total_value_usd?: number
+          paper_cash_usd?: number
+          holdings_value_usd?: number
+          recorded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      paper_buy: {
+        Args: {
+          p_shares: number
+          p_symbol: string
+          p_unit_price_usd: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      paper_sell: {
+        Args: {
+          p_shares: number
+          p_symbol: string
+          p_unit_price_usd: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      record_portfolio_snapshot: {
+        Args: {
+          p_user_id: string
+          p_total_value: number
+          p_cash: number
+          p_holdings_value: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
