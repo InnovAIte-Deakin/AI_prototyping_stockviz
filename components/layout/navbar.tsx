@@ -104,8 +104,8 @@ export default function Navbar() {
       className={cn(
         'sticky top-0 z-50 w-full transition-all duration-300',
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md border-b border-[#adb3b2]/20 shadow-md'
-          : 'bg-[#f9f9f8]/80 backdrop-blur-sm'
+          ? 'bg-card/95 backdrop-blur-md border-b border-border/20 shadow-md'
+          : 'bg-background/80 backdrop-blur-sm'
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,14 +113,14 @@ export default function Navbar() {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-6">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="flex items-center justify-center w-10 h-10 bg-[#7a7c7b] rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <BarChart3 className="h-6 w-6 text-white" />
+              <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <BarChart3 className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="hidden sm:block">
-                <span className="text-xl font-bold text-[#2d3433]">
+                <span className="text-xl font-bold text-foreground">
                   StockViz
                 </span>
-                <div className="text-[10px] uppercase tracking-wider text-[#5a6060] font-bold -mt-1">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold -mt-1">
                   Analysis Platform
                 </div>
               </div>
@@ -137,8 +137,8 @@ export default function Navbar() {
                     className={cn(
                       'flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 relative group',
                       isActive(item.href)
-                        ? 'bg-[#7a7c7b] text-white shadow-sm'
-                        : 'text-[#5f5e5e] hover:text-[#2d3433] hover:bg-[#f2f4f3]'
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-primary hover:text-foreground hover:bg-muted'
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -200,7 +200,7 @@ export default function Navbar() {
               </Button>
               <Button
                 size="sm"
-                className="bg-[#7a7c7b] hover:bg-[#5f5e5e] text-white"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 Sign Up
               </Button>

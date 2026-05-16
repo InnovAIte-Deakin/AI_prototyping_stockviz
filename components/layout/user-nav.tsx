@@ -50,33 +50,33 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 w-9 p-0 hover:bg-[#f2f4f3] rounded-full transition-all flex items-center justify-center border border-[#adb3b2]/20">
-          <UserIcon className="h-5 w-5 text-[#5a6060]" />
+        <Button variant="ghost" className="relative h-9 w-9 p-0 hover:bg-muted rounded-full transition-all flex items-center justify-center border border-border/20">
+          <UserIcon className="h-5 w-5 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 mt-2 border-[#adb3b2]/20 bg-white shadow-xl" align="end" forceMount>
+      <DropdownMenuContent className="w-56 mt-2 border-border/20 bg-card shadow-xl" align="end" forceMount>
         <DropdownMenuLabel className="font-normal px-2 py-1.5">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-bold leading-none text-[#2d3433]">{name}</p>
-            <p className="text-xs leading-none text-[#5a6060]">{user.email}</p>
+            <p className="text-sm font-bold leading-none text-foreground">{name}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-[#adb3b2]/10" />
+        <DropdownMenuSeparator className="bg-muted-foreground/10" />
         <DropdownMenuItem 
-          className="flex items-center px-2 py-2 text-sm font-medium text-[#5a6060]! cursor-pointer transition-colors focus:bg-[#f2f4f3]! focus:text-[#2d3433]! data-[highlighted]:bg-[#f2f4f3]! data-[highlighted]:text-[#2d3433]!"
+          className="flex items-center px-2 py-2 text-sm font-medium text-muted-foreground! cursor-pointer transition-colors focus:bg-muted! focus:text-foreground! data-[highlighted]:bg-muted! data-[highlighted]:text-foreground!"
           onClick={() => router.push('/portfolio')}
         >
-          <UserIcon className="mr-2 h-4 w-4 text-[#2d3433]! stroke-[#2d3433]!" />
+          <UserIcon className="mr-2 h-4 w-4 text-foreground! stroke-[var(--foreground)]!" />
           <span className="text-inherit!">View Portfolio</span>
         </DropdownMenuItem>
-        <DropdownMenuSeparator className="bg-[#adb3b2]/10" />
+        <DropdownMenuSeparator className="bg-muted-foreground/10" />
         <form action={signOut}>
           <DropdownMenuItem 
             variant="destructive"
-            className="flex items-center px-2 py-2 text-sm font-bold text-[#752121]! cursor-pointer transition-colors focus:bg-red-50! focus:text-[#752121]! data-[highlighted]:bg-red-50! data-[highlighted]:text-[#752121]!"
+            className="flex items-center px-2 py-2 text-sm font-bold text-destructive! cursor-pointer transition-colors focus:bg-destructive/10! focus:text-destructive! data-[highlighted]:bg-destructive/10! data-[highlighted]:text-destructive!"
             asChild
           >
-            <button type="submit" className="w-full flex items-center text-left text-[#752121]!">
+            <button type="submit" className="w-full flex items-center text-left text-destructive!">
               <LogOut className="mr-2 h-4 w-4 text-inherit!" />
               <span className="text-inherit!">Sign out</span>
             </button>

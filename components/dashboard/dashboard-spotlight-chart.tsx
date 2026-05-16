@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils"
 const chartConfig = {
   close: {
     label: "Close",
-    color: "hsl(142 71% 45%)",
+    color: "var(--color-finance-success)",
   },
 } satisfies ChartConfig
 
@@ -80,26 +80,26 @@ export const DashboardSpotlightChart = ({
   return (
     <Card
       className={cn(
-        "border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5",
+        "border-border/20 bg-card text-foreground shadow-md shadow-foreground/5",
         className
       )}
     >
       <CardHeader className="flex flex-col gap-2 space-y-0 pb-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0 space-y-1">
-          <p className="text-sm font-bold text-emerald-600">
+          <p className="text-sm font-bold text-finance-success">
             Today&apos;s Spotlight Gainer
           </p>
-          <CardTitle className="font-mono text-xl font-bold tracking-tight text-[#2d3433] sm:text-2xl">
+          <CardTitle className="font-mono text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             {symbol}
           </CardTitle>
-          <CardDescription className="line-clamp-2 text-base text-[#5a6060]">{companyName}</CardDescription>
-          <p className="text-sm font-bold tabular-nums text-emerald-600">
-            {formatPct(changePct)} <span className="text-xs font-medium text-[#5a6060]">session</span>
+          <CardDescription className="line-clamp-2 text-base text-muted-foreground">{companyName}</CardDescription>
+          <p className="text-sm font-bold tabular-nums text-finance-success">
+            {formatPct(changePct)} <span className="text-xs font-medium text-muted-foreground">session</span>
           </p>
         </div>
         <Link
           href={`/stock/${encodeURIComponent(symbol)}`}
-          className="shrink-0 text-sm font-bold text-[#5f5e5e] underline-offset-4 hover:text-[#2d3433] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5f5e5e] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          className="shrink-0 text-sm font-bold text-primary underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         >
           View {symbol} →
         </Link>
@@ -107,8 +107,8 @@ export const DashboardSpotlightChart = ({
       <CardContent className="pt-0">
         {isLoadingDaily ? (
           <div className="space-y-3 pt-2" aria-busy aria-live="polite">
-            <Skeleton className="h-[220px] w-full rounded-lg bg-[#f2f4f3]" />
-            <p className="text-center text-xs text-[#5a6060]">Loading price history…</p>
+            <Skeleton className="h-[220px] w-full rounded-lg bg-muted" />
+            <p className="text-center text-xs text-muted-foreground">Loading price history…</p>
           </div>
         ) : null}
 
@@ -136,7 +136,7 @@ export const DashboardSpotlightChart = ({
               data={chartRows}
               margin={{ left: 4, right: 8, top: 8, bottom: 4 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-[#adb3b2]/30" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-[var(--border)]/30" />
               <XAxis
                 dataKey="period"
                 tickLine={false}
@@ -144,7 +144,7 @@ export const DashboardSpotlightChart = ({
                 tickMargin={8}
                 minTickGap={28}
                 tickFormatter={(v) => (typeof v === "string" ? formatPeriodLabel(v) : String(v))}
-                className="text-[10px] font-medium text-[#adb3b2]"
+                className="text-[10px] font-medium text-muted-foreground"
               />
               <YAxis
                 tickLine={false}
@@ -153,7 +153,7 @@ export const DashboardSpotlightChart = ({
                 domain={["auto", "auto"]}
                 width={52}
                 tickFormatter={(v) => (typeof v === "number" ? formatUsd(v) : String(v))}
-                className="text-[10px] font-medium text-[#adb3b2]"
+                className="text-[10px] font-medium text-muted-foreground"
               />
               <ChartTooltip
                 content={
@@ -183,10 +183,10 @@ export const DashboardSpotlightChart = ({
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length === 0 ? (
-          <p className="text-sm text-[#5a6060]">No intraday history available for this symbol.</p>
+          <p className="text-sm text-muted-foreground">No intraday history available for this symbol.</p>
         ) : null}
 
-        <p className="mt-3 text-[10px] font-medium leading-snug text-[#adb3b2]">
+        <p className="mt-3 text-[10px] font-medium leading-snug text-muted-foreground">
           Daily closes via Alpha Vantage (compact). Not financial advice.
         </p>
       </CardContent>

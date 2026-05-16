@@ -84,13 +84,13 @@ export default async function PortfolioPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#f9f9f8] text-[#2d3433] selection:bg-[#e4e2e1] selection:text-[#525251]">
-      <div className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 sm:px-6">
-        <header className="space-y-1">
-          <h1 className="font-heading text-3xl font-bold tracking-tight text-[#2d3433]">
+    <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
+      <div className="mx-auto w-full max-w-7xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+        <header className="space-y-2">
+          <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Portfolio
           </h1>
-          <p className="text-[#5a6060] text-sm font-medium">
+          <p className="text-muted-foreground text-base font-medium max-w-2xl">
             Manage your paper trading positions and track your long-term performance.
           </p>
         </header>
@@ -98,15 +98,15 @@ export default async function PortfolioPage() {
         {/* Summary Row */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {summaryStats.map((s) => (
-            <Card key={s.label} className="border-[#adb3b2]/20 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <Card key={s.label} className="border-border/20 bg-card shadow-sm hover:shadow-md transition-all duration-200">
               <CardHeader className="p-4 pb-1 flex flex-row items-center justify-between space-y-0">
-                <span className="text-xs font-bold text-[#adb3b2]">{s.label}</span>
-                <s.icon className="h-3.5 w-3.5 text-[#adb3b2]" />
+                <span className="text-xs font-bold text-muted-foreground">{s.label}</span>
+                <s.icon className="h-3.5 w-3.5 text-muted-foreground" />
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 <p className={cn(
                   "text-lg font-bold tabular-nums",
-                  s.trend !== undefined ? (s.trend >= 0 ? "text-emerald-600" : "text-rose-600") : "text-[#2d3433]"
+                  s.trend !== undefined ? (s.trend >= 0 ? "text-emerald-600" : "text-rose-600") : "text-foreground"
                 )}>
                   {s.value}
                 </p>
@@ -116,9 +116,9 @@ export default async function PortfolioPage() {
         </div>
 
         {/* Chart Section */}
-        <Card className="border-[#adb3b2]/20 bg-white shadow-sm">
+        <Card className="border-border/20 bg-card shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg font-bold text-[#2d3433]">Portfolio Value Chart</CardTitle>
+            <CardTitle className="text-lg font-bold text-foreground">Portfolio Value Chart</CardTitle>
             <CardDescription>Historical total valuation over the last 30 days.</CardDescription>
           </CardHeader>
           <CardContent className="h-[350px]">
@@ -127,33 +127,33 @@ export default async function PortfolioPage() {
         </Card>
 
         {/* Holdings Table */}
-        <Card className="border-[#adb3b2]/20 bg-white shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#adb3b2]/10 bg-[#f9f9f8]/50">
+        <Card className="border-border/20 bg-card shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-border/10 bg-background/50">
             <div className="flex items-center gap-2">
-              <Briefcase className="size-4 text-[#5a6060]" />
-              <CardTitle className="text-lg font-bold text-[#2d3433]">Your Holdings</CardTitle>
+              <Briefcase className="size-4 text-muted-foreground" />
+              <CardTitle className="text-lg font-bold text-foreground">Your Holdings</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {snapshot.holdings.length === 0 ? (
               <div className="py-12 text-center">
-                <p className="text-sm font-medium text-[#adb3b2]">No active positions found.</p>
-                <Link href="/dashboard" className="mt-2 inline-block text-xs font-bold text-[#5f5e5e] hover:underline">
+                <p className="text-sm font-medium text-muted-foreground">No active positions found.</p>
+                <Link href="/dashboard" className="mt-2 inline-block text-xs font-bold text-primary hover:underline">
                   Find stocks to trade →
                 </Link>
               </div>
             ) : (
               <Table>
-                <TableHeader className="bg-[#f9f9f8]/50">
-                  <TableRow className="hover:bg-transparent border-[#adb3b2]/10">
-                    <TableHead className="font-bold text-[#5a6060] py-4">Symbol</TableHead>
-                    <TableHead className="font-bold text-[#5a6060]">Company</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">Quantity</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">Avg Buy Price</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">Current Price</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">Value</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">P/L</TableHead>
-                    <TableHead className="text-center font-bold text-[#5a6060]">Action</TableHead>
+                <TableHeader className="bg-background/50">
+                  <TableRow className="hover:bg-transparent border-border/10">
+                    <TableHead className="font-bold text-muted-foreground py-4">Symbol</TableHead>
+                    <TableHead className="font-bold text-muted-foreground">Company</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">Quantity</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">Avg Buy Price</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">Current Price</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">Value</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">P/L</TableHead>
+                    <TableHead className="text-center font-bold text-muted-foreground">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -165,17 +165,17 @@ export default async function PortfolioPage() {
                     const plPct = ((currentPrice - h.avg_price) / h.avg_price) * 100
 
                     return (
-                      <TableRow key={h.id} className="border-[#adb3b2]/10 hover:bg-[#f2f4f3]/30 transition-colors">
-                        <TableCell className="font-bold text-[#2d3433] py-4">{h.symbol}</TableCell>
-                        <TableCell className="text-[#5a6060] font-medium text-xs max-w-[150px] truncate">
+                      <TableRow key={h.id} className="border-border/10 hover:bg-muted/30 transition-colors">
+                        <TableCell className="font-bold text-foreground py-4">{h.symbol}</TableCell>
+                        <TableCell className="text-muted-foreground font-medium text-xs max-w-[150px] truncate">
                           {h.symbol} Corporation
                         </TableCell>
                         <TableCell className="text-right tabular-nums font-medium">{formatShares(h.shares)}</TableCell>
                         <TableCell className="text-right tabular-nums font-medium">{formatUsd(h.avg_price)}</TableCell>
-                        <TableCell className="text-right tabular-nums font-bold text-[#2d3433]">
+                        <TableCell className="text-right tabular-nums font-bold text-foreground">
                           {mark !== undefined ? formatUsd(mark) : "—"}
                         </TableCell>
-                        <TableCell className="text-right tabular-nums font-bold text-[#2d3433]">{formatUsd(value)}</TableCell>
+                        <TableCell className="text-right tabular-nums font-bold text-foreground">{formatUsd(value)}</TableCell>
                         <TableCell className={cn(
                           "text-right tabular-nums font-bold",
                           pl >= 0 ? "text-emerald-600" : "text-rose-600"
@@ -186,7 +186,7 @@ export default async function PortfolioPage() {
                           </span>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Button asChild variant="outline" size="sm" className="h-8 border-[#adb3b2]/30 text-xs font-bold hover:bg-[#2d3433] hover:text-white transition-all">
+                          <Button asChild variant="outline" size="sm" className="h-8 border-border/30 text-xs font-bold hover:bg-foreground hover:text-white transition-all">
                             <Link href={`/stock/${h.symbol}`}>
                               Trade <ArrowRight className="ml-1.5 size-3" />
                             </Link>
@@ -202,34 +202,34 @@ export default async function PortfolioPage() {
         </Card>
 
         {/* Transaction History Table */}
-        <Card className="border-[#adb3b2]/20 bg-white shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#adb3b2]/10 bg-[#f9f9f8]/50">
+        <Card className="border-border/20 bg-card shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-border/10 bg-background/50">
             <div className="flex items-center gap-2">
-              <History className="size-4 text-[#5a6060]" />
-              <CardTitle className="text-lg font-bold text-[#2d3433]">Transaction History</CardTitle>
+              <History className="size-4 text-muted-foreground" />
+              <CardTitle className="text-lg font-bold text-foreground">Transaction History</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {snapshot.transactions.length === 0 ? (
-              <div className="py-12 text-center text-sm font-medium text-[#adb3b2]">
+              <div className="py-12 text-center text-sm font-medium text-muted-foreground">
                 No transactions yet.
               </div>
             ) : (
               <Table>
-                <TableHeader className="bg-[#f9f9f8]/50">
-                  <TableRow className="hover:bg-transparent border-[#adb3b2]/10">
-                    <TableHead className="font-bold text-[#5a6060] py-4">Date</TableHead>
-                    <TableHead className="font-bold text-[#5a6060]">Type</TableHead>
-                    <TableHead className="font-bold text-[#5a6060]">Symbol</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">Quantity</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">Price</TableHead>
-                    <TableHead className="text-right font-bold text-[#5a6060]">Total</TableHead>
+                <TableHeader className="bg-background/50">
+                  <TableRow className="hover:bg-transparent border-border/10">
+                    <TableHead className="font-bold text-muted-foreground py-4">Date</TableHead>
+                    <TableHead className="font-bold text-muted-foreground">Type</TableHead>
+                    <TableHead className="font-bold text-muted-foreground">Symbol</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">Quantity</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">Price</TableHead>
+                    <TableHead className="text-right font-bold text-muted-foreground">Total</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {snapshot.transactions.map((t) => (
-                    <TableRow key={t.id} className="border-[#adb3b2]/10 hover:bg-[#f2f4f3]/30 transition-colors">
-                      <TableCell className="whitespace-nowrap text-[#5a6060] font-medium text-xs py-4">
+                    <TableRow key={t.id} className="border-border/10 hover:bg-muted/30 transition-colors">
+                      <TableCell className="whitespace-nowrap text-muted-foreground font-medium text-xs py-4">
                         {formatWhen(t.executed_at)}
                       </TableCell>
                       <TableCell>
@@ -240,10 +240,10 @@ export default async function PortfolioPage() {
                           {t.side}
                         </span>
                       </TableCell>
-                      <TableCell className="font-bold text-[#2d3433]">{t.symbol}</TableCell>
+                      <TableCell className="font-bold text-foreground">{t.symbol}</TableCell>
                       <TableCell className="text-right tabular-nums font-medium">{formatShares(t.shares)}</TableCell>
                       <TableCell className="text-right tabular-nums font-medium">{formatUsd(t.unit_price_usd)}</TableCell>
-                      <TableCell className="text-right tabular-nums font-bold text-[#2d3433]">
+                      <TableCell className="text-right tabular-nums font-bold text-foreground">
                         {formatUsd(Math.abs(t.total_cash_delta_usd))}
                       </TableCell>
                     </TableRow>

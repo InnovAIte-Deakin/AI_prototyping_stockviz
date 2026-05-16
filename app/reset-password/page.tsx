@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { updatePassword } from "@/app/auth/actions";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
@@ -57,11 +58,14 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9f9f8] text-[#2d3433] flex flex-col selection:bg-[#e4e2e1] selection:text-[#525251]">
+    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-accent selection:text-accent-foreground relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="flex-grow flex flex-col items-center justify-center p-6 md:p-12">
         {/* Brand Header */}
         <header className="mb-8 text-center shrink-0">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-[#5f5e5e]">
+          <Link href="/" className="text-xl font-bold tracking-tighter text-primary">
             StockViz
           </Link>
         </header>
@@ -73,8 +77,8 @@ export default function ResetPassword() {
             className="w-full flex flex-col gap-10"
           >
             <div className="text-center">
-              <h2 className="text-4xl font-bold tracking-tight text-[#5f5e5e] mb-4">Set new password</h2>
-              <p className="text-[#5a6060] text-base leading-relaxed">
+              <h2 className="text-4xl font-bold tracking-tight text-primary mb-4">Set new password</h2>
+              <p className="text-muted-foreground text-base leading-relaxed">
                 Enter your new password below.
               </p>
             </div>
@@ -84,7 +88,7 @@ export default function ResetPassword() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-3 text-sm font-medium text-[#752121] bg-[#fe8983]/20 rounded-xl border border-[#fe8983]/30"
+                  className="p-3 text-sm font-medium text-destructive bg-destructive/10 rounded-xl border border-destructive/30"
                 >
                   {error}
                 </motion.div>
@@ -93,7 +97,7 @@ export default function ResetPassword() {
               {/* New Password */}
               <div className="space-y-1.5">
                 <Label
-                  className="block text-base font-semibold text-[#5a6060] mb-1.5"
+                  className="block text-base font-semibold text-muted-foreground mb-1.5"
                   htmlFor="password"
                 >
                   New Password
@@ -103,9 +107,9 @@ export default function ResetPassword() {
                   transition={{ duration: 0.4 }}
                   className="relative"
                 >
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
-                    className={`w-full pl-12 pr-12 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.password ? "border-[#752121]" : "border-[#adb3b2]/20"} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                    className={`w-full pl-12 pr-12 h-[46px] bg-card text-foreground border ${fieldErrors.password ? "border-destructive" : "border-border/20"} focus-visible:border-primary focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-muted-foreground/50 outline-none`}
                     id="password"
                     name="password"
                     placeholder="Min. 8 characters"
@@ -117,7 +121,7 @@ export default function ResetPassword() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#adb3b2] hover:text-[#5f5e5e] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -127,7 +131,7 @@ export default function ResetPassword() {
               {/* Confirm Password */}
               <div className="space-y-1.5">
                 <Label
-                  className="block text-base font-semibold text-[#5a6060] mb-1.5"
+                  className="block text-base font-semibold text-muted-foreground mb-1.5"
                   htmlFor="confirmPassword"
                 >
                   Confirm Password
@@ -137,9 +141,9 @@ export default function ResetPassword() {
                   transition={{ duration: 0.4 }}
                   className="relative"
                 >
-                  <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 text-[#adb3b2] h-5 w-5" />
+                  <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
-                    className={`w-full pl-12 pr-12 h-[46px] bg-white text-[#2d3433] border ${fieldErrors.confirmPassword ? "border-[#752121]" : "border-[#adb3b2]/20"} focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-[#adb3b2]/50 outline-none`}
+                    className={`w-full pl-12 pr-12 h-[46px] bg-card text-foreground border ${fieldErrors.confirmPassword ? "border-destructive" : "border-border/20"} focus-visible:border-primary focus-visible:ring-0 rounded-lg text-base transition-colors duration-200 placeholder:text-muted-foreground/50 outline-none`}
                     id="confirmPassword"
                     name="confirmPassword"
                     placeholder="Re-enter your password"
@@ -151,7 +155,7 @@ export default function ResetPassword() {
                   <button
                     type="button"
                     onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#adb3b2] hover:text-[#5f5e5e] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                   >
                     {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -160,17 +164,17 @@ export default function ResetPassword() {
 
               <Button
                 disabled={isPending}
-                className="w-full bg-[#5f5e5e] text-white h-[48px] px-4 rounded-lg font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-[#5f5e5e] active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
+                className="w-full bg-primary text-primary-foreground h-[48px] px-4 rounded-lg font-bold text-base transition-all duration-200 hover:opacity-90 hover:bg-primary active:scale-[0.99] mt-6 shadow-none disabled:opacity-50"
                 type="submit"
               >
                 {isPending ? "Updating..." : "Update Password"}
               </Button>
             </form>
 
-            <p className="text-center text-base text-[#5a6060]">
+            <p className="text-center text-base text-muted-foreground">
               Remember your password?{" "}
               <Link
-                className="font-bold text-[#5f5e5e] hover:text-[#525251] transition-colors underline underline-offset-4"
+                className="font-bold text-primary hover:text-foreground transition-colors underline underline-offset-4"
                 href="/login"
               >
                 Sign in

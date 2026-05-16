@@ -27,10 +27,10 @@ export const PeersWidget = ({ symbol, className }: PeersWidgetProps) => {
   const peers = data ?? []
 
   return (
-    <Card className={cn("border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5", className)}>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-[#5f5e5e]">Peers</CardTitle>
-        <CardDescription className="text-[#5a6060]">
+        <CardTitle className="text-xl font-bold text-primary">Peers</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Companies in the same country and sector (Finnhub).
         </CardDescription>
       </CardHeader>
@@ -44,10 +44,10 @@ export const PeersWidget = ({ symbol, className }: PeersWidgetProps) => {
         ) : null}
 
         {error ? (
-          <Alert className="border-[#fe8983]/30 bg-[#fe8983]/10 text-[#752121]">
-            <AlertCircle className="text-[#752121]" />
+          <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+            <AlertCircle className="text-destructive" />
             <AlertTitle className="font-bold">Peers unavailable</AlertTitle>
-            <AlertDescription className="text-[#752121]/90">
+            <AlertDescription className="text-destructive/90">
               Industry peer data is currently unavailable due to API limits.
             </AlertDescription>
           </Alert>
@@ -57,7 +57,7 @@ export const PeersWidget = ({ symbol, className }: PeersWidgetProps) => {
           <ul className="flex flex-wrap gap-2" aria-label="Peer symbols">
             {peers.map((peer) => (
               <li key={peer}>
-                <Badge asChild variant="outline" className="font-mono text-xs border-[#adb3b2]/30 bg-[#f2f4f3]/50 text-[#2d3433] hover:bg-[#e4e2e1] transition-colors">
+                <Badge asChild variant="outline" className="font-mono text-xs border-border/30 bg-muted/50 text-foreground hover:bg-accent transition-colors">
                   <Link href={`/stock/${encodeURIComponent(peer)}`}>{peer}</Link>
                 </Badge>
               </li>
@@ -66,9 +66,9 @@ export const PeersWidget = ({ symbol, className }: PeersWidgetProps) => {
         ) : null}
 
         {!isLoading && !error && peers.length === 0 ? (
-          <div className="rounded-lg border border-[#adb3b2]/10 bg-[#f9f9f8] p-4 text-center">
-            <p className="text-sm font-bold text-[#5a6060]">No peers listed</p>
-            <p className="text-xs text-[#adb3b2] mt-1">We couldn&apos;t find any direct industry peers for this symbol.</p>
+          <div className="rounded-lg border border-border/10 bg-background p-4 text-center">
+            <p className="text-sm font-bold text-muted-foreground">No peers listed</p>
+            <p className="text-xs text-muted-foreground mt-1">We couldn&apos;t find any direct industry peers for this symbol.</p>
           </div>
         ) : null}
       </CardContent>

@@ -115,16 +115,16 @@ export const RecommendationWidget = ({
   const canGoNewer = sorted.length > 0 && safeIndex < sorted.length - 1
 
   return (
-    <Card className={cn("border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5", className)}>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-[#5f5e5e]">Analyst recommendations</CardTitle>
-        <CardDescription className="text-[#5a6060]">
+        <CardTitle className="text-xl font-bold text-primary">Analyst recommendations</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Finnhub consensus counts by reporting period. Use{" "}
-          <kbd className="bg-[#f2f4f3] rounded border border-[#adb3b2]/30 px-1 py-0.5 font-mono text-[10px] text-[#2d3433]">
+          <kbd className="bg-muted rounded border border-border/30 px-1 py-0.5 font-mono text-[10px] text-foreground">
             ←
           </kbd>{" "}
           /{" "}
-          <kbd className="bg-[#f2f4f3] rounded border border-[#adb3b2]/30 px-1 py-0.5 font-mono text-[10px] text-[#2d3433]">
+          <kbd className="bg-muted rounded border border-border/30 px-1 py-0.5 font-mono text-[10px] text-foreground">
             →
           </kbd>{" "}
           when the chart area is focused to step through periods.
@@ -140,10 +140,10 @@ export const RecommendationWidget = ({
         ) : null}
 
         {error ? (
-          <Alert className="border-[#fe8983]/30 bg-[#fe8983]/10 text-[#752121]">
-            <AlertCircle className="text-[#752121]" />
+          <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+            <AlertCircle className="text-destructive" />
             <AlertTitle className="font-bold">Analyst data unavailable</AlertTitle>
-            <AlertDescription className="text-[#752121]/90">
+            <AlertDescription className="text-destructive/90">
               Analyst consensus for {symbol} is currently unavailable due to API limits.
             </AlertDescription>
           </Alert>
@@ -154,15 +154,15 @@ export const RecommendationWidget = ({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1 space-y-1">
                 <p
-                  className="text-xs font-medium text-[#5a6060]"
+                  className="text-xs font-medium text-muted-foreground"
                   aria-live="polite"
                 >
                   Reporting period
                 </p>
-                <p className="font-heading truncate text-lg font-bold text-[#2d3433]">
+                <p className="font-heading truncate text-lg font-bold text-foreground">
                   {current.period ?? "—"}
                 </p>
-                <p className="text-[#adb3b2] text-xs font-medium">
+                <p className="text-muted-foreground text-xs font-medium">
                   {total > 0
                     ? `${total} analyst ${total === 1 ? "rating" : "ratings"} in this period`
                     : "No ratings in this period"}
@@ -176,12 +176,12 @@ export const RecommendationWidget = ({
                   disabled={!canGoOlder}
                   onClick={handlePreviousPeriod}
                   aria-label="Go to earlier reporting period"
-                  className="border-[#adb3b2]/30 text-[#5f5e5e] font-bold"
+                  className="border-border/30 text-primary font-bold"
                 >
                   <ChevronLeft className="size-4" aria-hidden />
                   <span className="hidden sm:inline">Previous</span>
                 </Button>
-                <span className="text-[#5a6060] tabular-nums text-xs font-bold">
+                <span className="text-muted-foreground tabular-nums text-xs font-bold">
                   {safeIndex + 1} / {sorted.length}
                 </span>
                 <Button
@@ -191,7 +191,7 @@ export const RecommendationWidget = ({
                   disabled={!canGoNewer}
                   onClick={handleNextPeriod}
                   aria-label="Go to later reporting period"
-                  className="border-[#adb3b2]/30 text-[#5f5e5e] font-bold"
+                  className="border-border/30 text-primary font-bold"
                 >
                   <span className="hidden sm:inline">Next</span>
                   <ChevronRight className="size-4" aria-hidden />
@@ -204,7 +204,7 @@ export const RecommendationWidget = ({
               tabIndex={0}
               aria-label="Recommendation distribution chart. Use left and right arrow keys to change period."
               onKeyDown={handleChartKeyDown}
-              className="rounded-lg border border-[#adb3b2]/20 bg-[#f2f4f3]/50 p-2 outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-[#5f5e5e]"
+              className="rounded-lg border border-border/20 bg-muted/50 p-2 outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
             >
               {total > 0 ? (
                 <ChartContainer
@@ -221,7 +221,7 @@ export const RecommendationWidget = ({
                     <XAxis type="number" tickLine={false} axisLine={false} />
                     <YAxis type="category" dataKey="periodLabel" hide width={0} />
                     <ChartTooltip
-                      cursor={{ fill: "#adb3b2", fillOpacity: 0.1 }}
+                      cursor={{ fill: "var(--border)", fillOpacity: 0.1 }}
                       content={
                         <ChartTooltipContent
                           formatter={(value, _name, item) => {
@@ -232,7 +232,7 @@ export const RecommendationWidget = ({
                             const n =
                               typeof value === "number" ? value : Number(value)
                             return (
-                              <span className="tabular-nums font-bold text-[#2d3433]">
+                              <span className="tabular-nums font-bold text-foreground">
                                 {Number.isFinite(n)
                                   ? `${name}: ${n.toLocaleString()}`
                                   : "—"}
@@ -262,16 +262,16 @@ export const RecommendationWidget = ({
               )}
             </div>
 
-            <div className="max-h-[min(280px,40vh)] overflow-auto rounded-md border border-[#adb3b2]/20">
+            <div className="max-h-[min(280px,40vh)] overflow-auto rounded-md border border-border/20">
               <Table>
-                <TableHeader className="bg-[#f2f4f3]/50">
+                <TableHeader className="bg-muted/50">
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="font-bold text-[#5f5e5e]">Period</TableHead>
-                    <TableHead className="text-right font-bold text-[#5f5e5e]">Strong buy</TableHead>
-                    <TableHead className="text-right font-bold text-[#5f5e5e]">Buy</TableHead>
-                    <TableHead className="text-right font-bold text-[#5f5e5e]">Hold</TableHead>
-                    <TableHead className="text-right font-bold text-[#5f5e5e]">Sell</TableHead>
-                    <TableHead className="text-right font-bold text-[#5f5e5e]">Strong sell</TableHead>
+                    <TableHead className="font-bold text-primary">Period</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Strong buy</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Buy</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Hold</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Sell</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Strong sell</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -280,7 +280,7 @@ export const RecommendationWidget = ({
                       key={row.period ?? idx}
                       className={cn(
                         "cursor-pointer transition-all",
-                        idx === safeIndex ? "bg-[#f2f4f3] border-l-2 border-l-[#5f5e5e]" : "hover:bg-[#f2f4f3]/30"
+                        idx === safeIndex ? "bg-muted border-l-2 border-l-[var(--primary)]" : "hover:bg-muted/30"
                       )}
                       onClick={() => setSelectedIndex(idx)}
                     >
@@ -311,9 +311,9 @@ export const RecommendationWidget = ({
         ) : null}
 
         {!isLoading && !error && sorted.length === 0 ? (
-          <div className="rounded-lg border border-[#adb3b2]/10 bg-[#f9f9f8] p-6 text-center">
-            <p className="text-sm font-bold text-[#5a6060]">No coverage</p>
-            <p className="text-xs text-[#adb3b2] mt-1">There are no analyst recommendations currently available for this symbol.</p>
+          <div className="rounded-lg border border-border/10 bg-background p-6 text-center">
+            <p className="text-sm font-bold text-muted-foreground">No coverage</p>
+            <p className="text-xs text-muted-foreground mt-1">There are no analyst recommendations currently available for this symbol.</p>
           </div>
         ) : null}
       </CardContent>

@@ -15,14 +15,14 @@ const formatUsd = (n: number): string =>
 export const PortfolioSummarySkeleton = () => (
   <div className="flex w-full gap-4 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-4 md:pb-0">
     {[...Array(4)].map((_, i) => (
-      <Card key={i} className="min-w-[160px] shrink-0 flex-1 border-[#adb3b2]/20 bg-white shadow-sm md:min-w-0">
+      <Card key={i} className="min-w-[160px] shrink-0 flex-1 border-border/20 bg-card shadow-sm md:min-w-0">
         <CardHeader className="p-4 pb-1 flex flex-row items-center justify-between space-y-0">
-          <div className="h-3 w-16 bg-[#f2f4f3] rounded animate-pulse" />
-          <div className="h-3.5 w-3.5 bg-[#f2f4f3] rounded animate-pulse" />
+          <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+          <div className="h-3.5 w-3.5 bg-muted rounded animate-pulse" />
         </CardHeader>
         <CardContent className="p-4 pt-0 space-y-2">
-          <div className="h-6 w-24 bg-[#f2f4f3] rounded animate-pulse" />
-          <div className="h-3 w-20 bg-[#f2f4f3] rounded animate-pulse" />
+          <div className="h-6 w-24 bg-muted rounded animate-pulse" />
+          <div className="h-3 w-20 bg-muted rounded animate-pulse" />
         </CardContent>
       </Card>
     ))}
@@ -59,7 +59,7 @@ export const PortfolioSummaryRow = async ({ userId }: { userId: string }) => {
   } catch (error) {
     console.error("Error loading portfolio summary:", error)
     return (
-      <Card className="border-[#fe8983]/30 bg-rose-50/50 p-6 text-center">
+      <Card className="border-destructive/30 bg-rose-50/50 p-6 text-center">
         <p className="text-sm font-bold text-rose-700">Portfolio summary unavailable</p>
         <p className="text-xs text-rose-600 mt-1">We&apos;re having trouble loading your balance right now. Please try refreshing.</p>
       </Card>
@@ -69,23 +69,23 @@ export const PortfolioSummaryRow = async ({ userId }: { userId: string }) => {
   return (
     <div className="flex w-full gap-4 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
       {stats.map((s) => (
-        <Card key={s.label} className="group min-w-[160px] shrink-0 flex-1 border-[#adb3b2]/20 bg-white shadow-sm hover:shadow-md transition-all duration-200 md:min-w-0">
+        <Card key={s.label} className="group min-w-[160px] shrink-0 flex-1 border-border/20 bg-card shadow-sm hover:shadow-md transition-all duration-200 md:min-w-0">
           <CardHeader className="p-4 pb-1 flex flex-row items-center justify-between space-y-0">
-            <span className="text-xs font-medium text-[#adb3b2]">{s.label}</span>
-            <s.icon className="h-3.5 w-3.5 text-[#adb3b2] transition-colors group-hover:text-[#5a6060]" />
+            <span className="text-xs font-medium text-muted-foreground">{s.label}</span>
+            <s.icon className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-muted-foreground" />
           </CardHeader>
           <CardContent className="p-4 pt-0">
             <p className={cn(
-              "text-lg font-bold tabular-nums text-[#2d3433]",
+              "text-lg font-bold tabular-nums text-foreground",
               s.label === "Today's Return" && (
-                (s.trend ?? 0) > 0 ? "text-emerald-600" : 
-                (s.trend ?? 0) < 0 ? "text-rose-600" : 
-                "text-[#5a6060]"
+              (s.trend ?? 0) > 0 ? "text-finance-success" : 
+              (s.trend ?? 0) < 0 ? "text-finance-danger" : 
+              "text-muted-foreground"
               )
             )}>
               {s.value}
             </p>
-            <p className="text-[10px] text-[#5a6060] font-medium">{s.sub}</p>
+            <p className="text-[10px] text-muted-foreground font-medium">{s.sub}</p>
           </CardContent>
         </Card>
       ))}

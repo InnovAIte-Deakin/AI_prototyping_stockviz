@@ -70,7 +70,7 @@ const TAB_IDS: Array<MetricGroupId | "all"> = [
 const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) => {
   if (rows.length === 0) {
     return (
-      <p className="text-[#adb3b2] py-8 text-center text-sm font-medium">
+      <p className="text-muted-foreground py-8 text-center text-sm font-medium">
         No metrics in this category for this symbol.
       </p>
     )
@@ -93,14 +93,14 @@ const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) =>
           data={rows}
           margin={{ left: -12, right: 12, top: 4, bottom: 4 }}
         >
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#adb3b2" strokeOpacity={0.2} />
+          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" strokeOpacity={0.2} />
           <XAxis
             type="number"
             tickLine={false}
             axisLine={false}
             tickMargin={8}
             domain={[0, "auto"]}
-            tick={{ fontSize: 10, fill: "#adb3b2" }}
+            tick={{ fontSize: 10, fill: "var(--border)" }}
           />
           <YAxis
             type="category"
@@ -109,16 +109,16 @@ const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) =>
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            tick={{ fontSize: 11, fill: "#5a6060", fontWeight: 500 }}
+            tick={{ fontSize: 11, fill: "var(--muted-foreground)", fontWeight: 500 }}
           />
           <ChartTooltip
-            cursor={{ fill: "#adb3b2", fillOpacity: 0.1 }}
+            cursor={{ fill: "var(--border)", fillOpacity: 0.1 }}
             content={
               <ChartTooltipContent
                 formatter={(_value, _name, item) => {
                   const row = item?.payload as FundamentalChartRow | undefined
                   return (
-                    <span className="font-bold text-[#2d3433] tabular-nums">
+                    <span className="font-bold text-foreground tabular-nums">
                       {row?.tooltip ?? "—"}
                     </span>
                   )
@@ -128,7 +128,7 @@ const FundamentalMetricBarChart = ({ rows }: { rows: FundamentalChartRow[] }) =>
           />
           <Bar
             dataKey="display"
-            fill="#7a7c7b"
+            fill="currentColor" className="text-primary"
             radius={[0, 4, 4, 0]}
             maxBarSize={24}
             isAnimationActive={false}
@@ -188,10 +188,10 @@ export const BasicFinancialsWidget = ({
   }, [metricFromApi])
 
   return (
-    <Card className={cn("border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5", className)}>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-[#5f5e5e]">Basic financials</CardTitle>
-        <CardDescription className="text-[#5a6060]">
+        <CardTitle className="text-xl font-bold text-primary">Basic financials</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Key ratios from Finnhub, grouped into comparable charts. Open{" "}
           <span className="font-bold">All metrics</span> for the complete
           table.
@@ -207,10 +207,10 @@ export const BasicFinancialsWidget = ({
         ) : null}
 
         {error ? (
-          <Alert className="border-[#fe8983]/30 bg-[#fe8983]/10 text-[#752121]">
-            <AlertCircle className="text-[#752121]" />
+          <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+            <AlertCircle className="text-destructive" />
             <AlertTitle className="font-bold">Financials unavailable</AlertTitle>
-            <AlertDescription className="text-[#752121]/90">
+            <AlertDescription className="text-destructive/90">
               We couldn&apos;t load the financial ratios for this company. This is usually due to API limits.
             </AlertDescription>
           </Alert>
@@ -223,12 +223,12 @@ export const BasicFinancialsWidget = ({
                 {highlights.map((h) => (
                   <div
                     key={h.key}
-                    className="bg-[#f2f4f3]/50 rounded-lg border border-[#adb3b2]/20 px-3 py-2.5"
+                    className="bg-muted/50 rounded-lg border border-border/20 px-3 py-2.5"
                   >
-                    <p className="text-[#5a6060] text-xs font-bold">
+                    <p className="text-muted-foreground text-xs font-bold">
                       {h.label}
                     </p>
-                    <p className="font-heading text-lg font-bold tabular-nums tracking-tight text-[#2d3433]">
+                    <p className="font-heading text-lg font-bold tabular-nums tracking-tight text-foreground">
                       {h.text}
                     </p>
                   </div>
@@ -240,13 +240,13 @@ export const BasicFinancialsWidget = ({
 
             <Tabs defaultValue="valuation" className="w-full">
               <div className="mb-6">
-                <ScrollArea className="w-full whitespace-nowrap rounded-lg bg-[#f2f4f3] p-1 shadow-inner">
+                <ScrollArea className="w-full whitespace-nowrap rounded-lg bg-muted p-1 shadow-inner">
                   <TabsList aria-label="Financial metric categories" className="inline-flex h-9 w-max items-center justify-start gap-1 bg-transparent p-0">
                     {TAB_IDS.map((id) => (
                       <TabsTrigger 
                         key={id} 
                         value={id} 
-                        className="h-7 shrink-0 px-4 text-xs font-bold transition-all data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] hover:text-[#2d3433] sm:text-sm"
+                        className="h-7 shrink-0 px-4 text-xs font-bold transition-all data-[state=active]:bg-primary! data-[state=active]:text-primary-foreground! text-primary hover:text-foreground sm:text-sm"
                       >
                         {id === "all" ? "All metrics" : METRIC_GROUPS[id].title}
                       </TabsTrigger>
@@ -261,21 +261,21 @@ export const BasicFinancialsWidget = ({
                   if (id === "all") {
                     return (
                       <TabsContent key="all" value="all" className="mt-0">
-                        <div className="max-h-[min(420px,55vh)] overflow-auto rounded-md border border-[#adb3b2]/20">
+                        <div className="max-h-[min(420px,55vh)] overflow-auto rounded-md border border-border/20">
                           <Table>
-                            <TableHeader className="bg-[#f2f4f3]/50">
+                            <TableHeader className="bg-muted/50">
                               <TableRow className="hover:bg-transparent">
-                                <TableHead className="w-[42%] font-bold text-[#5f5e5e]">Metric</TableHead>
-                                <TableHead className="font-bold text-[#5f5e5e]">Value</TableHead>
+                                <TableHead className="w-[42%] font-bold text-primary">Metric</TableHead>
+                                <TableHead className="font-bold text-primary">Value</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {tableEntries.map(([key, value]) => (
-                                <TableRow key={key} className="hover:bg-[#f2f4f3]/50">
-                                  <TableCell className="text-[#5a6060] align-top text-sm font-medium">
+                                <TableRow key={key} className="hover:bg-muted/50">
+                                  <TableCell className="text-muted-foreground align-top text-sm font-medium">
                                     {labelForMetricKey(key)}
                                   </TableCell>
-                                  <TableCell className="font-bold tabular-nums text-[#2d3433]">
+                                  <TableCell className="font-bold tabular-nums text-foreground">
                                     {formatMetricValue(value)}
                                   </TableCell>
                                 </TableRow>
@@ -291,7 +291,7 @@ export const BasicFinancialsWidget = ({
                   const rows = buildRowsForKeys(metricFromApi ?? {}, g.keys)
                   return (
                     <TabsContent key={id} value={id} className="mt-0 space-y-5">
-                      <p className="text-[#5a6060] text-sm font-medium leading-relaxed border-l-2 border-[#adb3b2]/30 pl-3">
+                      <p className="text-muted-foreground text-sm font-medium leading-relaxed border-l-2 border-border/30 pl-3">
                         {g.description}
                       </p>
                       <FundamentalMetricBarChart rows={rows} />
@@ -304,9 +304,9 @@ export const BasicFinancialsWidget = ({
         ) : null}
 
         {!isLoading && !error && tableEntries.length === 0 ? (
-          <div className="rounded-lg border border-[#adb3b2]/10 bg-[#f9f9f8] p-6 text-center">
-            <p className="text-sm font-bold text-[#5a6060]">No financial data</p>
-            <p className="text-xs text-[#adb3b2] mt-1">Detailed metrics for this symbol are not available at this time.</p>
+          <div className="rounded-lg border border-border/10 bg-background p-6 text-center">
+            <p className="text-sm font-bold text-muted-foreground">No financial data</p>
+            <p className="text-xs text-muted-foreground mt-1">Detailed metrics for this symbol are not available at this time.</p>
           </div>
         ) : null}
       </CardContent>

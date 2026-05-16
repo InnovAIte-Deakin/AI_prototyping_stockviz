@@ -54,9 +54,9 @@ const DashboardPage = async () => {
   const spotlightGainer = gainers.at(0) ?? null
 
   return (
-    <div className="min-h-screen bg-[#f9f9f8] text-[#2d3433] selection:bg-[#e4e2e1] selection:text-[#525251]">
+    <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
       {/* Top Section: Market Movers */}
-      <section className="bg-white/50 border-b border-[#adb3b2]/20 py-1">
+      <section className="bg-card/50 border-b border-border/20 py-1">
         {error ? (
           <div className="mx-auto max-w-7xl px-4 py-2 text-xs text-rose-600" role="alert">
             {error}
@@ -66,27 +66,29 @@ const DashboardPage = async () => {
         )}
       </section>
 
-      <div className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-7xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         {/* Header Section */}
-        <header className="space-y-6">
-          <div className="space-y-1">
-            <h1 className="font-heading text-2xl font-bold tracking-tight text-[#2d3433] sm:text-3xl">
+        <header className="space-y-8">
+          <div className="space-y-2">
+            <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Hi {greetingName}, welcome back
             </h1>
-            <p className="text-sm font-medium text-[#5a6060]">
+            <p className="text-base font-medium text-muted-foreground max-w-2xl">
               Everything you need to track your investment strategy in one place.
             </p>
           </div>
           
           <Suspense fallback={<PortfolioSummarySkeleton />}>
             {user ? (
-              <PortfolioSummaryRow userId={user.id} />
+              <div className="pt-2">
+                <PortfolioSummaryRow userId={user.id} />
+              </div>
             ) : null}
           </Suspense>
         </header>
 
         {/* Main Section: Row 1 - Performance & Status */}
-        <div className="grid gap-8 lg:grid-cols-3 lg:items-stretch">
+        <div className="grid gap-10 lg:grid-cols-3 lg:items-stretch">
           {/* Performance Column - 2/3 Width */}
           <div className="lg:col-span-2">
             <PortfolioPerformanceChart 
@@ -97,14 +99,14 @@ const DashboardPage = async () => {
           </div>
 
           {/* Sidebar - 1/3 Width Stacked & Aligned */}
-          <div className="flex flex-col gap-6 lg:col-span-1">
+          <div className="flex flex-col gap-8 lg:col-span-1">
             <MarketStatusCard />
             <WishlistCard className="flex-1" />
           </div>
         </div>
 
         {/* Main Section: Row 2 - Spotlight (Wider) */}
-        <section className="pt-2">
+        <section className="pt-6">
           {spotlightGainer && (
             <DashboardSpotlightChart
               symbol={spotlightGainer.symbol}

@@ -83,12 +83,12 @@ export function TradeStockDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] border-[#adb3b2]/20 bg-white shadow-2xl rounded-2xl p-0 overflow-hidden">
-        <DialogHeader className="p-6 pb-4 bg-[#f9f9f8]/50 border-b border-[#adb3b2]/10">
-          <DialogTitle className="text-xl font-bold text-[#2d3433]">
+      <DialogContent className="sm:max-w-[400px] border-border/20 bg-card shadow-2xl rounded-2xl p-0 overflow-hidden">
+        <DialogHeader className="p-6 pb-4 bg-background/50 border-b border-border/10">
+          <DialogTitle className="text-xl font-bold text-foreground">
             {mode === "buy" ? "Buy" : "Sell"} {symbol}
           </DialogTitle>
-          <DialogDescription className="text-[#5a6060] font-medium">
+          <DialogDescription className="text-muted-foreground font-medium">
             Execute a paper trade at the current market price.
           </DialogDescription>
         </DialogHeader>
@@ -96,15 +96,15 @@ export function TradeStockDialog({
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <p className="text-xs font-medium text-[#5a6060]">Current price</p>
-              <p className="text-lg font-bold text-[#2d3433]">
+              <p className="text-xs font-medium text-muted-foreground">Current price</p>
+              <p className="text-lg font-bold text-foreground">
                 {currentPrice !== null ? formatUsd(currentPrice) : "—"}
               </p>
             </div>
             <div className="space-y-1 text-right">
-              <p className="text-xs font-medium text-[#5a6060]">Available cash</p>
-              <p className="text-lg font-bold text-[#2d3433] flex items-center justify-end gap-1.5">
-                <Wallet className="size-3.5 text-emerald-600" />
+              <p className="text-xs font-medium text-muted-foreground">Available cash</p>
+              <p className="text-lg font-bold text-foreground flex items-center justify-end gap-1.5">
+                <Wallet className="size-3.5 text-finance-success" />
                 {formatUsd(availableCash)}
               </p>
             </div>
@@ -112,10 +112,10 @@ export function TradeStockDialog({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="shares" className="text-sm font-medium text-[#5a6060]">Quantity</Label>
+              <Label htmlFor="shares" className="text-sm font-medium text-muted-foreground">Quantity</Label>
               {mode === "sell" && (
-                <span className="text-[10px] font-medium text-[#adb3b2]">
-                  Owned: <span className="text-[#5a6060] font-bold">{sharesOwned}</span>
+                <span className="text-[10px] font-medium text-muted-foreground">
+                  Owned: <span className="text-muted-foreground font-bold">{sharesOwned}</span>
                 </span>
               )}
             </div>
@@ -127,27 +127,27 @@ export function TradeStockDialog({
               placeholder="0"
               value={shares}
               onChange={(e) => setShares(e.target.value)}
-              className="h-12 text-lg font-bold text-[#2d3433] bg-white border-[#adb3b2]/30 focus-visible:border-[#5f5e5e] focus-visible:ring-0 rounded-xl"
+              className="h-12 text-lg font-bold text-foreground bg-card border-border/30 focus-visible:border-primary focus-visible:ring-0 rounded-xl"
               autoFocus
             />
           </div>
 
-          <div className="rounded-xl bg-[#f2f4f3]/50 p-4 border border-[#adb3b2]/10 space-y-3">
+          <div className="rounded-xl bg-muted/50 p-4 border border-border/10 space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-[#5a6060]">Estimated {mode === "buy" ? "cost" : "proceeds"}</p>
+              <p className="text-sm font-medium text-muted-foreground">Estimated {mode === "buy" ? "cost" : "proceeds"}</p>
               <p className={cn(
                 "text-lg font-bold tabular-nums",
-                mode === "buy" ? "text-[#2d3433]" : "text-emerald-600"
+                mode === "buy" ? "text-foreground" : "text-finance-success"
               )}>
                 {formatUsd(estimatedValue)}
               </p>
             </div>
             
-            <div className="flex items-center justify-between border-t border-[#adb3b2]/10 pt-3">
-              <p className="text-xs font-medium text-[#adb3b2]">Cash after {mode === "buy" ? "purchase" : "sale"}</p>
+            <div className="flex items-center justify-between border-t border-border/10 pt-3">
+              <p className="text-xs font-medium text-muted-foreground">Cash after {mode === "buy" ? "purchase" : "sale"}</p>
               <p className={cn(
-                "text-sm font-bold tabular-nums text-[#5a6060]",
-                (mode === "buy" ? availableCash - estimatedValue : availableCash + estimatedValue) < 0 && "text-rose-600"
+                "text-sm font-bold tabular-nums text-muted-foreground",
+                (mode === "buy" ? availableCash - estimatedValue : availableCash + estimatedValue) < 0 && "text-destructive"
               )}>
                 {formatUsd(mode === "buy" ? availableCash - estimatedValue : availableCash + estimatedValue)}
               </p>
@@ -155,25 +155,25 @@ export function TradeStockDialog({
           </div>
 
           {mode === "buy" && estimatedValue > availableCash && (
-            <div className="flex items-start gap-2 text-rose-600 bg-rose-50 p-3 rounded-lg border border-rose-100">
+            <div className="flex items-start gap-2 text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">
               <Info className="size-4 shrink-0 mt-0.5" />
               <p className="text-xs font-bold">Insufficient funds for this trade.</p>
             </div>
           )}
 
           {mode === "sell" && shareCount > sharesOwned && (
-            <div className="flex items-start gap-2 text-rose-600 bg-rose-50 p-3 rounded-lg border border-rose-100">
+            <div className="flex items-start gap-2 text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">
               <Info className="size-4 shrink-0 mt-0.5" />
               <p className="text-xs font-bold">You cannot sell more shares than you own.</p>
             </div>
           )}
         </div>
 
-        <div className="p-6 pt-4 flex items-center gap-3 border-t border-[#adb3b2]/10">
+        <div className="p-6 pt-4 flex items-center gap-3 border-t border-border/10">
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="flex-1 h-9 text-xs border-[#adb3b2]/30 text-[#5a6060] font-bold rounded-xl hover:bg-[#f9f9f8] transition-all"
+            className="flex-1 h-9 text-xs border-border/30 text-muted-foreground font-bold rounded-xl hover:bg-background transition-all"
           >
             Cancel
           </Button>
@@ -181,8 +181,8 @@ export function TradeStockDialog({
             onClick={handleTrade}
             disabled={isPending || !isSharesValid || (mode === "buy" && estimatedValue > availableCash) || (mode === "sell" && shareCount > sharesOwned)}
             className={cn(
-              "flex-1 h-9 text-xs text-white font-bold rounded-xl transition-all shadow-sm",
-              mode === "buy" ? "bg-[#5f5e5e] hover:bg-[#4a4a4a]" : "bg-[#752121] hover:bg-[#5a1a1a]"
+              "flex-1 h-9 text-xs font-bold rounded-xl transition-all shadow-sm",
+              mode === "buy" ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
             )}
           >
             {isPending ? "Executing..." : `${mode === "buy" ? "Buy" : "Sell"} ${symbol}`}

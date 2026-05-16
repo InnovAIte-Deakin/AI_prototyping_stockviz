@@ -193,20 +193,20 @@ const ExplainRangePopoverBody = ({
   const dir = rangeStats.direction
   const badgeVariant =
     dir === "up"
-      ? "text-emerald-700"
+      ? "text-finance-success"
       : dir === "down"
-        ? "text-rose-700"
-        : "text-[#5a6060]"
+        ? "text-finance-danger"
+        : "text-muted-foreground"
 
   return (
     <div className="flex max-h-[min(70vh,520px)] flex-col gap-3 overflow-y-auto">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-heading text-sm font-bold text-[#2d3433]">{symbol}</p>
+          <p className="font-heading text-sm font-bold text-foreground">{symbol}</p>
           {companyName ? (
-            <p className="text-[#5a6060] text-xs font-medium">{companyName}</p>
+            <p className="text-muted-foreground text-xs font-medium">{companyName}</p>
           ) : null}
-          <p className="text-[#adb3b2] mt-1 text-xs font-medium">
+          <p className="text-muted-foreground mt-1 text-xs font-medium">
             {formatShortRange(rangeStats.from, rangeStats.to)}
           </p>
         </div>
@@ -246,7 +246,7 @@ const ExplainRangePopoverBody = ({
       </div>
 
       {tab === "yearly" ? (
-        <p className="text-[#5a6060] text-xs font-medium">
+        <p className="text-muted-foreground text-xs font-medium">
           Yearly bars span a full calendar year; explanations may be less precise than daily
           or monthly views.
         </p>
@@ -287,7 +287,7 @@ const ExplainRangePopoverBody = ({
 
           {explanation.mainDrivers.length > 0 ? (
             <div>
-              <p className="text-[#5a6060] mb-1 text-xs font-medium">
+              <p className="text-muted-foreground mb-1 text-xs font-medium">
                 Main drivers
               </p>
               <ul className="list-inside list-disc space-y-1.5 text-xs">
@@ -304,16 +304,16 @@ const ExplainRangePopoverBody = ({
 
           {explanation.importantDates.length > 0 ? (
             <div>
-              <p className="text-[#5a6060] mb-1 text-xs font-medium">
+              <p className="text-muted-foreground mb-1 text-xs font-medium">
                 Important dates
               </p>
               <ul className="space-y-2 text-xs">
                 {explanation.importantDates.map((e, i) => (
-                  <li key={i} className="rounded-md border border-[#adb3b2]/20 bg-[#f2f4f3]/30 p-2">
-                    <p className="font-bold text-[#2d3433]">{e.date}</p>
-                    <p className="text-[#2d3433]">{e.event}</p>
-                    <p className="text-[#5a6060]">{e.priceAction}</p>
-                    <p className="text-[#5a6060]">{e.relevance}</p>
+                  <li key={i} className="rounded-md border border-border/20 bg-muted/30 p-2">
+                    <p className="font-bold text-foreground">{e.date}</p>
+                    <p className="text-foreground">{e.event}</p>
+                    <p className="text-muted-foreground">{e.priceAction}</p>
+                    <p className="text-muted-foreground">{e.relevance}</p>
                   </li>
                 ))}
               </ul>
@@ -322,7 +322,7 @@ const ExplainRangePopoverBody = ({
 
           {explanation.evidence.length > 0 ? (
             <div>
-              <p className="text-[#5a6060] mb-1 text-xs font-medium">
+              <p className="text-muted-foreground mb-1 text-xs font-medium">
                 Evidence
               </p>
               <ul className="space-y-2 text-xs">
@@ -638,10 +638,10 @@ const SelectableChartSection = ({
 
   if (showError) {
     return (
-      <Alert className="border-[#fe8983]/30 bg-[#fe8983]/10 text-[#752121]">
-        <AlertCircle className="text-[#752121]" />
+      <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+        <AlertCircle className="text-destructive" />
         <AlertTitle className="font-bold">Price history unavailable</AlertTitle>
-        <AlertDescription className="text-[#752121]/90">
+        <AlertDescription className="text-destructive/90">
           The daily API limit has been reached. Historical price data for {symbol} will be available again shortly.
         </AlertDescription>
       </Alert>
@@ -678,7 +678,7 @@ const SelectableChartSection = ({
           onMouseDown={handleChartMouseDown}
           onMouseMove={handleChartMouseMove}
         >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#adb3b2" strokeOpacity={0.2} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.2} />
           <XAxis
             dataKey="period"
             tickLine={false}
@@ -908,20 +908,20 @@ export const PriceHistoryChart = ({
   )
 
   return (
-    <Card className={cn("border-[#adb3b2]/20 bg-white text-[#2d3433] shadow-md shadow-[#2d3433]/5", className)}>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-[#5f5e5e]">Price history</CardTitle>
-        <CardDescription className="text-[#5a6060]">
+        <CardTitle className="text-xl font-bold text-primary">Price history</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Historical OHLC from Alpha Vantage (daily compact, monthly; yearly aggregated from
           monthly). Drag a range to get an AI explanation using FMP news (server-side).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs value={tab} onValueChange={handleTabChange}>
-          <TabsList aria-label="Price history range" className="bg-[#f2f4f3] p-1">
-            <TabsTrigger value="daily" className="data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] font-bold hover:text-[#2d3433] transition-all">Daily</TabsTrigger>
-            <TabsTrigger value="monthly" className="data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] font-bold hover:text-[#2d3433] transition-all">Monthly</TabsTrigger>
-            <TabsTrigger value="yearly" className="data-[state=active]:bg-[#7a7c7b]! data-[state=active]:text-white! text-[#5f5e5e] font-bold hover:text-[#2d3433] transition-all">Yearly</TabsTrigger>
+          <TabsList aria-label="Price history range" className="bg-muted p-1">
+            <TabsTrigger value="daily" className="data-[state=active]:bg-primary! data-[state=active]:text-primary-foreground! text-primary font-bold hover:text-foreground transition-all">Daily</TabsTrigger>
+            <TabsTrigger value="monthly" className="data-[state=active]:bg-primary! data-[state=active]:text-primary-foreground! text-primary font-bold hover:text-foreground transition-all">Monthly</TabsTrigger>
+            <TabsTrigger value="yearly" className="data-[state=active]:bg-primary! data-[state=active]:text-primary-foreground! text-primary font-bold hover:text-foreground transition-all">Yearly</TabsTrigger>
           </TabsList>
 
           <TabsContent value="daily" className="mt-4 min-h-[320px]">

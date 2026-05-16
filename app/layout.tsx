@@ -55,7 +55,7 @@ export default function RootLayout({
       className={`${geistMono.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className={`${inter.className} min-h-full flex flex-col bg-[#f9f9f8]`}>
+      <body className={`${inter.className} min-h-full flex flex-col bg-background`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
