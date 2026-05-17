@@ -22,7 +22,7 @@ const formatPrice = (n: number | undefined): string => {
   if (n === undefined || !Number.isFinite(n)) {
     return "—"
   }
-  return new Intl.NumberFormat(undefined, {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,

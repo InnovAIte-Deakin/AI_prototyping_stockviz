@@ -175,3 +175,36 @@ export const sellPaperShares = async (symbol: string, shares: number): Promise<P
 
   return { ok: true }
 }
+
+export const resetPortfolio = async (): Promise<PaperTradeResult> => {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    return { ok: false, error: "You must be signed in." }
+  }
+
+  let admin
+  try {
+    admin = createServiceRoleClient()
+  } catch {
+    return { ok: false, error: "System is not configured (missing service role key)." }
+  }
+
+  try {
+    await admin.from("portfolio_holdings").delete().eq("user_id", user.id)
+    await admin.from("portfolio_transactions").delete().eq("user_id", user.id)
+    await admin.from("portfolio_history").delete().eq("user_id", user.id)
+    await admin.from("profiles").update({ paper_cash_usd: 100000 }).eq("id", user.id)
+  } catch {
+    return { ok: false, error: "Failed to reset portfolio." }
+  }
+
+  revalidatePath("/portfolio")
+  revalidatePath("/dashboard")
+
+  recordCurrentPortfolioSnapshot(user.id).catch(console.error)
+
+  return { ok: true }
+}

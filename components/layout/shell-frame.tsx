@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
 import { UserNav } from '@/components/layout/user-nav'
 import { cn } from '@/lib/utils'
-import { Briefcase, Star, BookOpen } from 'lucide-react'
+import { Briefcase, Star, BookOpen, Scale } from 'lucide-react'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
 
 
@@ -60,6 +60,16 @@ export default function ShellFrame({ children }: { children: ReactNode }) {
             >
               <Briefcase className="size-4" />
               <span>Portfolio</span>
+            </Link>
+            <Link
+              href="/compare"
+              className={cn(
+                "hidden sm:flex items-center gap-1.5 text-sm font-bold transition-all hover:text-foreground",
+                pathname === "/compare" ? "text-foreground border-b-2 border-border pb-0.5" : "text-primary"
+              )}
+            >
+              <Scale className="size-4" />
+              <span>Compare</span>
             </Link>
             <Link
               href="/learn"

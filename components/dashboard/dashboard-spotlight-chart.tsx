@@ -30,7 +30,7 @@ const chartConfig = {
 } satisfies ChartConfig
 
 const formatUsd = (n: number): string =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,

@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Search, Trash2, TrendingUp, TrendingDown, Clock, ChevronUp, ChevronDown, Star } from "lucide-react"
+import { Search, Trash2, TrendingUp, TrendingDown, Clock, ChevronUp, ChevronDown, Star, Activity } from "lucide-react"
 import { useWishlist } from "@/components/providers/wishlist-provider"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -47,16 +47,21 @@ const WishlistSummary = ({
   const stats = React.useMemo(() => {
     let topGainer = { symbol: "", change: -Infinity }
     let topLoser = { symbol: "", change: Infinity }
+    let totalChange = 0
+    let validCount = 0
 
     Object.entries(quotes).forEach(([symbol, q]) => {
       if (!q || q.dp === undefined) return
       if (q.dp > topGainer.change) topGainer = { symbol, change: q.dp }
       if (q.dp < topLoser.change) topLoser = { symbol, change: q.dp }
+      totalChange += q.dp
+      validCount++
     })
 
     return {
       topGainer: topGainer.symbol !== "" ? topGainer : null,
       topLoser: topLoser.symbol !== "" ? topLoser : null,
+      averageMove: validCount > 0 ? totalChange / validCount : null
     }
   }, [quotes])
 
@@ -81,11 +86,18 @@ const WishlistSummary = ({
       sub: stats.topLoser ? formatPct(stats.topLoser.change) : "No data",
       icon: TrendingDown,
       color: "text-finance-danger"
+    },
+    {
+      label: "Average Move",
+      value: stats.averageMove !== null ? formatPct(stats.averageMove) : "—",
+      sub: "Across wishlist",
+      icon: Activity,
+      color: stats.averageMove !== null ? (stats.averageMove >= 0 ? "text-finance-success" : "text-finance-danger") : "text-muted-foreground"
     }
   ]
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {summaryData.map((s) => (
         <Card key={s.label} className="group bg-card border-border/20 shadow-sm transition-all">
           <CardHeader className="p-4 pb-1.5 flex flex-row items-center justify-between space-y-0">
@@ -317,7 +329,7 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
-      <div className="mx-auto max-w-7xl space-y-10 px-4 py-12 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl space-y-10 px-6 py-10">
         <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">
             <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
@@ -467,7 +479,7 @@ export default function WishlistPage() {
             </Card>
           )}
         </div>
-      </div>
+      </main>
     </div>
   )
 }

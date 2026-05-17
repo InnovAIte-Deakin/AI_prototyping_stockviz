@@ -37,7 +37,7 @@ export const StockSymbolView = ({
 
   return (
     <div className={cn("min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground")}>
-      <div className={cn("mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-6", className)}>
+      <main className={cn("mx-auto w-full max-w-6xl space-y-6 px-6 py-10", className)}>
         <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
@@ -91,25 +91,25 @@ export const StockSymbolView = ({
 
         <EarningsCalendarWidget symbol={symbol} />
 
-        <TradeStockDialog 
-          isOpen={isBuyOpen} 
-          onOpenChange={setIsBuyOpen} 
-          mode="buy" 
-          symbol={symbol} 
-          currentPrice={currentPrice} 
-          availableCash={paperCashUsd} 
-          sharesOwned={initialSharesOwned}
-        />
-        <TradeStockDialog 
-          isOpen={isSellOpen} 
-          onOpenChange={setIsSellOpen} 
-          mode="sell" 
-          symbol={symbol} 
-          currentPrice={currentPrice} 
-          availableCash={paperCashUsd} 
-          sharesOwned={initialSharesOwned}
-        />
-      </div>
+      <TradeStockDialog 
+        isOpen={isBuyOpen} 
+        onOpenChange={setIsBuyOpen} 
+        mode="buy" 
+        symbol={symbol} 
+        currentPrice={currentPrice} 
+        availableCash={paperCashUsd} 
+        sharesOwned={initialSharesOwned}
+      />
+      <TradeStockDialog 
+        isOpen={isSellOpen} 
+        onOpenChange={setIsSellOpen} 
+        mode="sell" 
+        symbol={symbol} 
+        currentPrice={currentPrice} 
+        availableCash={paperCashUsd} 
+        sharesOwned={initialSharesOwned}
+      />
+      </main>
     </div>
   )
 }

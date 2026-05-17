@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { Wallet, Banknote, LineChart, PieChart } from "lucide-react"
 
 const formatUsd = (n: number): string =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,

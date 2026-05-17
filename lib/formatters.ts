@@ -8,7 +8,7 @@
  */
 export const formatUsd = (n: number | null): string => {
   if (n === null) return "—"
-  return new Intl.NumberFormat(undefined, {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
@@ -42,7 +42,7 @@ export const formatWhen = (dateStr: string | null): string => {
  */
 export const formatCompactNumber = (n: number | null): string => {
   if (n === null) return "—"
-  return new Intl.NumberFormat(undefined, {
+  return new Intl.NumberFormat("en-US", {
     notation: "compact",
     maximumFractionDigits: 1,
   }).format(n)

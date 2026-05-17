@@ -150,10 +150,12 @@
 
   body {
     @apply bg-background text-foreground transition-colors duration-300 ease-in-out;
+    overflow-x: hidden;
   }
 
   html {
     @apply font-sans;
+    overflow-x: hidden;
   }
 
   /* Premium Light Scrollbar */
