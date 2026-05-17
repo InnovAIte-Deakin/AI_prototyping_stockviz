@@ -20,7 +20,7 @@ import {
 import { cn } from "@/lib/utils"
 
 const formatUsd = (n: number): string =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 0,
@@ -43,6 +43,8 @@ type PortfolioPerformanceChartProps = {
 }
 
 export const PortfolioPerformanceChart = ({ currentBalance, history, className }: PortfolioPerformanceChartProps) => {
+  const [range, setRange] = React.useState("1M")
+
   const chartData = React.useMemo(() => {
     return history.map(p => ({
       date: new Date(p.recorded_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
@@ -81,15 +83,50 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
             30-day estimated value trend
           </CardDescription>
         </div>
-        <div className={cn(
-          "flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-bold",
-          isPositive ? "bg-finance-success/10 text-finance-success border border-finance-success/20" : "bg-finance-danger/10 text-finance-danger border border-finance-danger/20"
-        )}>
-          {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-          {isPositive ? "+" : ""}{totalChangePct.toFixed(2)}%
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-1 bg-muted/50 p-1 rounded-lg border border-border/10">
+            {["1D", "1W", "1M", "3M", "All"].map((r) => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-bold rounded-md transition-colors",
+                  range === r 
+                    ? "bg-background text-foreground shadow-sm ring-1 ring-border/10" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+          <div className={cn(
+            "flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-bold",
+            isPositive ? "bg-finance-success/10 text-finance-success border border-finance-success/20" : "bg-finance-danger/10 text-finance-danger border border-finance-danger/20"
+          )}>
+            {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+            {isPositive ? "+" : ""}{totalChangePct.toFixed(2)}%
+          </div>
         </div>
       </CardHeader>
       <CardContent>
+        {/* Mobile range buttons */}
+        <div className="sm:hidden flex items-center justify-between gap-1 bg-muted/50 p-1 rounded-lg border border-border/10 mb-6">
+          {["1D", "1W", "1M", "3M", "All"].map((r) => (
+            <button
+              key={r}
+              onClick={() => setRange(r)}
+              className={cn(
+                "flex-1 py-1 text-[10px] font-bold rounded-md transition-colors",
+                range === r 
+                  ? "bg-background text-foreground shadow-sm ring-1 ring-border/10" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              )}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
         <ChartContainer config={chartConfig} className="h-[320px] w-full [&_.recharts-surface]:outline-none">
           <LineChart
             accessibilityLayer
@@ -140,10 +177,19 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
             />
           </LineChart>
         </ChartContainer>
+
+        {Math.abs(totalChangePct) < 0.1 && chartData.length > 0 && (
+          <div className="mt-4 bg-muted/30 border border-border/10 rounded-lg p-3 text-center">
+            <p className="text-xs font-medium text-muted-foreground">
+              Your portfolio is currently stable because current prices are close to your average buy prices.
+            </p>
+          </div>
+        )}
+
         <div className="mt-6 flex items-center justify-between text-xs font-medium text-muted-foreground border-t border-border/10 pt-5">
           <div className="flex flex-col gap-0.5">
             <span className="text-xs font-medium text-muted-foreground">Starting Balance</span>
-            <span className="text-foreground text-sm font-bold">{new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(firstValue)}</span>
+            <span className="text-foreground text-sm font-bold">{new Intl.NumberFormat("en-US", { style: 'currency', currency: 'USD' }).format(firstValue)}</span>
           </div>
           <div className="flex flex-col gap-0.5 text-right">
             <span className="text-xs font-medium text-muted-foreground">Total Return</span>

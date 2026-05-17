@@ -88,7 +88,7 @@ type LearningModule = {
 }
 
 const formatUsd = (value: number, digits = 0): string =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: digits,
@@ -96,7 +96,7 @@ const formatUsd = (value: number, digits = 0): string =>
   }).format(value)
 
 const formatCompactUsd = (value: number): string =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     notation: "compact",

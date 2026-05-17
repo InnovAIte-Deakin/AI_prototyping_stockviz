@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
 const formatUsd = (n: number): string =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,

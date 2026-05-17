@@ -11,7 +11,7 @@ import { fetchMarkPricesBySymbol } from "@/lib/portfolio/mark-prices"
 import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/data"
 
 const formatUsd = (n: number): string =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
