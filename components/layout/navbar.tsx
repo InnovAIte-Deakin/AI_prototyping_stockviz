@@ -18,6 +18,7 @@ import {
   Activity,
   Sliders,
   Star,
+  Scale,
 } from 'lucide-react'
 import { StockSymbolSearch } from '@/components/layout/stock-symbol-search'
 import {
@@ -72,6 +73,12 @@ const navItems = [
     label: 'Weights',
     icon: Sliders,
     description: 'Analysis weights',
+  },
+  {
+    href: '/compare',
+    label: 'Compare',
+    icon: Scale,
+    description: 'Compare stocks',
   },
 ]
 
