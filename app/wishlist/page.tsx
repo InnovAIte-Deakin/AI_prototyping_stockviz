@@ -317,7 +317,7 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
-      <div className="mx-auto max-w-7xl space-y-10 px-4 py-12 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl space-y-10 px-6 py-10">
         <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">
             <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
@@ -467,7 +467,7 @@ export default function WishlistPage() {
             </Card>
           )}
         </div>
-      </div>
+      </main>
     </div>
   )
 }

@@ -1261,7 +1261,7 @@ function ModuleChart({ moduleId }: { moduleId: string }) {
 export function LearnExperience() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
-      <div className="mx-auto max-w-7xl space-y-10 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <main className="mx-auto w-full max-w-6xl space-y-10 px-6 py-10">
         <section className="relative overflow-hidden rounded-3xl border border-border/20 bg-card/80 shadow-md shadow-foreground/5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(173,179,178,0.16),transparent_42%)]" />
           <div className="relative grid gap-8 px-6 py-8 lg:grid-cols-[minmax(0,1.2fr)_340px] lg:px-8 lg:py-10">
@@ -1454,7 +1454,7 @@ export function LearnExperience() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

@@ -86,7 +86,7 @@ export default async function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
-      <div className="mx-auto w-full max-w-7xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl space-y-12 px-6 py-10">
         <header className="space-y-2">
           <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Portfolio
@@ -254,7 +254,7 @@ export default async function PortfolioPage() {
             )}
           </CardContent>
         </Card>
-      </div>
+      </main>
     </div>
   )
 }

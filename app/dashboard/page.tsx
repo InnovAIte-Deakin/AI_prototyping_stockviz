@@ -77,7 +77,7 @@ const DashboardPage = async () => {
         )}
       </section>
 
-      <div className="mx-auto max-w-7xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl space-y-12 px-6 py-10">
         {/* Header Section */}
         <header className="space-y-8">
           <div className="space-y-2">
@@ -127,7 +127,7 @@ const DashboardPage = async () => {
             />
           )}
         </section>
-      </div>
+      </main>
     </div>
   )
 }
