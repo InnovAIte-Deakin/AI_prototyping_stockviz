@@ -14,6 +14,7 @@ import { TrendingUp, TrendingDown } from "lucide-react"
 import { TradeStockDialog } from "@/components/stock/trade-stock-dialog"
 import { useFinnhubQuote } from "@/hooks/use-finnhub-stock-data"
 import { PriceTriggerPanel } from "@/components/stock/price-trigger-panel"
+import EarningsCalendarWidget from "@/components/stock/widgets/earnings-calendar-widget"
 
 type StockSymbolViewProps = {
   symbol: string
@@ -73,22 +74,22 @@ export const StockSymbolView = ({
           </div>
         </header>
 
-      <QuoteWidget 
-        symbol={symbol} 
-      />
+        <QuoteWidget symbol={symbol} />
 
-      <TechnicalAnalysisPanel symbol={symbol} />
+        <TechnicalAnalysisPanel symbol={symbol} />
 
-      <PriceHistoryChart symbol={symbol} />
+        <PriceHistoryChart symbol={symbol} />
 
-      <PriceTriggerPanel symbol={symbol} currentPrice={currentPrice} />
+        <PriceTriggerPanel symbol={symbol} currentPrice={currentPrice} />
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <BasicFinancialsWidget symbol={symbol} className="min-h-0 md:col-span-1" />
-        <RecommendationWidget symbol={symbol} className="min-h-0 md:col-span-1" />
-      </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <BasicFinancialsWidget symbol={symbol} className="min-h-0 md:col-span-1" />
+          <RecommendationWidget symbol={symbol} className="min-h-0 md:col-span-1" />
+        </div>
 
-      <PeersWidget symbol={symbol} />
+        <PeersWidget symbol={symbol} />
+
+        <EarningsCalendarWidget symbol={symbol} />
 
       <TradeStockDialog 
         isOpen={isBuyOpen} 
