@@ -46,11 +46,68 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
   const [range, setRange] = React.useState("1M")
 
   const chartData = React.useMemo(() => {
-    return history.map(p => ({
-      date: new Date(p.recorded_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+    // 1. Sort history chronologically
+    const data = [...history].map(p => ({
+      time: new Date(p.recorded_at).getTime(),
       value: p.total_value_usd
-    }))
-  }, [history])
+    })).sort((a, b) => a.time - b.time)
+
+    const nowTime = new Date().getTime()
+    
+    let startTime = data.length > 0 ? data[0].time : nowTime
+    let interval = 24 * 60 * 60 * 1000 // 1 day
+    
+    if (range === "1D") {
+      startTime = nowTime - 24 * 60 * 60 * 1000
+      interval = 60 * 60 * 1000 // 1 hour
+    } else if (range === "1W") {
+      startTime = nowTime - 7 * 24 * 60 * 60 * 1000
+    } else if (range === "1M") {
+      startTime = nowTime - 30 * 24 * 60 * 60 * 1000
+    } else if (range === "3M") {
+      startTime = nowTime - 90 * 24 * 60 * 60 * 1000
+    } else if (range === "All") {
+      if (nowTime - startTime < 2 * 24 * 60 * 60 * 1000) {
+        startTime = nowTime - 2 * 24 * 60 * 60 * 1000 // At least show 2 days for "All"
+      }
+    }
+
+    const result = []
+    let currentTime = startTime
+    
+    const getValueAtTime = (t: number) => {
+      let val = 1000000 // default starting balance
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].time <= t) {
+          val = data[i].value
+        } else {
+          break
+        }
+      }
+      return val
+    }
+
+    // Generate points
+    while (currentTime <= nowTime) {
+      const dateObj = new Date(currentTime)
+      result.push({
+        timestamp: currentTime,
+        date: range === "1D" 
+          ? dateObj.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+          : dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+        value: getValueAtTime(currentTime)
+      })
+      currentTime += interval
+    }
+
+    // Replace the last point's value with the live currentBalance
+    if (result.length > 0) {
+      result[result.length - 1].value = currentBalance
+      result[result.length - 1].date = "Now"
+    }
+
+    return result
+  }, [history, range, currentBalance])
 
   if (history.length === 0) {
     return (
@@ -80,7 +137,7 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
         <div className="space-y-1">
           <CardTitle className="text-xl font-bold text-primary">Portfolio Performance</CardTitle>
           <CardDescription className="text-muted-foreground">
-            30-day estimated value trend
+            {range === "1D" ? "24-hour" : range === "1W" ? "7-day" : range === "1M" ? "30-day" : range === "3M" ? "90-day" : "All-time"} estimated value trend
           </CardDescription>
         </div>
         <div className="flex items-center gap-4">
