@@ -2,9 +2,12 @@ import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   BarChart3,
+  BookOpen,
   Globe,
+  Scale,
   ServerCog,
   Sliders,
+  Star,
   TrendingUp,
 } from "lucide-react";
 
@@ -44,6 +47,30 @@ export const primaryNavItems: ShellNavItem[] = [
     href: "/portfolio",
     status: "live",
     matchPrefixes: ["/portfolio"],
+  },
+  {
+    label: "Wishlist",
+    description: "Track saved symbols and jump back into research quickly.",
+    icon: Star,
+    href: "/wishlist",
+    status: "live",
+    matchPrefixes: ["/wishlist"],
+  },
+  {
+    label: "Compare",
+    description: "Compare symbols side by side with the new comparison surface.",
+    icon: Scale,
+    href: "/compare",
+    status: "live",
+    matchPrefixes: ["/compare"],
+  },
+  {
+    label: "Learn",
+    description: "Open the guided learning center for investing concepts.",
+    icon: BookOpen,
+    href: "/learn",
+    status: "live",
+    matchPrefixes: ["/learn"],
   },
   {
     label: "Admin",
@@ -91,6 +118,21 @@ export const liveRouteShortcuts = [
     href: "/portfolio",
     description:
       "View, add, edit, and delete persisted holdings for the signed-in user.",
+  },
+  {
+    label: "Wishlist",
+    href: "/wishlist",
+    description: "Review saved symbols and current quote movement.",
+  },
+  {
+    label: "Compare",
+    href: "/compare",
+    description: "Compare multiple symbols in one workspace.",
+  },
+  {
+    label: "Learn",
+    href: "/learn",
+    description: "Explore guided investing concepts.",
   },
   {
     label: "Sample analysis",

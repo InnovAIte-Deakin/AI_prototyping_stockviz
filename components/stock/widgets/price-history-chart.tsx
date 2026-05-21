@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   CartesianGrid,
   Line,
@@ -8,766 +8,166 @@ import {
   ReferenceArea,
   XAxis,
   YAxis,
-} from "recharts";
-import { AlertCircle, RefreshCw, X } from "lucide-react";
+} from "recharts"
+import { AlertCircle, RefreshCw, X } from "lucide-react"
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import type { ChartConfig } from "@/components/ui/chart";
+} from "@/components/ui/card"
+import type { ChartConfig } from "@/components/ui/chart"
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@/components/ui/chart"
 import {
   Popover,
   PopoverAnchor,
   PopoverContent,
-} from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@/components/ui/popover"
+import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 import {
   type PriceHistoryTab,
-  usePriceSeries,
-} from "@/hooks/use-price-series";
+  useAlphaVantageSeries,
+} from "@/hooks/use-alpha-vantage-series"
 import {
   computeSelectedRangeStats,
   findChartIndicesForUserDates,
   type ChartBarForRange,
   type SelectedRangePayload,
-} from "@/lib/stocks/compute-price-range-stats";
-import type { RangeExplanation } from "@/lib/stocks/explain-range-schema";
-import { cn } from "@/lib/utils";
+} from "@/lib/stocks/compute-price-range-stats"
+import type { RangeExplanation } from "@/lib/stocks/explain-range-schema"
+import { cn } from "@/lib/utils"
 
 type PriceHistoryChartProps = {
-  symbol: string;
-  companyName?: string;
-  className?: string;
-};
-
-type CommittedSelection = { hi: number; lo: number };
+  symbol: string
+  companyName?: string
+  className?: string
+}
 
 const chartConfig = {
   close: {
-    color: "var(--chart-1)",
     label: "Close",
+    color: "var(--chart-1)",
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
-const formatUsd = (value: number): string =>
-  new Intl.NumberFormat(undefined, {
-    currency: "USD",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
+const formatUsd = (n: number): string =>
+  new Intl.NumberFormat("en-US", {
     style: "currency",
-  }).format(value);
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n)
 
 const toRowsFromDailyMonthly = (
   points: Array<{
-    date: string;
-    open: number;
-    high: number;
-    low: number;
-    close: number;
-    volume: number;
-  }>,
+    date: string
+    open: number
+    high: number
+    low: number
+    close: number
+    volume: number
+  }>
 ): ChartBarForRange[] =>
-  points.map((point) => ({
-    close: point.close,
-    high: point.high,
-    low: point.low,
-    open: point.open,
-    period: point.date,
-    volume: point.volume,
-  }));
+  points.map((p) => ({
+    period: p.date,
+    open: p.open,
+    high: p.high,
+    low: p.low,
+    close: p.close,
+    volume: p.volume,
+  }))
 
 const toRowsFromYearly = (
   points: Array<{
-    year: string;
-    open: number;
-    high: number;
-    low: number;
-    close: number;
-    volume: number;
-  }>,
+    year: string
+    open: number
+    high: number
+    low: number
+    close: number
+    volume: number
+  }>
 ): ChartBarForRange[] =>
-  points.map((point) => ({
-    close: point.close,
-    high: point.high,
-    low: point.low,
-    open: point.open,
-    period: point.year,
-    volume: point.volume,
-  }));
+  points.map((p) => ({
+    period: p.year,
+    open: p.open,
+    high: p.high,
+    low: p.low,
+    close: p.close,
+    volume: p.volume,
+  }))
 
 const formatPeriodLabel = (tab: PriceHistoryTab, period: string): string => {
-  if (tab === "yearly") return period;
-
-  const date = new Date(`${period}T12:00:00Z`);
-  if (Number.isNaN(date.getTime())) return period;
-
-  if (tab === "monthly") {
-    return date.toLocaleDateString(undefined, {
-      month: "short",
-      year: "numeric",
-    });
+  if (tab === "yearly") {
+    return period
   }
-
-  return date.toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-};
+  if (tab === "monthly") {
+    const d = new Date(`${period}T12:00:00Z`)
+    if (!Number.isNaN(d.getTime())) {
+      return d.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+      })
+    }
+  }
+  const d = new Date(`${period}T12:00:00Z`)
+  if (!Number.isNaN(d.getTime())) {
+    return d.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+  }
+  return period
+}
 
 const formatShortRange = (from: string, to: string): string => {
-  const fromDate = new Date(`${from}T12:00:00Z`);
-  const toDate = new Date(`${to}T12:00:00Z`);
-
-  if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) {
-    return `${from} - ${to}`;
+  const d0 = new Date(`${from}T12:00:00Z`)
+  const d1 = new Date(`${to}T12:00:00Z`)
+  if (Number.isNaN(d0.getTime()) || Number.isNaN(d1.getTime())) {
+    return `${from} – ${to}`
   }
-
-  const options: Intl.DateTimeFormatOptions = {
-    day: "numeric",
+  const o: Intl.DateTimeFormatOptions = {
     month: "short",
+    day: "numeric",
     year: "numeric",
-  };
-
-  return `${fromDate.toLocaleDateString(
-    undefined,
-    options,
-  )} - ${toDate.toLocaleDateString(undefined, options)}`;
-};
+  }
+  return `${d0.toLocaleDateString(undefined, o)} – ${d1.toLocaleDateString(undefined, o)}`
+}
 
 const readActiveIndex = (state: unknown): number | null => {
-  if (!state || typeof state !== "object") return null;
-
-  const index = (state as { activeTooltipIndex?: number }).activeTooltipIndex;
-  if (typeof index !== "number" || index < 0) return null;
-
-  return index;
-};
+  if (!state || typeof state !== "object") {
+    return null
+  }
+  const idx = (state as { activeTooltipIndex?: number }).activeTooltipIndex
+  if (typeof idx !== "number" || idx < 0) {
+    return null
+  }
+  return idx
+}
 
 const cacheKeyForRange = (
   symbol: string,
-  payload: SelectedRangePayload,
+  payload: SelectedRangePayload
 ): string =>
-  `${symbol.trim().toUpperCase()}:${payload.from}:${payload.to}:${payload.percentageChange.toFixed(
-    2,
-  )}`;
+  `${symbol.trim().toUpperCase()}:${payload.from}:${payload.to}:${payload.percentageChange.toFixed(2)}`
 
-export const PriceHistoryChart = ({
-  symbol,
-  companyName,
-  className,
-}: PriceHistoryChartProps) => {
-  const [tab, setTab] = React.useState<PriceHistoryTab>("daily");
-  const {
-    daily,
-    monthly,
-    yearly,
-    errorDaily,
-    errorMonthly,
-    isLoadingDaily,
-    isLoadingMonthly,
-  } = usePriceSeries(symbol, tab);
-
-  const handleTabChange = (value: string) => {
-    if (value === "daily" || value === "monthly" || value === "yearly") {
-      setTab(value);
-    }
-  };
-
-  const dailyRows = React.useMemo(
-    () => (daily ? toRowsFromDailyMonthly(daily) : []),
-    [daily],
-  );
-  const monthlyRows = React.useMemo(
-    () => (monthly ? toRowsFromDailyMonthly(monthly) : []),
-    [monthly],
-  );
-  const yearlyRows = React.useMemo(
-    () => (yearly.length > 0 ? toRowsFromYearly(yearly) : []),
-    [yearly],
-  );
-
-  return (
-    <Card className={cn(className)}>
-      <CardHeader>
-        <CardTitle>Price history</CardTitle>
-        <CardDescription>
-          Historical OHLC from the configured market-data provider; yearly bars
-          are aggregated from monthly data.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Tabs value={tab} onValueChange={handleTabChange}>
-          <TabsList aria-label="Price history range">
-            <TabsTrigger value="daily">Daily</TabsTrigger>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="yearly">Yearly</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="daily" className="mt-4 min-h-[320px]">
-            <SelectableChartSection
-              chartRows={dailyRows}
-              companyName={companyName}
-              errorMessage={errorDaily}
-              showError={Boolean(errorDaily)}
-              showLoading={isLoadingDaily}
-              symbol={symbol}
-              tab="daily"
-            />
-          </TabsContent>
-          <TabsContent value="monthly" className="mt-4 min-h-[320px]">
-            <SelectableChartSection
-              chartRows={monthlyRows}
-              companyName={companyName}
-              errorMessage={errorMonthly}
-              showError={Boolean(errorMonthly)}
-              showLoading={isLoadingMonthly}
-              symbol={symbol}
-              tab="monthly"
-            />
-          </TabsContent>
-          <TabsContent value="yearly" className="mt-4 min-h-[320px]">
-            <SelectableChartSection
-              chartRows={yearlyRows}
-              companyName={companyName}
-              errorMessage={errorMonthly}
-              showError={Boolean(errorMonthly)}
-              showLoading={isLoadingMonthly}
-              symbol={symbol}
-              tab="yearly"
-            />
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
-};
-
-const SelectableChartSection = ({
-  tab,
-  chartRows,
-  symbol,
-  companyName,
-  showLoading,
-  showError,
-  errorMessage,
-}: {
-  tab: PriceHistoryTab;
-  chartRows: ChartBarForRange[];
-  symbol: string;
-  companyName?: string;
-  showLoading: boolean;
-  showError: boolean;
-  errorMessage: string | null;
-}) => {
-  const [isSelecting, setIsSelecting] = React.useState(false);
-  const [, forceDragRender] = React.useReducer((value: number) => value + 1, 0);
-  const [committed, setCommitted] =
-    React.useState<CommittedSelection | null>(null);
-  const [popoverOpen, setPopoverOpen] = React.useState(false);
-  const [rangeStats, setRangeStats] =
-    React.useState<SelectedRangePayload | null>(null);
-  const [explanation, setExplanation] =
-    React.useState<RangeExplanation | null>(null);
-  const [explainLoading, setExplainLoading] = React.useState(false);
-  const [explainError, setExplainError] = React.useState<string | null>(null);
-  const [mobileFrom, setMobileFrom] = React.useState("");
-  const [mobileTo, setMobileTo] = React.useState("");
-  const isSelectingRef = React.useRef(false);
-  const dragRef = React.useRef({ a: 0, b: 0 });
-  const explainCache = React.useRef(new Map<string, RangeExplanation>());
-  const abortRef = React.useRef<AbortController | null>(null);
-  const isYearlyTab = tab === "yearly";
-
-  const clearSelection = React.useCallback(() => {
-    abortRef.current?.abort();
-    abortRef.current = null;
-    isSelectingRef.current = false;
-    setIsSelecting(false);
-    setCommitted(null);
-    setPopoverOpen(false);
-    setRangeStats(null);
-    setExplanation(null);
-    setExplainError(null);
-    setExplainLoading(false);
-  }, []);
-
-  React.useEffect(() => {
-    clearSelection();
-    setMobileFrom("");
-    setMobileTo("");
-  }, [tab, symbol, clearSelection]);
-
-  const runExplainRequest = React.useCallback(
-    async (stats: SelectedRangePayload) => {
-      const key = cacheKeyForRange(symbol, stats);
-      const cached = explainCache.current.get(key);
-      if (cached) {
-        setExplanation(cached);
-        setExplainError(null);
-        setExplainLoading(false);
-        return;
-      }
-
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-
-      setExplanation(null);
-      setExplainError(null);
-      setExplainLoading(true);
-
-      try {
-        const response = await fetch("/api/stocks/explain-range", {
-          body: JSON.stringify({
-            ...stats,
-            companyName: companyName?.trim() || undefined,
-            symbol: symbol.trim().toUpperCase(),
-          }),
-          headers: { "Content-Type": "application/json" },
-          method: "POST",
-          signal: controller.signal,
-        });
-        const json = (await response.json()) as
-          | RangeExplanation
-          | { error?: string };
-
-        if (controller.signal.aborted) return;
-
-        if (!response.ok) {
-          setExplainError(
-            typeof (json as { error?: string }).error === "string"
-              ? (json as { error: string }).error
-              : "Could not generate explanation right now.",
-          );
-          return;
-        }
-
-        if ("summary" in json && "mainDrivers" in json) {
-          const value = json as RangeExplanation;
-          explainCache.current.set(key, value);
-          setExplanation(value);
-        } else {
-          setExplainError("Could not generate explanation right now.");
-        }
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-        setExplainError("Could not generate explanation right now.");
-      } finally {
-        if (!controller.signal.aborted) {
-          setExplainLoading(false);
-        }
-      }
-    },
-    [companyName, symbol],
-  );
-
-  const commitSelection = React.useCallback(
-    (lo: number, hi: number) => {
-      if (hi - lo < 1) return;
-
-      const stats = computeSelectedRangeStats(chartRows, lo, hi, isYearlyTab);
-      if (!stats) return;
-
-      setCommitted({ hi, lo });
-      setRangeStats(stats);
-      setPopoverOpen(true);
-      void runExplainRequest(stats);
-    },
-    [chartRows, isYearlyTab, runExplainRequest],
-  );
-
-  const finalizeDrag = React.useCallback(() => {
-    if (!isSelectingRef.current) return;
-
-    isSelectingRef.current = false;
-    setIsSelecting(false);
-
-    commitSelection(
-      Math.min(dragRef.current.a, dragRef.current.b),
-      Math.max(dragRef.current.a, dragRef.current.b),
-    );
-  }, [commitSelection]);
-
-  React.useEffect(() => {
-    if (!isSelecting) return;
-
-    const handleWindowPointerEnd = () => {
-      finalizeDrag();
-    };
-
-    window.addEventListener("mouseup", handleWindowPointerEnd);
-    window.addEventListener("touchend", handleWindowPointerEnd);
-
-    return () => {
-      window.removeEventListener("mouseup", handleWindowPointerEnd);
-      window.removeEventListener("touchend", handleWindowPointerEnd);
-    };
-  }, [finalizeDrag, isSelecting]);
-
-  const handleChartMouseDown = React.useCallback(
-    (state: unknown) => {
-      const index = readActiveIndex(state);
-      if (index === null || index >= chartRows.length) return;
-
-      dragRef.current = { a: index, b: index };
-      isSelectingRef.current = true;
-      setIsSelecting(true);
-      forceDragRender();
-    },
-    [chartRows.length],
-  );
-
-  const handleChartMouseMove = React.useCallback(
-    (state: unknown) => {
-      if (!isSelectingRef.current) return;
-
-      const index = readActiveIndex(state);
-      if (index === null || index >= chartRows.length) return;
-
-      dragRef.current.b = index;
-      forceDragRender();
-    },
-    [chartRows.length],
-  );
-
-  const handleRetry = React.useCallback(() => {
-    if (rangeStats) {
-      void runExplainRequest(rangeStats);
-    }
-  }, [rangeStats, runExplainRequest]);
-
-  const handleApplyMobileRange = React.useCallback(() => {
-    if (!mobileFrom || !mobileTo) return;
-
-    const fromIso =
-      tab === "monthly"
-        ? `${mobileFrom}-01`
-        : tab === "yearly"
-          ? `${mobileFrom}-01-01`
-          : mobileFrom;
-    const toIso =
-      tab === "monthly"
-        ? `${mobileTo}-01`
-        : tab === "yearly"
-          ? `${mobileTo}-12-31`
-          : mobileTo;
-    const found = findChartIndicesForUserDates(chartRows, tab, fromIso, toIso);
-    if (!found) return;
-
-    commitSelection(
-      Math.min(found.start, found.end),
-      Math.max(found.start, found.end),
-    );
-  }, [chartRows, commitSelection, mobileFrom, mobileTo, tab]);
-
-  if (showLoading) {
-    return (
-      <div className="space-y-3 pt-2">
-        <Skeleton className="h-[280px] w-full rounded-lg" />
-      </div>
-    );
-  }
-
-  if (showError && errorMessage) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle />
-        <AlertTitle>Could not load price history</AlertTitle>
-        <AlertDescription>{errorMessage}</AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (chartRows.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        No price data for this range.
-      </p>
-    );
-  }
-
-  const provisional =
-    isSelecting && isSelectingRef.current
-      ? {
-          hi: Math.max(dragRef.current.a, dragRef.current.b),
-          lo: Math.min(dragRef.current.a, dragRef.current.b),
-        }
-      : committed;
-  const referenceArea =
-    provisional && provisional.hi > provisional.lo ? (
-      <ReferenceArea
-        fill="var(--chart-1)"
-        fillOpacity={0.12}
-        strokeOpacity={0.4}
-        x1={chartRows[provisional.lo].period}
-        x2={chartRows[provisional.hi].period}
-      />
-    ) : null;
-
-  return (
-    <div className="relative space-y-3">
-      <ChartContainer
-        className="aspect-auto h-[min(360px,50vh)] w-full"
-        config={chartConfig}
-      >
-        <LineChart
-          accessibilityLayer
-          data={chartRows}
-          margin={{ bottom: 8, left: 8, right: 8, top: 8 }}
-          onMouseDown={handleChartMouseDown}
-          onMouseMove={handleChartMouseMove}
-        >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis
-            axisLine={false}
-            dataKey="period"
-            minTickGap={24}
-            tickFormatter={(value) =>
-              typeof value === "string"
-                ? formatPeriodLabel(tab, value)
-                : String(value)
-            }
-            tickLine={false}
-            tickMargin={8}
-          />
-          <YAxis
-            axisLine={false}
-            domain={["auto", "auto"]}
-            tickFormatter={(value) =>
-              typeof value === "number" ? formatUsd(value) : String(value)
-            }
-            tickLine={false}
-            tickMargin={8}
-            width={56}
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                formatter={(value) =>
-                  typeof value === "number" ? formatUsd(value) : String(value)
-                }
-                labelFormatter={(_, payload) => {
-                  const point = payload?.[0]?.payload as
-                    | ChartBarForRange
-                    | undefined;
-                  return formatPeriodLabel(tab, point?.period ?? "");
-                }}
-              />
-            }
-          />
-          {referenceArea}
-          <Line
-            activeDot={{ r: 4 }}
-            dataKey="close"
-            dot={false}
-            isAnimationActive={false}
-            stroke="var(--color-close)"
-            strokeWidth={2}
-            type="monotone"
-          />
-        </LineChart>
-      </ChartContainer>
-
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <div className="text-muted-foreground text-xs">
-          {rangeStats
-            ? `${formatShortRange(rangeStats.from, rangeStats.to)} (${rangeStats.percentageChange >= 0 ? "+" : ""}${rangeStats.percentageChange.toFixed(2)}%)`
-            : "Range explanation available"}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {rangeStats && !popoverOpen ? (
-            <Button
-              onClick={() => setPopoverOpen(true)}
-              size="sm"
-              type="button"
-              variant="secondary"
-            >
-              View explanation
-            </Button>
-          ) : null}
-          {committed ? (
-            <Button
-              onClick={clearSelection}
-              size="sm"
-              type="button"
-              variant="outline"
-            >
-              Clear selection
-            </Button>
-          ) : null}
-        </div>
-      </div>
-
-      <MobileRangeInputs
-        from={mobileFrom}
-        onApply={handleApplyMobileRange}
-        onFromChange={setMobileFrom}
-        onToChange={setMobileTo}
-        tab={tab}
-        to={mobileTo}
-      />
-
-      {rangeStats ? (
-        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-          <PopoverAnchor className="pointer-events-none absolute top-2 right-2 h-1 w-1" />
-          <PopoverContent
-            align="end"
-            className="w-[420px] max-w-[calc(100vw-2rem)] p-4"
-            onOpenAutoFocus={(event) => event.preventDefault()}
-            side="left"
-            sideOffset={8}
-          >
-            <ExplainRangePopoverBody
-              companyName={companyName}
-              errorMessage={explainError}
-              explanation={explanation}
-              isLoading={explainLoading}
-              onClose={() => setPopoverOpen(false)}
-              onRetry={handleRetry}
-              rangeStats={rangeStats}
-              symbol={symbol}
-              tab={tab}
-            />
-          </PopoverContent>
-        </Popover>
-      ) : null}
-    </div>
-  );
-};
-
-const MobileRangeInputs = ({
-  tab,
-  from,
-  to,
-  onFromChange,
-  onToChange,
-  onApply,
-}: {
-  tab: PriceHistoryTab;
-  from: string;
-  to: string;
-  onFromChange: (value: string) => void;
-  onToChange: (value: string) => void;
-  onApply: () => void;
-}) => (
-  <div className="border-border/60 bg-muted/10 space-y-2 rounded-lg border p-3 md:hidden">
-    <p className="text-muted-foreground text-xs font-medium">
-      {tab === "daily"
-        ? "Date range"
-        : tab === "monthly"
-          ? "Month range"
-          : "Year range"}
-    </p>
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-      {tab === "daily" ? (
-        <>
-          <DateInput
-            label="From"
-            onChange={onFromChange}
-            type="date"
-            value={from}
-          />
-          <DateInput
-            label="To"
-            onChange={onToChange}
-            type="date"
-            value={to}
-          />
-        </>
-      ) : null}
-      {tab === "monthly" ? (
-        <>
-          <DateInput
-            label="From"
-            onChange={onFromChange}
-            type="month"
-            value={from}
-          />
-          <DateInput
-            label="To"
-            onChange={onToChange}
-            type="month"
-            value={to}
-          />
-        </>
-      ) : null}
-      {tab === "yearly" ? (
-        <>
-          <DateInput
-            label="From year"
-            max={2100}
-            min={1900}
-            onChange={onFromChange}
-            placeholder="2020"
-            type="number"
-            value={from}
-          />
-          <DateInput
-            label="To year"
-            max={2100}
-            min={1900}
-            onChange={onToChange}
-            placeholder="2024"
-            type="number"
-            value={to}
-          />
-        </>
-      ) : null}
-      <Button className="w-full sm:w-auto" onClick={onApply} size="sm" type="button">
-        Explain range
-      </Button>
-    </div>
-  </div>
-);
-
-const DateInput = ({
-  label,
-  type,
-  value,
-  onChange,
-  min,
-  max,
-  placeholder,
-}: {
-  label: string;
-  type: "date" | "month" | "number";
-  value: string;
-  onChange: (value: string) => void;
-  min?: number;
-  max?: number;
-  placeholder?: string;
-}) => (
-  <label className="flex flex-col gap-1 text-xs">
-    <span className="text-muted-foreground">{label}</span>
-    <input
-      className="border-input bg-background h-8 rounded-md border px-2 text-sm"
-      inputMode={type === "number" ? "numeric" : undefined}
-      max={max}
-      min={min}
-      onChange={(event) => onChange(event.target.value)}
-      placeholder={placeholder}
-      type={type}
-      value={value}
-    />
-  </label>
-);
+type CommittedSelection = { lo: number; hi: number }
 
 const ExplainRangePopoverBody = ({
   symbol,
@@ -780,74 +180,75 @@ const ExplainRangePopoverBody = ({
   onRetry,
   onClose,
 }: {
-  symbol: string;
-  companyName?: string;
-  rangeStats: SelectedRangePayload;
-  tab: PriceHistoryTab;
-  explanation: RangeExplanation | null;
-  isLoading: boolean;
-  errorMessage: string | null;
-  onRetry: () => void;
-  onClose: () => void;
+  symbol: string
+  companyName?: string
+  rangeStats: SelectedRangePayload
+  tab: PriceHistoryTab
+  explanation: RangeExplanation | null
+  isLoading: boolean
+  errorMessage: string | null
+  onRetry: () => void
+  onClose: () => void
 }) => {
-  const directionClass =
-    rangeStats.direction === "up"
-      ? "text-emerald-600 dark:text-emerald-400"
-      : rangeStats.direction === "down"
-        ? "text-red-600 dark:text-red-400"
-        : "text-muted-foreground";
+  const dir = rangeStats.direction
+  const badgeVariant =
+    dir === "up"
+      ? "text-finance-success"
+      : dir === "down"
+        ? "text-finance-danger"
+        : "text-muted-foreground"
 
   return (
     <div className="flex max-h-[min(70vh,520px)] flex-col gap-3 overflow-y-auto">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-heading text-sm font-semibold">{symbol}</p>
+          <p className="font-heading text-sm font-bold text-foreground">{symbol}</p>
           {companyName ? (
-            <p className="text-muted-foreground text-xs">{companyName}</p>
+            <p className="text-muted-foreground text-xs font-medium">{companyName}</p>
           ) : null}
-          <p className="text-muted-foreground mt-1 text-xs">
+          <p className="text-muted-foreground mt-1 text-xs font-medium">
             {formatShortRange(rangeStats.from, rangeStats.to)}
           </p>
         </div>
         <Button
-          aria-label="Close explanation"
-          className="shrink-0"
-          onClick={onClose}
-          size="icon-xs"
           type="button"
           variant="ghost"
+          size="icon-xs"
+          className="shrink-0"
+          aria-label="Close explanation"
+          onClick={onClose}
         >
           <X className="size-4" />
         </Button>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <Badge className="tabular-nums" variant="outline">
+        <Badge variant="outline" className="tabular-nums">
           Start {formatUsd(rangeStats.startClose)}
         </Badge>
-        <Badge className="tabular-nums" variant="outline">
+        <Badge variant="outline" className="tabular-nums">
           End {formatUsd(rangeStats.endClose)}
         </Badge>
-        <Badge className={cn("tabular-nums", directionClass)} variant="outline">
+        <Badge variant="outline" className={cn("tabular-nums", badgeVariant)}>
           {rangeStats.absoluteChange >= 0 ? "+" : ""}
           {formatUsd(rangeStats.absoluteChange)} (
           {rangeStats.percentageChange >= 0 ? "+" : ""}
           {rangeStats.percentageChange.toFixed(2)}%)
         </Badge>
-        <Badge className={cn("capitalize", directionClass)} variant="secondary">
-          {rangeStats.direction}
+        <Badge variant="secondary" className={cn("capitalize", badgeVariant)}>
+          {dir}
         </Badge>
         {explanation ? (
-          <Badge className="capitalize" variant="outline">
-            Confidence: {explanation.confidence}
+          <Badge variant="outline" className="capitalize">
+            Model confidence: {explanation.confidence}
           </Badge>
         ) : null}
       </div>
 
       {tab === "yearly" ? (
-        <p className="text-muted-foreground text-xs">
-          Yearly bars span full calendar years, so explanations may be less
-          precise than daily or monthly views.
+        <p className="text-muted-foreground text-xs font-medium">
+          Yearly bars span a full calendar year; explanations may be less precise than daily
+          or monthly views.
         </p>
       ) : null}
 
@@ -857,11 +258,11 @@ const ExplainRangePopoverBody = ({
         <div className="space-y-2">
           <p className="text-destructive text-sm">{errorMessage}</p>
           <Button
-            className="gap-1.5"
-            onClick={onRetry}
-            size="sm"
             type="button"
             variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={onRetry}
           >
             <RefreshCw className="size-3.5" />
             Retry
@@ -872,7 +273,7 @@ const ExplainRangePopoverBody = ({
       {!errorMessage && isLoading ? (
         <div className="space-y-2">
           <p className="text-muted-foreground text-sm">
-            Analyzing {symbol} from {formatShortRange(rangeStats.from, rangeStats.to)}
+            Analyzing {symbol} from {formatShortRange(rangeStats.from, rangeStats.to)}…
           </p>
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-full" />
@@ -885,31 +286,34 @@ const ExplainRangePopoverBody = ({
           <p>{explanation.summary}</p>
 
           {explanation.mainDrivers.length > 0 ? (
-            <ExplanationList
-              items={explanation.mainDrivers.map((driver) => ({
-                body: driver.explanation,
-                meta: driver.confidence,
-                title: driver.category.replaceAll("_", " "),
-              }))}
-              title="Main drivers"
-            />
+            <div>
+              <p className="text-muted-foreground mb-1 text-xs font-medium">
+                Main drivers
+              </p>
+              <ul className="list-inside list-disc space-y-1.5 text-xs">
+                {explanation.mainDrivers.map((d, i) => (
+                  <li key={i}>
+                    <span className="font-medium">{d.category.replaceAll("_", " ")}</span>{" "}
+                    <span className="text-muted-foreground">({d.confidence})</span> —{" "}
+                    {d.explanation}
+                  </li>
+                ))}
+              </ul>
+            </div>
           ) : null}
 
           {explanation.importantDates.length > 0 ? (
             <div>
-              <p className="text-muted-foreground mb-1 text-xs font-medium uppercase">
+              <p className="text-muted-foreground mb-1 text-xs font-medium">
                 Important dates
               </p>
               <ul className="space-y-2 text-xs">
-                {explanation.importantDates.map((event, index) => (
-                  <li
-                    className="border-border/60 bg-muted/20 rounded-md border p-2"
-                    key={`${event.date}-${index}`}
-                  >
-                    <p className="font-medium">{event.date}</p>
-                    <p>{event.event}</p>
-                    <p className="text-muted-foreground">{event.priceAction}</p>
-                    <p className="text-muted-foreground">{event.relevance}</p>
+                {explanation.importantDates.map((e, i) => (
+                  <li key={i} className="rounded-md border border-border/20 bg-muted/30 p-2">
+                    <p className="font-bold text-foreground">{e.date}</p>
+                    <p className="text-foreground">{e.event}</p>
+                    <p className="text-muted-foreground">{e.priceAction}</p>
+                    <p className="text-muted-foreground">{e.relevance}</p>
                   </li>
                 ))}
               </ul>
@@ -918,29 +322,30 @@ const ExplainRangePopoverBody = ({
 
           {explanation.evidence.length > 0 ? (
             <div>
-              <p className="text-muted-foreground mb-1 text-xs font-medium uppercase">
+              <p className="text-muted-foreground mb-1 text-xs font-medium">
                 Evidence
               </p>
               <ul className="space-y-2 text-xs">
-                {explanation.evidence.map((item, index) => (
-                  <li key={`${item.headline}-${index}`}>
-                    {item.url ? (
+                {explanation.evidence.map((ev, i) => (
+                  <li key={i}>
+                    {ev.url ? (
                       <a
-                        className="text-primary font-medium underline-offset-2 hover:underline"
-                        href={item.url}
-                        rel="noopener noreferrer"
+                        href={ev.url}
                         target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary font-medium underline-offset-2 hover:underline"
                       >
-                        {item.headline}
+                        {ev.headline}
                       </a>
                     ) : (
-                      <span className="font-medium">{item.headline}</span>
+                      <span className="font-medium">{ev.headline}</span>
                     )}
                     <span className="text-muted-foreground">
-                      {item.source ? ` | ${item.source}` : ""}
-                      {item.publishedDate ? ` | ${item.publishedDate}` : ""}
+                      {" "}
+                      {ev.source ? `· ${ev.source}` : ""}
+                      {ev.publishedDate ? ` · ${ev.publishedDate}` : ""}
                     </span>
-                    <p className="text-muted-foreground mt-0.5">{item.relevance}</p>
+                    <p className="text-muted-foreground mt-0.5">{ev.relevance}</p>
                   </li>
                 ))}
               </ul>
@@ -954,30 +359,603 @@ const ExplainRangePopoverBody = ({
         </div>
       ) : null}
     </div>
-  );
-};
+  )
+}
 
-const ExplanationList = ({
-  title,
-  items,
+const SelectableChartSection = ({
+  tab,
+  chartRows,
+  symbol,
+  companyName,
+  showLoading,
+  showError,
 }: {
-  title: string;
-  items: Array<{ title: string; body: string; meta?: string }>;
-}) => (
-  <div>
-    <p className="text-muted-foreground mb-1 text-xs font-medium uppercase">
-      {title}
-    </p>
-    <ul className="list-inside list-disc space-y-1.5 text-xs">
-      {items.map((item, index) => (
-        <li key={`${item.title}-${index}`}>
-          <span className="font-medium">{item.title}</span>
-          {item.meta ? (
-            <span className="text-muted-foreground"> ({item.meta})</span>
+  tab: PriceHistoryTab
+  chartRows: ChartBarForRange[]
+  symbol: string
+  companyName?: string
+  showLoading: boolean
+  showError: boolean
+}) => {
+  const [isSelecting, setIsSelecting] = React.useState(false)
+  const isSelectingRef = React.useRef(false)
+  const dragRef = React.useRef({ a: 0, b: 0 })
+  const [dragTick, setDragTick] = React.useState(0)
+  const [committed, setCommitted] = React.useState<CommittedSelection | null>(null)
+  const [popoverOpen, setPopoverOpen] = React.useState(false)
+
+  const [rangeStats, setRangeStats] = React.useState<SelectedRangePayload | null>(null)
+  const [explanation, setExplanation] = React.useState<RangeExplanation | null>(null)
+  const [explainLoading, setExplainLoading] = React.useState(false)
+  const [explainError, setExplainError] = React.useState<string | null>(null)
+  const explainCache = React.useRef(
+    new Map<string, RangeExplanation>()
+  )
+  const abortRef = React.useRef<AbortController | null>(null)
+
+  const [mobileFrom, setMobileFrom] = React.useState("")
+  const [mobileTo, setMobileTo] = React.useState("")
+
+  const isYearlyTab = tab === "yearly"
+
+  React.useEffect(() => {
+    isSelectingRef.current = isSelecting
+  }, [isSelecting])
+
+  const bumpDrag = React.useCallback(() => {
+    setDragTick((t) => t + 1)
+  }, [])
+
+  const clearSelection = React.useCallback(() => {
+    abortRef.current?.abort()
+    abortRef.current = null
+    isSelectingRef.current = false
+    setIsSelecting(false)
+    setCommitted(null)
+    setPopoverOpen(false)
+    setRangeStats(null)
+    setExplanation(null)
+    setExplainError(null)
+    setExplainLoading(false)
+  }, [])
+
+  React.useEffect(() => {
+    clearSelection()
+  }, [tab, symbol, clearSelection])
+
+  const runExplainRequest = React.useCallback(
+    async (stats: SelectedRangePayload) => {
+      const key = cacheKeyForRange(symbol, stats)
+      const cached = explainCache.current.get(key)
+      if (cached) {
+        setExplanation(cached)
+        setExplainLoading(false)
+        setExplainError(null)
+        return
+      }
+
+      abortRef.current?.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
+
+      setExplainLoading(true)
+      setExplainError(null)
+      setExplanation(null)
+
+      try {
+        const res = await fetch("/api/stocks/explain-range", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            symbol: symbol.trim().toUpperCase(),
+            companyName: companyName?.trim() || undefined,
+            ...stats,
+          }),
+        })
+        const json = (await res.json()) as RangeExplanation | { error?: string }
+
+        if (controller.signal.aborted) {
+          return
+        }
+
+        if (!res.ok) {
+          const msg =
+            typeof (json as { error?: string }).error === "string"
+              ? (json as { error: string }).error
+              : "Couldn’t generate explanation right now."
+          setExplainError(msg)
+          setExplanation(null)
+          return
+        }
+
+        if ("summary" in json && "mainDrivers" in json) {
+          explainCache.current.set(key, json as RangeExplanation)
+          setExplanation(json as RangeExplanation)
+        } else {
+          setExplainError("Couldn’t generate explanation right now.")
+        }
+      } catch (e) {
+        if (e instanceof DOMException && e.name === "AbortError") {
+          return
+        }
+        setExplainError("Couldn’t generate explanation right now.")
+      } finally {
+        if (!controller.signal.aborted) {
+          setExplainLoading(false)
+        }
+      }
+    },
+    [symbol, companyName]
+  )
+
+  const finalizeDrag = React.useCallback(() => {
+    if (!isSelectingRef.current) {
+      return
+    }
+    isSelectingRef.current = false
+    setIsSelecting(false)
+    const lo = Math.min(dragRef.current.a, dragRef.current.b)
+    const hi = Math.max(dragRef.current.a, dragRef.current.b)
+    if (hi - lo < 1) {
+      return
+    }
+    const stats = computeSelectedRangeStats(chartRows, lo, hi, isYearlyTab)
+    if (!stats) {
+      return
+    }
+    setCommitted({ lo, hi })
+    setRangeStats(stats)
+    setPopoverOpen(true)
+
+    const key = cacheKeyForRange(symbol, stats)
+    const cached = explainCache.current.get(key)
+    if (cached) {
+      setExplanation(cached)
+      setExplainLoading(false)
+      setExplainError(null)
+      return
+    }
+    void runExplainRequest(stats)
+  }, [chartRows, isYearlyTab, symbol, runExplainRequest])
+
+  React.useEffect(() => {
+    if (!isSelecting) {
+      return
+    }
+    const handleWindowPointerEnd = () => {
+      finalizeDrag()
+    }
+    window.addEventListener("mouseup", handleWindowPointerEnd)
+    window.addEventListener("touchend", handleWindowPointerEnd)
+    return () => {
+      window.removeEventListener("mouseup", handleWindowPointerEnd)
+      window.removeEventListener("touchend", handleWindowPointerEnd)
+    }
+  }, [isSelecting, finalizeDrag])
+
+  const handleChartMouseDown = React.useCallback(
+    (state: unknown) => {
+      const idx = readActiveIndex(state)
+      if (idx === null || idx >= chartRows.length) {
+        return
+      }
+      dragRef.current = { a: idx, b: idx }
+      isSelectingRef.current = true
+      setIsSelecting(true)
+      bumpDrag()
+    },
+    [chartRows.length, bumpDrag]
+  )
+
+  const handleChartMouseMove = React.useCallback(
+    (state: unknown) => {
+      if (!isSelectingRef.current) {
+        return
+      }
+      const idx = readActiveIndex(state)
+      if (idx === null || idx >= chartRows.length) {
+        return
+      }
+      dragRef.current.b = idx
+      bumpDrag()
+    },
+    [chartRows.length, bumpDrag]
+  )
+
+  const handleRetry = React.useCallback(() => {
+    if (!rangeStats) {
+      return
+    }
+    void runExplainRequest(rangeStats)
+  }, [rangeStats, runExplainRequest])
+
+  const handlePopoverOpenChange = React.useCallback((open: boolean) => {
+    setPopoverOpen(open)
+  }, [])
+
+  const handleClosePopover = React.useCallback(() => {
+    setPopoverOpen(false)
+  }, [])
+
+  const showEmpty =
+    !showLoading && !showError && chartRows.length === 0
+
+  const handleApplyMobileRange = React.useCallback(() => {
+    if (!mobileFrom || !mobileTo) {
+      return
+    }
+    const fromIso =
+      tab === "monthly" ? `${mobileFrom}-01` : tab === "yearly" ? `${mobileFrom}-01-01` : mobileFrom
+    const toIso =
+      tab === "monthly"
+        ? `${mobileTo}-01`
+        : tab === "yearly"
+          ? `${mobileTo}-12-31`
+          : mobileTo
+    const found = findChartIndicesForUserDates(chartRows, tab, fromIso, toIso)
+    if (!found) {
+      return
+    }
+    const stats = computeSelectedRangeStats(
+      chartRows,
+      found.start,
+      found.end,
+      isYearlyTab
+    )
+    if (!stats) {
+      return
+    }
+    setCommitted({ lo: Math.min(found.start, found.end), hi: Math.max(found.start, found.end) })
+    setRangeStats(stats)
+    setPopoverOpen(true)
+    const key = cacheKeyForRange(symbol, stats)
+    const cached = explainCache.current.get(key)
+    if (cached) {
+      setExplanation(cached)
+      setExplainLoading(false)
+      setExplainError(null)
+      return
+    }
+    void runExplainRequest(stats)
+  }, [mobileFrom, mobileTo, tab, chartRows, isYearlyTab, symbol, runExplainRequest])
+
+  void dragTick
+  const provisionalLoHi: { lo: number; hi: number } | null = isSelecting
+    ? {
+        lo: Math.min(dragRef.current.a, dragRef.current.b),
+        hi: Math.max(dragRef.current.a, dragRef.current.b),
+      }
+    : committed
+
+  if (showLoading) {
+    return (
+      <div className="space-y-3 pt-2">
+        <Skeleton className="h-[280px] w-full rounded-lg" />
+      </div>
+    )
+  }
+
+  if (showError) {
+    return (
+      <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+        <AlertCircle className="text-destructive" />
+        <AlertTitle className="font-bold">Price history unavailable</AlertTitle>
+        <AlertDescription className="text-destructive/90">
+          The daily API limit has been reached. Historical price data for {symbol} will be available again shortly.
+        </AlertDescription>
+      </Alert>
+    )
+  }
+
+  if (showEmpty) {
+    return (
+      <p className="text-muted-foreground text-sm">No price data for this range.</p>
+    )
+  }
+
+  const refArea =
+    provisionalLoHi && provisionalLoHi.hi > provisionalLoHi.lo ? (
+      <ReferenceArea
+        x1={chartRows[provisionalLoHi.lo].period}
+        x2={chartRows[provisionalLoHi.hi].period}
+        strokeOpacity={0.4}
+        fill="var(--chart-1)"
+        fillOpacity={0.12}
+      />
+    ) : null
+
+  return (
+    <div className="relative space-y-3">
+      <ChartContainer
+        config={chartConfig}
+        className="aspect-auto h-[min(360px,50vh)] w-full [&_.recharts-surface]:outline-none"
+      >
+        <LineChart
+          accessibilityLayer
+          data={chartRows}
+          margin={{ left: 8, right: 8, top: 8, bottom: 8 }}
+          onMouseDown={handleChartMouseDown}
+          onMouseMove={handleChartMouseMove}
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.2} />
+          <XAxis
+            dataKey="period"
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            minTickGap={24}
+            tickFormatter={(v) =>
+              typeof v === "string" ? formatPeriodLabel(tab, v) : String(v)
+            }
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            domain={["auto", "auto"]}
+            tickFormatter={(v) =>
+              typeof v === "number" ? formatUsd(v) : String(v)
+            }
+            width={56}
+          />
+          <ChartTooltip
+            content={
+              <ChartTooltipContent
+                labelFormatter={(_, payload) => {
+                  const p = payload?.[0]?.payload as ChartBarForRange | undefined
+                  const raw = p?.period ?? ""
+                  return formatPeriodLabel(tab, raw)
+                }}
+                formatter={(value) =>
+                  typeof value === "number" ? formatUsd(value) : String(value)
+                }
+              />
+            }
+          />
+          {refArea}
+          <Line
+            type="monotone"
+            dataKey="close"
+            stroke="var(--color-close)"
+            strokeWidth={2}
+            dot={false}
+            activeDot={{ r: 4 }}
+            isAnimationActive={false}
+          />
+        </LineChart>
+      </ChartContainer>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <p className="text-muted-foreground text-xs">
+          Drag across the chart to explain a move.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {rangeStats && !popoverOpen ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setPopoverOpen(true)}
+            >
+              View explanation
+            </Button>
           ) : null}
-          <span> - {item.body}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+          {committed ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={clearSelection}
+            >
+              Clear selection
+            </Button>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="border-border/60 space-y-2 rounded-lg border bg-muted/10 p-3 md:hidden">
+        <p className="text-muted-foreground text-xs font-medium">
+          Or pick a range ({tab === "daily" ? "dates" : tab === "monthly" ? "months" : "years"})
+        </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+          {tab === "daily" ? (
+            <>
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">From</span>
+                <input
+                  type="date"
+                  value={mobileFrom}
+                  onChange={(e) => setMobileFrom(e.target.value)}
+                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">To</span>
+                <input
+                  type="date"
+                  value={mobileTo}
+                  onChange={(e) => setMobileTo(e.target.value)}
+                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                />
+              </label>
+            </>
+          ) : null}
+          {tab === "monthly" ? (
+            <>
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">From</span>
+                <input
+                  type="month"
+                  value={mobileFrom}
+                  onChange={(e) => setMobileFrom(e.target.value)}
+                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">To</span>
+                <input
+                  type="month"
+                  value={mobileTo}
+                  onChange={(e) => setMobileTo(e.target.value)}
+                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                />
+              </label>
+            </>
+          ) : null}
+          {tab === "yearly" ? (
+            <>
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">From year</span>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={1900}
+                  max={2100}
+                  placeholder="e.g. 2020"
+                  value={mobileFrom}
+                  onChange={(e) => setMobileFrom(e.target.value)}
+                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-xs">
+                <span className="text-muted-foreground">To year</span>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={1900}
+                  max={2100}
+                  placeholder="e.g. 2024"
+                  value={mobileTo}
+                  onChange={(e) => setMobileTo(e.target.value)}
+                  className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+                />
+              </label>
+            </>
+          ) : null}
+          <Button
+            type="button"
+            size="sm"
+            className="w-full sm:w-auto"
+            onClick={handleApplyMobileRange}
+          >
+            Explain range
+          </Button>
+        </div>
+      </div>
+
+      {rangeStats ? (
+        <Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
+          <PopoverAnchor className="pointer-events-none absolute top-2 right-2 h-1 w-1" />
+          <PopoverContent
+            align="end"
+            side="left"
+            sideOffset={8}
+            className="w-[420px] max-w-[calc(100vw-2rem)] gap-0 p-4"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
+            <ExplainRangePopoverBody
+              symbol={symbol}
+              companyName={companyName}
+              rangeStats={rangeStats}
+              tab={tab}
+              explanation={explanation}
+              isLoading={explainLoading}
+              errorMessage={explainError}
+              onRetry={handleRetry}
+              onClose={handleClosePopover}
+            />
+          </PopoverContent>
+        </Popover>
+      ) : null}
+    </div>
+  )
+}
+
+export const PriceHistoryChart = ({
+  symbol,
+  companyName,
+  className,
+}: PriceHistoryChartProps) => {
+  const [tab, setTab] = React.useState<PriceHistoryTab>("daily")
+  const {
+    daily,
+    monthly,
+    yearly,
+    errorDaily,
+    errorMonthly,
+    isLoadingDaily,
+    isLoadingMonthly,
+  } = useAlphaVantageSeries(symbol, tab)
+
+  const handleTabChange = (value: string) => {
+    if (value === "daily" || value === "monthly" || value === "yearly") {
+      setTab(value)
+    }
+  }
+
+  const dailyRows = React.useMemo(
+    () => (daily ? toRowsFromDailyMonthly(daily) : []),
+    [daily]
+  )
+  const monthlyRows = React.useMemo(
+    () => (monthly ? toRowsFromDailyMonthly(monthly) : []),
+    [monthly]
+  )
+  const yearlyRows = React.useMemo(
+    () => (yearly.length > 0 ? toRowsFromYearly(yearly) : []),
+    [yearly]
+  )
+
+  return (
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
+      <CardHeader>
+        <CardTitle className="text-xl font-bold text-primary">Price history</CardTitle>
+        <CardDescription className="text-muted-foreground">
+          Historical OHLC from Alpha Vantage (daily compact, monthly; yearly aggregated from
+          monthly). Drag a range to get an AI explanation using FMP news (server-side).
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Tabs value={tab} onValueChange={handleTabChange}>
+          <TabsList aria-label="Price history range" className="bg-muted p-1">
+            <TabsTrigger value="daily" className="data-[state=active]:bg-primary! data-[state=active]:text-primary-foreground! text-primary font-bold hover:text-foreground transition-all">Daily</TabsTrigger>
+            <TabsTrigger value="monthly" className="data-[state=active]:bg-primary! data-[state=active]:text-primary-foreground! text-primary font-bold hover:text-foreground transition-all">Monthly</TabsTrigger>
+            <TabsTrigger value="yearly" className="data-[state=active]:bg-primary! data-[state=active]:text-primary-foreground! text-primary font-bold hover:text-foreground transition-all">Yearly</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="daily" className="mt-4 min-h-[320px]">
+            <SelectableChartSection
+              tab="daily"
+              chartRows={dailyRows}
+              symbol={symbol}
+              companyName={companyName}
+              showLoading={isLoadingDaily}
+              showError={Boolean(errorDaily)}
+            />
+          </TabsContent>
+          <TabsContent value="monthly" className="mt-4 min-h-[320px]">
+            <SelectableChartSection
+              tab="monthly"
+              chartRows={monthlyRows}
+              symbol={symbol}
+              companyName={companyName}
+              showLoading={isLoadingMonthly}
+              showError={Boolean(errorMonthly)}
+            />
+          </TabsContent>
+          <TabsContent value="yearly" className="mt-4 min-h-[320px]">
+            <SelectableChartSection
+              tab="yearly"
+              chartRows={yearlyRows}
+              symbol={symbol}
+              companyName={companyName}
+              showLoading={isLoadingMonthly}
+              showError={Boolean(errorMonthly)}
+            />
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  )
+}

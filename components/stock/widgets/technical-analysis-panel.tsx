@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   Bar,
   CartesianGrid,
@@ -11,213 +11,196 @@ import {
   ReferenceLine,
   XAxis,
   YAxis,
-} from "recharts";
+} from "recharts"
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import type { ChartConfig } from "@/components/ui/chart";
+} from "@/components/ui/card"
+import type { ChartConfig } from "@/components/ui/chart"
 import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
-import { Skeleton } from "@/components/ui/skeleton";
-import { usePriceSeries } from "@/hooks/use-price-series";
-import { computeTaFromOhlc, type TaBar } from "@/lib/ta/indicators-from-ohlc";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/chart"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useAlphaVantageSeries } from "@/hooks/use-alpha-vantage-series"
+import { computeTaFromOhlc, type TaBar } from "@/lib/ta/indicators-from-ohlc"
+import { cn } from "@/lib/utils"
 
 type FinnhubAggregatePayload = {
-  error?: string;
+  error?: string
   technicalAnalysis?: {
-    count?: { buy?: number; neutral?: number; sell?: number };
-    signal?: string;
-  };
-  trend?: { adx?: number; trending?: boolean };
-};
+    count?: { buy?: number; neutral?: number; sell?: number }
+    signal?: string
+  }
+  trend?: { adx?: number; trending?: boolean }
+}
 
-type TechnicalAnalysisPanelProps = {
-  symbol: string;
-  className?: string;
-};
-
-type ChartRow = TaBar;
-
-const priceConfig = {
-  close: { label: "Close", color: "var(--chart-1)" },
-  sma20: { label: "SMA 20", color: "var(--chart-2)" },
-  sma50: { label: "SMA 50", color: "var(--chart-3)" },
-  bbUpper: { label: "BB upper", color: "var(--muted-foreground)" },
-  bbLower: { label: "BB lower", color: "var(--muted-foreground)" },
-} satisfies ChartConfig;
+const priceMacdConfig = {
+  close: { label: "Close", color: "hsl(220 14% 96%)" },
+  sma20: { label: "SMA 20", color: "hsl(217 91% 60%)" },
+  sma50: { label: "SMA 50", color: "hsl(280 65% 60%)" },
+  bbUpper: { label: "BB upper", color: "hsl(215 16% 47%)" },
+  bbLower: { label: "BB lower", color: "hsl(215 16% 47%)" },
+} satisfies ChartConfig
 
 const rsiConfig = {
-  rsi14: { label: "RSI 14", color: "var(--chart-4)" },
-} satisfies ChartConfig;
+  rsi: { label: "RSI (14)", color: "hsl(38 92% 50%)" },
+} satisfies ChartConfig
 
 const macdConfig = {
-  macdLine: { label: "MACD", color: "var(--chart-1)" },
-  macdSignal: { label: "Signal", color: "var(--chart-3)" },
-  macdHist: { label: "Histogram", color: "var(--chart-2)" },
-} satisfies ChartConfig;
+  macd: { label: "MACD", color: "hsl(217 91% 60%)" },
+  signal: { label: "Signal", color: "hsl(280 65% 60%)" },
+  hist: { label: "Histogram", color: "hsl(142 71% 45%)" },
+} satisfies ChartConfig
 
 const obvConfig = {
-  obv: { label: "OBV", color: "var(--chart-5)" },
-} satisfies ChartConfig;
+  obv: { label: "OBV", color: "hsl(199 89% 48%)" },
+} satisfies ChartConfig
 
-const formatAxisDate = (date: string): string => {
-  const parsed = new Date(`${date}T12:00:00Z`);
-  if (Number.isNaN(parsed.getTime())) return date;
-  return parsed.toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-  });
-};
+const formatAxisDate = (d: string): string => {
+  const dt = new Date(`${d}T12:00:00Z`)
+  if (Number.isNaN(dt.getTime())) return d
+  return dt.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+}
 
-const formatTooltipDate = (date: string): string => {
-  const parsed = new Date(`${date}T12:00:00Z`);
-  if (Number.isNaN(parsed.getTime())) return date;
-  return parsed.toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
+const formatTooltipDate = (d: string): string => {
+  const dt = new Date(`${d}T12:00:00Z`)
+  if (Number.isNaN(dt.getTime())) return d
+  return dt.toLocaleDateString(undefined, {
     year: "numeric",
-  });
-};
+    month: "short",
+    day: "numeric",
+  })
+}
+
+type ChartRow = TaBar
 
 const toChartRows = (bars: TaBar[]): ChartRow[] => {
   const ready = bars.filter(
-    (bar) =>
-      bar.rsi14 !== null &&
-      bar.sma50 !== null &&
-      bar.macdLine !== null &&
-      bar.bbUpper !== null &&
-      bar.obv !== null,
-  );
+    (b) =>
+      b.rsi14 !== null &&
+      b.sma50 !== null &&
+      b.macdLine !== null &&
+      b.bbUpper !== null &&
+      b.obv !== null
+  )
+  return ready.slice(-160)
+}
 
-  return ready.slice(-160);
-};
+type TechnicalAnalysisPanelProps = {
+  symbol: string
+  className?: string
+}
 
-export const TechnicalAnalysisPanel = ({
-  symbol,
-  className,
-}: TechnicalAnalysisPanelProps) => {
-  const trimmed = symbol.trim();
-  const { daily, errorDaily, isLoadingDaily } = usePriceSeries(trimmed, "daily");
-  const [aggregate, setAggregate] =
-    React.useState<FinnhubAggregatePayload | null>(null);
-  const [aggregateError, setAggregateError] = React.useState<string | null>(
-    null,
-  );
+export const TechnicalAnalysisPanel = ({ symbol, className }: TechnicalAnalysisPanelProps) => {
+  const trimmed = symbol.trim()
+  const { daily, errorDaily, isLoadingDaily } = useAlphaVantageSeries(trimmed, "daily")
+
+  const [aggregate, setAggregate] = React.useState<FinnhubAggregatePayload | null>(null)
+  const [aggregateError, setAggregateError] = React.useState<string | null>(null)
 
   React.useEffect(() => {
-    if (!trimmed) return;
-
-    const controller = new AbortController();
-    let cancelled = false;
-
-    setAggregate(null);
-    setAggregateError(null);
+    if (!trimmed) {
+      return
+    }
+    let cancelled = false
+    setAggregate(null)
+    setAggregateError(null)
 
     void (async () => {
       try {
-        const params = new URLSearchParams({
-          resolution: "D",
-          symbol: trimmed,
-        });
-        const response = await fetch(`/api/stock-aggregate-technical?${params}`, {
-          signal: controller.signal,
-        });
-        const payload = (await response.json().catch(() => null)) as
-          | FinnhubAggregatePayload
-          | null;
-
-        if (cancelled) return;
-
-        if (!response.ok) {
-          setAggregateError(
-            payload?.error ??
-              `Finnhub aggregate request failed (${response.status})`,
-          );
-          return;
+        const res = await fetch(
+          `/api/stock-aggregate-technical?${new URLSearchParams({ symbol: trimmed, resolution: "D" })}`
+        )
+        const json: unknown = await res.json().catch(() => null)
+        if (cancelled) return
+        if (!res.ok) {
+          const msg =
+            json &&
+            typeof json === "object" &&
+            "error" in json &&
+            typeof (json as { error?: string }).error === "string"
+              ? (json as { error: string }).error
+              : `Finnhub aggregate request failed (${res.status})`
+          setAggregateError(msg)
+          return
         }
-
-        if (payload?.error) {
-          setAggregateError(payload.error);
-          return;
+        const payload = json as FinnhubAggregatePayload
+        if (payload.error && typeof payload.error === "string") {
+          setAggregateError(payload.error)
+          return
         }
-
-        setAggregate(payload);
-      } catch (error) {
-        if (cancelled) return;
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
+        setAggregate(payload)
+      } catch {
+        if (!cancelled) {
+          setAggregateError("Could not load Finnhub aggregate scan.")
         }
-        setAggregateError("Could not load Finnhub aggregate scan.");
       }
-    })();
+    })()
 
     return () => {
-      cancelled = true;
-      controller.abort();
-    };
-  }, [trimmed]);
+      cancelled = true
+    }
+  }, [trimmed])
 
   const chartRows = React.useMemo(() => {
-    if (!daily?.length) return [];
-    return toChartRows(computeTaFromOhlc(daily));
-  }, [daily]);
+    if (!daily?.length) return []
+    return toChartRows(computeTaFromOhlc(daily))
+  }, [daily])
 
-  const latest = chartRows.at(-1) ?? null;
-  const signalLabel = aggregate?.technicalAnalysis?.signal;
-  const counts = aggregate?.technicalAnalysis?.count;
-  const adx = aggregate?.trend?.adx;
-  const trending = aggregate?.trend?.trending;
+  const latest = chartRows.length > 0 ? chartRows[chartRows.length - 1] : null
+
+  const signalLabel = aggregate?.technicalAnalysis?.signal
+  const counts = aggregate?.technicalAnalysis?.count
+  const adx = aggregate?.trend?.adx
+  const trending = aggregate?.trend?.trending
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
       <CardHeader>
-        <CardTitle>Technical analysis</CardTitle>
-        <CardDescription>
-          SMA, Bollinger bands, MACD, RSI, ATR, and OBV computed from
-          provider-backed daily OHLC. Finnhub aggregate scan appears when the
-          configured API plan supports it.
+        <CardTitle className="text-xl font-bold text-primary">Technical analysis</CardTitle>
+        <CardDescription className="text-muted-foreground">
+          SMA / Bollinger / MACD / RSI / ATR / OBV computed from Alpha Vantage daily OHLC
+          (same series as price history). Finnhub aggregate indicator scan is shown when your API
+          plan allows it (see docs Technical Analysis).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {aggregate || aggregateError ? (
           <div
-            aria-label="Finnhub aggregate technical scan"
-            className="bg-muted/30 flex flex-wrap items-center gap-2 rounded-lg border px-3 py-2"
+            className="flex flex-wrap items-center gap-2 rounded-lg border border-border/20 bg-muted/50 px-3 py-2"
             role="region"
+            aria-label="Finnhub aggregate technical scan"
           >
             {aggregateError ? (
-              <p className="text-muted-foreground text-xs">{aggregateError}</p>
+              <p className="text-xs text-muted-foreground font-medium">Indicator scan temporarily unavailable.</p>
             ) : (
               <>
                 {signalLabel ? (
-                  <Badge className="capitalize" variant="outline">
+                  <Badge variant="outline" className="font-bold capitalize border-border/30 bg-card text-primary">
                     Finnhub signal: {signalLabel}
                   </Badge>
                 ) : null}
                 {counts ? (
-                  <span className="text-muted-foreground text-xs">
-                    Buy {counts.buy ?? "-"} | Neutral {counts.neutral ?? "-"} |
-                    Sell {counts.sell ?? "-"}
+                  <span className="text-xs text-muted-foreground font-bold">
+                    Buy {counts.buy ?? "—"} · Neutral {counts.neutral ?? "—"} · Sell{" "}
+                    {counts.sell ?? "—"}
                   </span>
                 ) : null}
-                {typeof adx === "number" && Number.isFinite(adx) ? (
-                  <span className="text-muted-foreground text-xs">
+                {adx !== undefined && Number.isFinite(adx) ? (
+                  <span className="text-xs text-muted-foreground font-bold">
                     ADX {adx.toFixed(1)}
-                    {trending !== undefined
-                      ? ` (${trending ? "trending" : "range"})`
-                      : ""}
+                    {trending !== undefined ? (
+                      <span className="ml-1">({trending ? "trending" : "range"})</span>
+                    ) : null}
                   </span>
                 ) : null}
               </>
@@ -226,308 +209,290 @@ export const TechnicalAnalysisPanel = ({
         ) : null}
 
         {isLoadingDaily ? (
-          <div aria-busy aria-live="polite" className="space-y-3">
-            <Skeleton className="h-[280px] w-full" />
-            <Skeleton className="h-[120px] w-full" />
-            <Skeleton className="h-[140px] w-full" />
+          <div className="space-y-3" aria-busy aria-live="polite">
+            <Skeleton className="h-[280px] w-full bg-muted" />
+            <Skeleton className="h-[120px] w-full bg-muted" />
+            <Skeleton className="h-[140px] w-full bg-muted" />
           </div>
         ) : null}
 
         {!isLoadingDaily && errorDaily ? (
-          <p className="text-destructive text-sm">{errorDaily}</p>
+          <div className="rounded-lg border border-rose-200 bg-rose-50/50 p-4 text-center">
+            <p className="text-sm font-bold text-rose-700">Indicators unavailable</p>
+            <p className="text-xs text-rose-600 mt-1">Unable to compute technicals due to API limits. Please try again later.</p>
+          </div>
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            Not enough daily bars to plot indicators.
-          </p>
+          <div className="rounded-lg border border-border/10 bg-background p-6 text-center">
+            <p className="text-sm font-bold text-muted-foreground">No indicators found</p>
+            <p className="text-xs text-muted-foreground mt-1">Not enough daily price bars available to plot technical indicators for this symbol.</p>
+          </div>
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length > 0 ? (
           <>
-            {latest ? <LatestIndicatorSummary latest={latest} /> : null}
-            <PriceBandChart rows={chartRows} />
-            <RsiChart rows={chartRows} />
-            <MacdChart rows={chartRows} />
-            <ObvChart rows={chartRows} />
-            <p className="text-muted-foreground text-[10px] leading-snug">
-              For education only. Indicator math follows common textbook
-              definitions; values may differ slightly from trading platforms.
+            {latest ? (
+              <div className="grid gap-2 text-xs font-medium text-muted-foreground sm:grid-cols-2 lg:grid-cols-4">
+                <p>
+                  RSI (14):{" "}
+                  <span className="font-bold tabular-nums text-foreground">
+                    {latest.rsi14?.toFixed(2) ?? "—"}
+                  </span>
+                </p>
+                <p>
+                  MACD / Sig / Hist:{" "}
+                  <span className="font-bold tabular-nums text-foreground">
+                    {latest.macdLine?.toFixed(3) ?? "—"} / {latest.macdSignal?.toFixed(3) ?? "—"} /{" "}
+                    {latest.macdHist?.toFixed(3) ?? "—"}
+                  </span>
+                </p>
+                <p>
+                  ATR (14):{" "}
+                  <span className="font-bold tabular-nums text-foreground">
+                    {latest.atr14?.toFixed(3) ?? "—"}
+                  </span>
+                </p>
+                <p>
+                  Close vs SMA50:{" "}
+                  <span className="font-bold tabular-nums text-foreground">
+                    {latest.sma50 !== null
+                      ? `${(((latest.close - latest.sma50) / latest.sma50) * 100).toFixed(2)}%`
+                      : "—"}
+                  </span>
+                </p>
+              </div>
+            ) : null}
+
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">
+                Price &amp; bands
+              </p>
+              <ChartContainer
+                config={priceMacdConfig}
+                className="aspect-auto h-[min(320px,45vh)] w-full [&_.recharts-surface]:outline-none"
+              >
+                <ComposedChart
+                  data={chartRows}
+                  margin={{ left: 8, right: 8, top: 8, bottom: 4 }}
+                  accessibilityLayer
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.2} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={24}
+                    tickFormatter={(v) => (typeof v === "string" ? formatAxisDate(v) : String(v))}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    domain={["auto", "auto"]}
+                    tickFormatter={(v) => (typeof v === "number" ? v.toFixed(2) : String(v))}
+                    width={56}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(_, p) => {
+                          const row = p?.[0]?.payload as ChartRow | undefined
+                          return row?.date ? formatTooltipDate(row.date) : ""
+                        }}
+                      />
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="bbUpper"
+                    stroke="var(--color-bbUpper)"
+                    strokeWidth={1}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="bbLower"
+                    stroke="var(--color-bbLower)"
+                    strokeWidth={1}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="sma20"
+                    stroke="var(--color-sma20)"
+                    strokeWidth={1.5}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="sma50"
+                    stroke="var(--color-sma50)"
+                    strokeWidth={1.5}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="close"
+                    stroke="var(--color-close)"
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                  <ChartLegend content={<ChartLegendContent />} />
+                </ComposedChart>
+              </ChartContainer>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">
+                RSI (14)
+              </p>
+              <ChartContainer
+                config={rsiConfig}
+                className="aspect-auto h-[140px] w-full [&_.recharts-surface]:outline-none"
+              >
+                <ComposedChart
+                  data={chartRows}
+                  margin={{ left: 8, right: 8, top: 4, bottom: 0 }}
+                  accessibilityLayer
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.2} />
+                  <XAxis dataKey="date" hide />
+                  <YAxis domain={[0, 100]} width={36} tickLine={false} axisLine={false} />
+                  <ReferenceArea y1={70} y2={100} fill="#fe8983" fillOpacity={0.15} />
+                  <ReferenceArea y1={0} y2={30} fill="#10b981" fillOpacity={0.15} />
+                  <ReferenceLine y={70} stroke="var(--border)" strokeOpacity={0.5} strokeDasharray="4 4" />
+                  <ReferenceLine y={30} stroke="var(--border)" strokeOpacity={0.5} strokeDasharray="4 4" />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(_, p) => {
+                          const row = p?.[0]?.payload as ChartRow | undefined
+                          return row?.date ? formatTooltipDate(row.date) : ""
+                        }}
+                      />
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="rsi14"
+                    stroke="var(--color-rsi)"
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                </ComposedChart>
+              </ChartContainer>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">MACD</p>
+              <ChartContainer
+                config={macdConfig}
+                className="aspect-auto h-[160px] w-full [&_.recharts-surface]:outline-none"
+              >
+                <ComposedChart
+                  data={chartRows}
+                  margin={{ left: 8, right: 8, top: 4, bottom: 0 }}
+                  accessibilityLayer
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.2} />
+                  <XAxis dataKey="date" hide />
+                  <YAxis tickLine={false} axisLine={false} width={48} domain={["auto", "auto"]} />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(_, p) => {
+                          const row = p?.[0]?.payload as ChartRow | undefined
+                          return row?.date ? formatTooltipDate(row.date) : ""
+                        }}
+                      />
+                    }
+                  />
+                  <ReferenceLine y={0} stroke="hsl(var(--border))" />
+                  <Bar dataKey="macdHist" isAnimationActive={false}>
+                    {chartRows.map((row, i) => (
+                      <Cell
+                        key={`macd-h-${row.date}-${i}`}
+                        fill={
+                          row.macdHist === null
+                            ? "transparent"
+                            : row.macdHist >= 0
+                              ? "hsl(142 71% 40%)"
+                              : "hsl(0 72% 51%)"
+                        }
+                      />
+                    ))}
+                  </Bar>
+                  <Line
+                    type="monotone"
+                    dataKey="macdLine"
+                    stroke="var(--color-macd)"
+                    strokeWidth={1.5}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="macdSignal"
+                    stroke="var(--color-signal)"
+                    strokeWidth={1.5}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                </ComposedChart>
+              </ChartContainer>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">
+                On-balance volume
+              </p>
+              <ChartContainer
+                config={obvConfig}
+                className="aspect-auto h-[100px] w-full [&_.recharts-surface]:outline-none"
+              >
+                <ComposedChart
+                  data={chartRows}
+                  margin={{ left: 8, right: 8, top: 2, bottom: 0 }}
+                  accessibilityLayer
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.2} />
+                  <XAxis dataKey="date" hide />
+                  <YAxis tickLine={false} axisLine={false} width={52} domain={["auto", "auto"]} />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelFormatter={(_, p) => {
+                          const row = p?.[0]?.payload as ChartRow | undefined
+                          return row?.date ? formatTooltipDate(row.date) : ""
+                        }}
+                      />
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="obv"
+                    stroke="var(--color-obv)"
+                    strokeWidth={1.5}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                </ComposedChart>
+              </ChartContainer>
+            </div>
+
+            <p className="text-[10px] font-medium leading-snug text-muted-foreground">
+              For education only. Alpha Vantage uses TIME_SERIES_DAILY (compact). Indicator math
+              follows common textbook definitions; values may differ slightly from other platforms.
             </p>
           </>
         ) : null}
       </CardContent>
     </Card>
-  );
-};
-
-const LatestIndicatorSummary = ({ latest }: { latest: ChartRow }) => (
-  <div className="text-muted-foreground grid gap-2 text-xs sm:grid-cols-2 lg:grid-cols-4">
-    <p>
-      RSI 14:{" "}
-      <span className="text-foreground font-medium tabular-nums">
-        {latest.rsi14?.toFixed(2) ?? "-"}
-      </span>
-    </p>
-    <p>
-      MACD / signal / hist:{" "}
-      <span className="text-foreground font-medium tabular-nums">
-        {latest.macdLine?.toFixed(3) ?? "-"} /{" "}
-        {latest.macdSignal?.toFixed(3) ?? "-"} /{" "}
-        {latest.macdHist?.toFixed(3) ?? "-"}
-      </span>
-    </p>
-    <p>
-      ATR 14:{" "}
-      <span className="text-foreground font-medium tabular-nums">
-        {latest.atr14?.toFixed(3) ?? "-"}
-      </span>
-    </p>
-    <p>
-      Close vs SMA50:{" "}
-      <span className="text-foreground font-medium tabular-nums">
-        {latest.sma50
-          ? `${(((latest.close - latest.sma50) / latest.sma50) * 100).toFixed(
-              2,
-            )}%`
-          : "-"}
-      </span>
-    </p>
-  </div>
-);
-
-const PriceBandChart = ({ rows }: { rows: ChartRow[] }) => (
-  <div className="space-y-1">
-    <p className="text-muted-foreground text-xs font-medium uppercase">
-      Price and bands
-    </p>
-    <ChartContainer
-      className="aspect-auto h-[min(320px,45vh)] w-full"
-      config={priceConfig}
-    >
-      <ComposedChart
-        accessibilityLayer
-        data={rows}
-        margin={{ bottom: 4, left: 8, right: 8, top: 8 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis
-          axisLine={false}
-          dataKey="date"
-          minTickGap={24}
-          tickFormatter={(value) =>
-            typeof value === "string" ? formatAxisDate(value) : String(value)
-          }
-          tickLine={false}
-        />
-        <YAxis
-          axisLine={false}
-          domain={["auto", "auto"]}
-          tickFormatter={(value) =>
-            typeof value === "number" ? value.toFixed(2) : String(value)
-          }
-          tickLine={false}
-          width={56}
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(_, payload) => {
-                const row = payload?.[0]?.payload as ChartRow | undefined;
-                return row?.date ? formatTooltipDate(row.date) : "";
-              }}
-            />
-          }
-        />
-        <Line
-          dataKey="bbUpper"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-bbUpper)"
-          strokeWidth={1}
-          type="monotone"
-        />
-        <Line
-          dataKey="bbLower"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-bbLower)"
-          strokeWidth={1}
-          type="monotone"
-        />
-        <Line
-          dataKey="sma20"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-sma20)"
-          strokeWidth={1.5}
-          type="monotone"
-        />
-        <Line
-          dataKey="sma50"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-sma50)"
-          strokeWidth={1.5}
-          type="monotone"
-        />
-        <Line
-          dataKey="close"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-close)"
-          strokeWidth={2}
-          type="monotone"
-        />
-        <ChartLegend content={<ChartLegendContent />} />
-      </ComposedChart>
-    </ChartContainer>
-  </div>
-);
-
-const RsiChart = ({ rows }: { rows: ChartRow[] }) => (
-  <div className="space-y-1">
-    <p className="text-muted-foreground text-xs font-medium uppercase">RSI 14</p>
-    <ChartContainer className="aspect-auto h-[140px] w-full" config={rsiConfig}>
-      <ComposedChart
-        accessibilityLayer
-        data={rows}
-        margin={{ bottom: 0, left: 8, right: 8, top: 4 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis dataKey="date" hide />
-        <YAxis axisLine={false} domain={[0, 100]} tickLine={false} width={36} />
-        <ReferenceArea fill="var(--destructive)" fillOpacity={0.12} y1={70} y2={100} />
-        <ReferenceArea fill="var(--chart-2)" fillOpacity={0.12} y1={0} y2={30} />
-        <ReferenceLine stroke="var(--muted-foreground)" strokeDasharray="4 4" y={70} />
-        <ReferenceLine stroke="var(--muted-foreground)" strokeDasharray="4 4" y={30} />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(_, payload) => {
-                const row = payload?.[0]?.payload as ChartRow | undefined;
-                return row?.date ? formatTooltipDate(row.date) : "";
-              }}
-            />
-          }
-        />
-        <Line
-          dataKey="rsi14"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-rsi14)"
-          strokeWidth={2}
-          type="monotone"
-        />
-      </ComposedChart>
-    </ChartContainer>
-  </div>
-);
-
-const MacdChart = ({ rows }: { rows: ChartRow[] }) => (
-  <div className="space-y-1">
-    <p className="text-muted-foreground text-xs font-medium uppercase">MACD</p>
-    <ChartContainer
-      className="aspect-auto h-[160px] w-full"
-      config={macdConfig}
-    >
-      <ComposedChart
-        accessibilityLayer
-        data={rows}
-        margin={{ bottom: 0, left: 8, right: 8, top: 4 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis dataKey="date" hide />
-        <YAxis
-          axisLine={false}
-          domain={["auto", "auto"]}
-          tickLine={false}
-          width={48}
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(_, payload) => {
-                const row = payload?.[0]?.payload as ChartRow | undefined;
-                return row?.date ? formatTooltipDate(row.date) : "";
-              }}
-            />
-          }
-        />
-        <ReferenceLine stroke="var(--border)" y={0} />
-        <Bar dataKey="macdHist" isAnimationActive={false}>
-          {rows.map((row, index) => (
-            <Cell
-              fill={
-                row.macdHist === null
-                  ? "transparent"
-                  : row.macdHist >= 0
-                    ? "var(--chart-2)"
-                    : "var(--destructive)"
-              }
-              key={`macd-hist-${row.date}-${index}`}
-            />
-          ))}
-        </Bar>
-        <Line
-          dataKey="macdLine"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-macdLine)"
-          strokeWidth={1.5}
-          type="monotone"
-        />
-        <Line
-          dataKey="macdSignal"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-macdSignal)"
-          strokeWidth={1.5}
-          type="monotone"
-        />
-      </ComposedChart>
-    </ChartContainer>
-  </div>
-);
-
-const ObvChart = ({ rows }: { rows: ChartRow[] }) => (
-  <div className="space-y-1">
-    <p className="text-muted-foreground text-xs font-medium uppercase">
-      On-balance volume
-    </p>
-    <ChartContainer className="aspect-auto h-[100px] w-full" config={obvConfig}>
-      <ComposedChart
-        accessibilityLayer
-        data={rows}
-        margin={{ bottom: 0, left: 8, right: 8, top: 2 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis dataKey="date" hide />
-        <YAxis
-          axisLine={false}
-          domain={["auto", "auto"]}
-          tickLine={false}
-          width={52}
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(_, payload) => {
-                const row = payload?.[0]?.payload as ChartRow | undefined;
-                return row?.date ? formatTooltipDate(row.date) : "";
-              }}
-            />
-          }
-        />
-        <Line
-          dataKey="obv"
-          dot={false}
-          isAnimationActive={false}
-          stroke="var(--color-obv)"
-          strokeWidth={1.5}
-          type="monotone"
-        />
-      </ComposedChart>
-    </ChartContainer>
-  </div>
-);
+  )
+}

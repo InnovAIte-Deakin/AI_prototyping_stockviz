@@ -81,8 +81,11 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
           : [
               ...current,
               {
+                created_at: new Date().toISOString(),
                 id: `pending-${normalized}`,
+                name: name ?? null,
                 notes: null,
+                stockId: `pending-${normalized}`,
                 symbol: normalized,
               },
             ],

@@ -1,8 +1,9 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import Link from "next/link";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import * as React from "react"
+import Link from "next/link"
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+import { AlertCircle } from "lucide-react"
 
 import {
   Card,
@@ -10,53 +11,55 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import type { ChartConfig } from "@/components/ui/chart";
+} from "@/components/ui/card"
+import type { ChartConfig } from "@/components/ui/chart"
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
-import { Skeleton } from "@/components/ui/skeleton";
-import { usePriceSeries } from "@/hooks/use-price-series";
-import { cn } from "@/lib/utils";
-
-type DashboardSpotlightChartProps = {
-  symbol: string;
-  companyName: string;
-  changePct: number | null;
-  className?: string;
-};
+} from "@/components/ui/chart"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useAlphaVantageSeries } from "@/hooks/use-alpha-vantage-series"
+import { cn } from "@/lib/utils"
 
 const chartConfig = {
   close: {
-    color: "var(--chart-2)",
     label: "Close",
+    color: "var(--color-finance-success)",
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
-const formatUsd = (value: number): string =>
-  new Intl.NumberFormat(undefined, {
-    currency: "USD",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
+const formatUsd = (n: number): string =>
+  new Intl.NumberFormat("en-US", {
     style: "currency",
-  }).format(value);
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n)
 
-const formatPct = (value: number | null): string => {
-  if (value === null) return "-";
-  return `${value > 0 ? "+" : ""}${value.toFixed(2)}%`;
-};
+const formatPct = (n: number | null): string => {
+  if (n === null) return "—"
+  if (n > 0) return `+${n.toFixed(2)}%`
+  return `${n.toFixed(2)}%`
+}
 
 const formatPeriodLabel = (period: string): string => {
-  const date = new Date(`${period}T12:00:00Z`);
-  if (Number.isNaN(date.getTime())) return period;
+  const d = new Date(`${period}T12:00:00Z`)
+  if (!Number.isNaN(d.getTime())) {
+    return d.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    })
+  }
+  return period
+}
 
-  return date.toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-  });
-};
+type DashboardSpotlightChartProps = {
+  symbol: string
+  companyName: string
+  changePct: number | null
+  className?: string
+}
 
 export const DashboardSpotlightChart = ({
   symbol,
@@ -64,124 +67,129 @@ export const DashboardSpotlightChart = ({
   changePct,
   className,
 }: DashboardSpotlightChartProps) => {
-  const { daily, errorDaily, isLoadingDaily } = usePriceSeries(symbol, "daily");
+  const { daily, errorDaily, isLoadingDaily } = useAlphaVantageSeries(symbol, "daily")
+
   const chartRows = React.useMemo(() => {
-    if (!daily?.length) return [];
-    return daily.slice(-90).map((point) => ({
-      close: point.close,
-      period: point.date,
-    }));
-  }, [daily]);
+    if (!daily?.length) return []
+    return daily.slice(-90).map((p) => ({
+      period: p.date,
+      close: p.close,
+    }))
+  }, [daily])
 
   return (
-    <Card className={cn(className)}>
-      <CardHeader className="flex flex-col gap-2 space-y-0 sm:flex-row sm:items-start sm:justify-between">
+    <Card
+      className={cn(
+        "border-border/20 bg-card text-foreground shadow-md shadow-foreground/5",
+        className
+      )}
+    >
+      <CardHeader className="flex flex-col gap-2 space-y-0 pb-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0 space-y-1">
-          <p className="text-muted-foreground text-xs font-medium uppercase">
-            Spotlight gainer
+          <p className="text-sm font-bold text-finance-success">
+            Today&apos;s Spotlight Gainer
           </p>
-          <CardTitle className="font-mono text-xl sm:text-2xl">
+          <CardTitle className="font-mono text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             {symbol}
           </CardTitle>
-          <CardDescription className="line-clamp-2">
-            {companyName}
-          </CardDescription>
-          <p className="text-emerald-600 text-sm font-semibold tabular-nums dark:text-emerald-400">
-            {formatPct(changePct)}
+          <CardDescription className="line-clamp-2 text-base text-muted-foreground">{companyName}</CardDescription>
+          <p className="text-sm font-bold tabular-nums text-finance-success">
+            {formatPct(changePct)} <span className="text-xs font-medium text-muted-foreground">session</span>
           </p>
         </div>
         <Link
-          className="text-primary shrink-0 text-sm font-medium underline-offset-4 hover:underline"
           href={`/stock/${encodeURIComponent(symbol)}`}
+          className="shrink-0 text-sm font-bold text-primary underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         >
-          View {symbol}
+          View {symbol} →
         </Link>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         {isLoadingDaily ? (
-          <div aria-busy aria-live="polite" className="space-y-3 pt-2">
-            <Skeleton className="h-[220px] w-full rounded-lg" />
+          <div className="space-y-3 pt-2" aria-busy aria-live="polite">
+            <Skeleton className="h-[220px] w-full rounded-lg bg-muted" />
+            <p className="text-center text-xs text-muted-foreground">Loading price history…</p>
           </div>
         ) : null}
 
         {!isLoadingDaily && errorDaily ? (
-          <p className="border-border bg-muted/30 rounded-lg border px-3 py-2 text-sm">
-            {errorDaily}
-          </p>
+          <div className="mt-2 space-y-3 rounded-lg border border-rose-200 bg-rose-50/50 p-3">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+              <div className="space-y-1.5">
+                <p className="text-xs font-bold text-rose-700">Unable to load chart</p>
+                <p className="line-clamp-3 text-[11px] leading-relaxed text-rose-600/90">
+                  Chart temporarily unavailable because the daily API limit has been reached. Please try again later.
+                </p>
+              </div>
+            </div>
+          </div>
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length > 0 ? (
           <ChartContainer
-            className="aspect-auto h-[220px] w-full"
             config={chartConfig}
+            className="aspect-auto h-[220px] w-full [&_.recharts-surface]:outline-none"
           >
             <LineChart
               accessibilityLayer
               data={chartRows}
-              margin={{ bottom: 4, left: 4, right: 8, top: 8 }}
+              margin={{ left: 4, right: 8, top: 8, bottom: 4 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-[var(--border)]/30" />
               <XAxis
-                axisLine={false}
                 dataKey="period"
-                minTickGap={28}
-                tickFormatter={(value) =>
-                  typeof value === "string"
-                    ? formatPeriodLabel(value)
-                    : String(value)
-                }
                 tickLine={false}
+                axisLine={false}
                 tickMargin={8}
+                minTickGap={28}
+                tickFormatter={(v) => (typeof v === "string" ? formatPeriodLabel(v) : String(v))}
+                className="text-[10px] font-medium text-muted-foreground"
               />
               <YAxis
-                axisLine={false}
-                domain={["auto", "auto"]}
-                tickFormatter={(value) =>
-                  typeof value === "number" ? formatUsd(value) : String(value)
-                }
                 tickLine={false}
+                axisLine={false}
                 tickMargin={8}
-                width={56}
+                domain={["auto", "auto"]}
+                width={52}
+                tickFormatter={(v) => (typeof v === "number" ? formatUsd(v) : String(v))}
+                className="text-[10px] font-medium text-muted-foreground"
               />
               <ChartTooltip
                 content={
                   <ChartTooltipContent
+                    labelFormatter={(_, payload) => {
+                      const p = payload?.[0]?.payload as { period?: string } | undefined
+                      const raw = p?.period ?? ""
+                      return formatPeriodLabel(raw)
+                    }}
                     formatter={(value) =>
                       typeof value === "number" ? formatUsd(value) : String(value)
                     }
-                    labelFormatter={(_, payload) => {
-                      const point = payload?.[0]?.payload as
-                        | { period?: string }
-                        | undefined;
-                      return formatPeriodLabel(point?.period ?? "");
-                    }}
                   />
                 }
               />
               <Line
-                activeDot={{ r: 4 }}
+                type="monotone"
                 dataKey="close"
-                dot={false}
-                isAnimationActive={false}
                 stroke="var(--color-close)"
                 strokeWidth={2}
-                type="monotone"
+                dot={false}
+                activeDot={{ r: 4 }}
+                isAnimationActive={false}
               />
             </LineChart>
           </ChartContainer>
         ) : null}
 
         {!isLoadingDaily && !errorDaily && chartRows.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No price history is available for this symbol.
-          </p>
+          <p className="text-sm text-muted-foreground">No intraday history available for this symbol.</p>
         ) : null}
 
-        <p className="text-muted-foreground mt-3 text-[10px] leading-snug">
-          Daily closes from the configured stock price provider. Not financial
-          advice.
+        <p className="mt-3 text-[10px] font-medium leading-snug text-muted-foreground">
+          Daily closes via Alpha Vantage (compact). Not financial advice.
         </p>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
