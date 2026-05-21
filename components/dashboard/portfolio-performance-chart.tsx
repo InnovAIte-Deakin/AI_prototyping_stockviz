@@ -112,7 +112,7 @@ export const PortfolioPerformanceChart = ({ currentBalance, history, className }
   if (history.length === 0) {
     return (
       <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5 flex flex-col items-center justify-center py-12 text-center", className)}>
-        <CardTitle className="text-sm font-medium text-muted-foreground">No trade history yet</CardTitle>
+        <CardTitle className="text-sm font-medium text-muted-foreground">No portfolio activity yet</CardTitle>
         <CardDescription className="text-xs font-medium text-muted-foreground max-w-[240px] mt-1 leading-relaxed">
           Start paper trading by searching for a stock and clicking &quot;Buy&quot; to see your performance trend here.
         </CardDescription>

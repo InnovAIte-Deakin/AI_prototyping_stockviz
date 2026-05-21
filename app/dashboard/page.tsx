@@ -8,6 +8,8 @@ import { WishlistCard } from "@/components/dashboard/wishlist-card"
 import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
 import { createClient } from "@/lib/supabase/server"
 import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/data"
+import { ensurePortfolioHistory } from "@/lib/portfolio/history"
+import { fetchMarkPricesBySymbol } from "@/lib/portfolio/mark-prices"
 import { checkAndExecuteTriggers } from "@/lib/triggers/execution"
 import type { User } from "@supabase/supabase-js"
 
@@ -47,16 +49,19 @@ const DashboardPage = async () => {
   }
 
   const snapshot = user ? await loadPaperPortfolioSnapshot(user.id) : null
-  
-  let currentHoldingsValue = 0
-  if (snapshot) {
-    // Note: On the dashboard we use the avg_price for holdings value if mark prices aren't fetched yet
-    // to avoid an extra API call here, as PortfolioSummaryRow handles the live marks.
-    // However, for the chart to be accurate, we should ideally use the same logic.
-    currentHoldingsValue = snapshot.holdings.reduce((acc, h) => acc + (h.avg_price * h.shares), 0)
+
+  let currentBalance = 1_000_000
+  let portfolioHistory: Awaited<ReturnType<typeof ensurePortfolioHistory>> = []
+
+  if (snapshot && user) {
+    const marks = await fetchMarkPricesBySymbol(snapshot.holdings.map((h) => h.symbol))
+    const currentHoldingsValue = snapshot.holdings.reduce((acc, h) => {
+      const mark = marks.get(h.symbol.toUpperCase())
+      return acc + (mark ?? h.avg_price) * h.shares
+    }, 0)
+    currentBalance = snapshot.paperCashUsd + currentHoldingsValue
+    portfolioHistory = await ensurePortfolioHistory(user.id, snapshot, currentBalance)
   }
-  
-  const currentBalance = (snapshot?.paperCashUsd ?? 1000000) + currentHoldingsValue
 
   const firstName = resolveFirstName(user, profileFullName)
   const greetingName =
@@ -104,7 +109,7 @@ const DashboardPage = async () => {
           <div className="lg:col-span-2">
             <PortfolioPerformanceChart 
               currentBalance={currentBalance} 
-              history={snapshot?.history ?? []}
+              history={portfolioHistory}
               className="h-full" 
             />
           </div>
