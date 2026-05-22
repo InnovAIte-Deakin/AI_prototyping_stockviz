@@ -4,335 +4,423 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[];
+  | Json[]
 
 export type Database = {
   public: {
     Tables: {
       analysis_cache: {
         Row: {
-          cache_key: string;
-          created_at: string;
-          data: Json;
-          expires_at: string;
-        };
+          cache_key: string
+          created_at: string
+          data: Json
+          expires_at: string
+        }
         Insert: {
-          cache_key: string;
-          created_at?: string;
-          data: Json;
-          expires_at: string;
-        };
+          cache_key: string
+          created_at?: string
+          data: Json
+          expires_at: string
+        }
         Update: {
-          cache_key?: string;
-          created_at?: string;
-          data?: Json;
-          expires_at?: string;
-        };
-        Relationships: [];
-      };
+          cache_key?: string
+          created_at?: string
+          data?: Json
+          expires_at?: string
+        }
+        Relationships: []
+      }
       api_call_log: {
         Row: {
-          api_name: string;
-          created_at: string;
-          endpoint: string;
-          id: number;
-          response_time: number | null;
-          success: boolean | null;
-          symbol: string | null;
-          timeframe: string | null;
-        };
+          api_name: string
+          created_at: string
+          endpoint: string
+          id: number
+          response_time: number | null
+          success: boolean | null
+          symbol: string | null
+          timeframe: string | null
+        }
         Insert: {
-          api_name: string;
-          created_at?: string;
-          endpoint: string;
-          id?: never;
-          response_time?: number | null;
-          success?: boolean | null;
-          symbol?: string | null;
-          timeframe?: string | null;
-        };
+          api_name: string
+          created_at?: string
+          endpoint: string
+          id?: never
+          response_time?: number | null
+          success?: boolean | null
+          symbol?: string | null
+          timeframe?: string | null
+        }
         Update: {
-          api_name?: string;
-          created_at?: string;
-          endpoint?: string;
-          id?: never;
-          response_time?: number | null;
-          success?: boolean | null;
-          symbol?: string | null;
-          timeframe?: string | null;
-        };
-        Relationships: [];
-      };
+          api_name?: string
+          created_at?: string
+          endpoint?: string
+          id?: never
+          response_time?: number | null
+          success?: boolean | null
+          symbol?: string | null
+          timeframe?: string | null
+        }
+        Relationships: []
+      }
       portfolio_holdings: {
         Row: {
-          acquired_at: string | null;
-          avg_price: number;
-          created_at: string;
-          id: string;
-          notes: string | null;
-          shares: number;
-          symbol: string;
-          updated_at: string;
-          user_id: string;
-        };
+          acquired_at: string | null
+          avg_price: number
+          created_at: string
+          id: string
+          notes: string | null
+          shares: number
+          symbol: string
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          acquired_at?: string | null;
-          avg_price: number;
-          created_at?: string;
-          id?: string;
-          notes?: string | null;
-          shares: number;
-          symbol: string;
-          updated_at?: string;
-          user_id: string;
-        };
+          acquired_at?: string | null
+          avg_price: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          shares: number
+          symbol: string
+          updated_at?: string
+          user_id: string
+        }
         Update: {
-          acquired_at?: string | null;
-          avg_price?: number;
-          created_at?: string;
-          id?: string;
-          notes?: string | null;
-          shares?: number;
-          symbol?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
+          acquired_at?: string | null
+          avg_price?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          shares?: number
+          symbol?: string
+          updated_at?: string
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "portfolio_holdings_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            foreignKeyName: "portfolio_holdings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       portfolio_transactions: {
         Row: {
-          created_at: string;
-          executed_at: string;
-          id: string;
-          realized_pl_usd: number | null;
-          shares: number;
-          side: string;
-          symbol: string;
-          total_cash_delta_usd: number;
-          unit_price_usd: number;
-          user_id: string;
-        };
+          created_at: string
+          executed_at: string
+          id: string
+          realized_pl_usd: number | null
+          shares: number
+          side: string
+          symbol: string
+          total_cash_delta_usd: number
+          unit_price_usd: number
+          user_id: string
+        }
         Insert: {
-          created_at?: string;
-          executed_at?: string;
-          id?: string;
-          realized_pl_usd?: number | null;
-          shares: number;
-          side: string;
-          symbol: string;
-          total_cash_delta_usd: number;
-          unit_price_usd: number;
-          user_id: string;
-        };
+          created_at?: string
+          executed_at?: string
+          id?: string
+          realized_pl_usd?: number | null
+          shares: number
+          side: string
+          symbol: string
+          total_cash_delta_usd: number
+          unit_price_usd: number
+          user_id: string
+        }
         Update: {
-          created_at?: string;
-          executed_at?: string;
-          id?: string;
-          realized_pl_usd?: number | null;
-          shares?: number;
-          side?: string;
-          symbol?: string;
-          total_cash_delta_usd?: number;
-          unit_price_usd?: number;
-          user_id?: string;
-        };
+          created_at?: string
+          executed_at?: string
+          id?: string
+          realized_pl_usd?: number | null
+          shares?: number
+          side?: string
+          symbol?: string
+          total_cash_delta_usd?: number
+          unit_price_usd?: number
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "portfolio_transactions_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            foreignKeyName: "portfolio_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
-        ];
-      };
+        ]
+      }
       profiles: {
         Row: {
-          avatar_url: string | null;
-          created_at: string;
-          full_name: string | null;
-          id: string;
-          paper_cash_usd: number;
-          preferences: Json | null;
-          updated_at: string;
-        };
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          paper_cash_usd: number
+          preferences: Json | null
+          updated_at: string
+        }
         Insert: {
-          avatar_url?: string | null;
-          created_at?: string;
-          full_name?: string | null;
-          id: string;
-          paper_cash_usd?: number;
-          preferences?: Json | null;
-          updated_at?: string;
-        };
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          paper_cash_usd?: number
+          preferences?: Json | null
+          updated_at?: string
+        }
         Update: {
-          avatar_url?: string | null;
-          created_at?: string;
-          full_name?: string | null;
-          id?: string;
-          paper_cash_usd?: number;
-          preferences?: Json | null;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          paper_cash_usd?: number
+          preferences?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       provider_preferences: {
         Row: {
-          capability: string;
-          fallback_enabled: boolean;
-          provider: string;
-          updated_at: string;
-          updated_by: string | null;
-        };
+          capability: string
+          fallback_enabled: boolean
+          provider: string
+          updated_at: string
+          updated_by: string | null
+        }
         Insert: {
-          capability: string;
-          fallback_enabled?: boolean;
-          provider: string;
-          updated_at?: string;
-          updated_by?: string | null;
-        };
+          capability: string
+          fallback_enabled?: boolean
+          provider: string
+          updated_at?: string
+          updated_by?: string | null
+        }
         Update: {
-          capability?: string;
-          fallback_enabled?: boolean;
-          provider?: string;
-          updated_at?: string;
-          updated_by?: string | null;
-        };
-        Relationships: [];
-      };
+          capability?: string
+          fallback_enabled?: boolean
+          provider?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       stocks: {
         Row: {
-          created_at: string;
-          exchange_mic: string | null;
-          id: string;
-          last_price: number | null;
-          name: string | null;
-          symbol: string;
-          updated_at: string;
-        };
+          created_at: string
+          exchange_mic: string | null
+          id: string
+          last_price: number | null
+          name: string | null
+          symbol: string
+          updated_at: string
+        }
         Insert: {
-          created_at?: string;
-          exchange_mic?: string | null;
-          id?: string;
-          last_price?: number | null;
-          name?: string | null;
-          symbol: string;
-          updated_at?: string;
-        };
+          created_at?: string
+          exchange_mic?: string | null
+          id?: string
+          last_price?: number | null
+          name?: string | null
+          symbol: string
+          updated_at?: string
+        }
         Update: {
-          created_at?: string;
-          exchange_mic?: string | null;
-          id?: string;
-          last_price?: number | null;
-          name?: string | null;
-          symbol?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
+          created_at?: string
+          exchange_mic?: string | null
+          id?: string
+          last_price?: number | null
+          name?: string | null
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       wishlist: {
         Row: {
-          created_at: string;
-          id: string;
-          notes: string | null;
-          stock_id: string;
-          user_id: string;
-        };
+          created_at: string
+          id: string
+          notes: string | null
+          stock_id: string
+          user_id: string
+        }
         Insert: {
-          created_at?: string;
-          id?: string;
-          notes?: string | null;
-          stock_id: string;
-          user_id: string;
-        };
+          created_at?: string
+          id?: string
+          notes?: string | null
+          stock_id: string
+          user_id: string
+        }
         Update: {
-          created_at?: string;
-          id?: string;
-          notes?: string | null;
-          stock_id?: string;
-          user_id?: string;
-        };
+          created_at?: string
+          id?: string
+          notes?: string | null
+          stock_id?: string
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "wishlist_stock_id_fkey";
-            columns: ["stock_id"];
-            isOneToOne: false;
-            referencedRelation: "stocks";
-            referencedColumns: ["id"];
+            foreignKeyName: "wishlist_stock_id_fkey"
+            columns: ["stock_id"]
+            isOneToOne: false
+            referencedRelation: "stocks"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "wishlist_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
+            foreignKeyName: "wishlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
-        ];
-      };
-    };
+        ]
+      }
+      portfolio_history: {
+        Row: {
+          id: string
+          user_id: string
+          total_value_usd: number
+          paper_cash_usd: number
+          holdings_value_usd: number
+          recorded_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          total_value_usd: number
+          paper_cash_usd: number
+          holdings_value_usd: number
+          recorded_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          total_value_usd?: number
+          paper_cash_usd?: number
+          holdings_value_usd?: number
+          recorded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      price_triggers: {
+        Row: {
+          id: string
+          user_id: string
+          symbol: string
+          trigger_price: number
+          condition: "above" | "below"
+          type: "notify" | "buy" | "sell"
+          shares: number | null
+          status: "active" | "fired" | "cancelled"
+          created_at: string
+          fired_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          symbol: string
+          trigger_price: number
+          condition: "above" | "below"
+          type: "notify" | "buy" | "sell"
+          shares?: number | null
+          status?: "active" | "fired" | "cancelled"
+          created_at?: string
+          fired_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          symbol?: string
+          trigger_price?: number
+          condition?: "above" | "below"
+          type?: "notify" | "buy" | "sell"
+          shares?: number | null
+          status?: "active" | "fired" | "cancelled"
+          created_at?: string
+          fired_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_triggers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+    }
     Views: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Functions: {
       paper_buy: {
         Args: {
-          p_shares: number;
-          p_symbol: string;
-          p_unit_price_usd: number;
-          p_user_id: string;
-        };
-        Returns: undefined;
-      };
+          p_shares: number
+          p_symbol: string
+          p_unit_price_usd: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       paper_sell: {
         Args: {
-          p_shares: number;
-          p_symbol: string;
-          p_unit_price_usd: number;
-          p_user_id: string;
-        };
-        Returns: undefined;
-      };
-    };
+          p_shares: number
+          p_symbol: string
+          p_unit_price_usd: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      record_portfolio_snapshot: {
+        Args: {
+          p_user_id: string
+          p_total_value: number
+          p_cash: number
+          p_holdings_value: number
+        }
+        Returns: undefined
+      }
+    }
     Enums: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
-};
+      [_ in never]: never
+    }
+  }
+}
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<
-  keyof Database,
-  "public"
->];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R;
+      Row: infer R
     }
     ? R
     : never
@@ -340,98 +428,98 @@ export type Tables<
         DefaultSchema["Views"])
     ? (DefaultSchema["Tables"] &
         DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R;
+        Row: infer R
       }
       ? R
       : never
-    : never;
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I;
+      Insert: infer I
     }
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I;
+        Insert: infer I
       }
       ? I
       : never
-    : never;
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U;
+      Update: infer U
     }
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U;
+        Update: infer U
       }
       ? U
       : never
-    : never;
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never;
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never;
+    : never
 
 export const Constants = {
   public: {
     Enums: {},
   },
-} as const;
+} as const

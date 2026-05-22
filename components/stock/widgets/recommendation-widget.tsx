@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import * as React from "react"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react"
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/components/ui/chart"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -28,8 +28,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useFinnhubRecommendation } from "@/hooks/use-finnhub-stock-data";
+} from "@/components/ui/table"
+import { useFinnhubRecommendation } from "@/hooks/use-finnhub-stock-data"
 import {
   RECOMMENDATION_CHART_CONFIG,
   RECOMMENDATION_STACK_KEYS,
@@ -37,96 +37,115 @@ import {
   sortRecommendationsChronologically,
   totalRecommendations,
   type RecommendationStackKey,
-} from "@/lib/analyst-recommendation-display";
-import type { FinnhubRecommendationTrend } from "@/lib/types";
-import { cn } from "@/lib/utils";
+} from "@/lib/analyst-recommendation-display"
+import type { FinnhubRecommendationTrend } from "@/lib/types"
+import { cn } from "@/lib/utils"
 
-const EMPTY_ROWS: FinnhubRecommendationTrend[] = [];
+const EMPTY_ROWS: FinnhubRecommendationTrend[] = []
 
 type RecommendationWidgetProps = {
-  symbol: string;
-  className?: string;
-};
+  symbol: string
+  className?: string
+}
 
-const num = (value: number | undefined): string => {
-  if (value === undefined || !Number.isFinite(value)) return "-";
-  return String(value);
-};
+const num = (v: number | undefined): string => {
+  if (v === undefined || !Number.isFinite(v)) {
+    return "—"
+  }
+  return String(v)
+}
 
 export const RecommendationWidget = ({
   symbol,
   className,
 }: RecommendationWidgetProps) => {
-  const { data, error, isLoading } = useFinnhubRecommendation(symbol);
-  const rows = data ?? EMPTY_ROWS;
+  const { data, error, isLoading } = useFinnhubRecommendation(symbol)
+  const rows = data ?? EMPTY_ROWS
+
   const sorted = React.useMemo(
     () => sortRecommendationsChronologically(rows),
-    [rows],
-  );
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+    [rows]
+  )
+
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
 
   React.useLayoutEffect(() => {
-    if (sorted.length > 0) {
-      setSelectedIndex(sorted.length - 1);
+    if (sorted.length === 0) {
+      return
     }
-  }, [sorted]);
+    setSelectedIndex(sorted.length - 1)
+  }, [sorted])
 
   const safeIndex =
     sorted.length === 0
       ? 0
-      : Math.min(Math.max(selectedIndex, 0), sorted.length - 1);
-  const current = sorted[safeIndex];
+      : Math.min(Math.max(selectedIndex, 0), sorted.length - 1)
+  const current = sorted[safeIndex]
   const chartData = React.useMemo(
     () => (current ? [rowToChartDatum(current)] : []),
-    [current],
-  );
-  const total = current ? totalRecommendations(current) : 0;
-  const canGoOlder = safeIndex > 0;
-  const canGoNewer = sorted.length > 0 && safeIndex < sorted.length - 1;
+    [current]
+  )
+
+  const total = current ? totalRecommendations(current) : 0
 
   const handlePreviousPeriod = () => {
-    setSelectedIndex((index) => Math.max(0, index - 1));
-  };
+    setSelectedIndex((i) => Math.max(0, i - 1))
+  }
 
   const handleNextPeriod = () => {
-    if (sorted.length === 0) return;
-    setSelectedIndex((index) => Math.min(sorted.length - 1, index + 1));
-  };
+    if (sorted.length === 0) {
+      return
+    }
+    setSelectedIndex((i) => Math.min(sorted.length - 1, i + 1))
+  }
 
-  const handleChartKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      handlePreviousPeriod();
-      return;
+  const handleChartKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault()
+      handlePreviousPeriod()
+      return
     }
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      handleNextPeriod();
+    if (e.key === "ArrowRight") {
+      e.preventDefault()
+      handleNextPeriod()
     }
-  };
+  }
+
+  const canGoOlder = safeIndex > 0
+  const canGoNewer = sorted.length > 0 && safeIndex < sorted.length - 1
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("border-border/20 bg-card text-foreground shadow-md shadow-foreground/5", className)}>
       <CardHeader>
-        <CardTitle>Analyst recommendations</CardTitle>
-        <CardDescription>
-          Finnhub consensus counts by reporting period.
+        <CardTitle className="text-xl font-bold text-primary">Analyst recommendations</CardTitle>
+        <CardDescription className="text-muted-foreground">
+          Finnhub consensus counts by reporting period. Use{" "}
+          <kbd className="bg-muted rounded border border-border/30 px-1 py-0.5 font-mono text-[10px] text-foreground">
+            ←
+          </kbd>{" "}
+          /{" "}
+          <kbd className="bg-muted rounded border border-border/30 px-1 py-0.5 font-mono text-[10px] text-foreground">
+            →
+          </kbd>{" "}
+          when the chart area is focused to step through periods.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {isLoading ? (
           <div className="space-y-2">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton className="h-10 w-full" key={index} />
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-full" />
             ))}
           </div>
         ) : null}
 
         {error ? (
-          <Alert variant="destructive">
-            <AlertCircle />
-            <AlertTitle>Could not load recommendations</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="border-destructive/30 bg-destructive/10 text-destructive">
+            <AlertCircle className="text-destructive" />
+            <AlertTitle className="font-bold">Analyst data unavailable</AlertTitle>
+            <AlertDescription className="text-destructive/90">
+              Analyst consensus for {symbol} is currently unavailable due to API limits.
+            </AlertDescription>
           </Alert>
         ) : null}
 
@@ -135,15 +154,15 @@ export const RecommendationWidget = ({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1 space-y-1">
                 <p
+                  className="text-xs font-medium text-muted-foreground"
                   aria-live="polite"
-                  className="text-muted-foreground text-xs font-medium uppercase"
                 >
                   Reporting period
                 </p>
-                <p className="font-heading truncate text-lg font-semibold">
-                  {current.period ?? "-"}
+                <p className="font-heading truncate text-lg font-bold text-foreground">
+                  {current.period ?? "—"}
                 </p>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-muted-foreground text-xs font-medium">
                   {total > 0
                     ? `${total} analyst ${total === 1 ? "rating" : "ratings"} in this period`
                     : "No ratings in this period"}
@@ -151,88 +170,88 @@ export const RecommendationWidget = ({
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <Button
-                  aria-label="Go to earlier reporting period"
-                  disabled={!canGoOlder}
-                  onClick={handlePreviousPeriod}
-                  size="sm"
                   type="button"
                   variant="outline"
+                  size="sm"
+                  disabled={!canGoOlder}
+                  onClick={handlePreviousPeriod}
+                  aria-label="Go to earlier reporting period"
+                  className="border-border/30 text-primary font-bold"
                 >
-                  <ChevronLeft aria-hidden className="size-4" />
+                  <ChevronLeft className="size-4" aria-hidden />
                   <span className="hidden sm:inline">Previous</span>
                 </Button>
-                <span className="text-muted-foreground tabular-nums text-xs">
+                <span className="text-muted-foreground tabular-nums text-xs font-bold">
                   {safeIndex + 1} / {sorted.length}
                 </span>
                 <Button
-                  aria-label="Go to later reporting period"
-                  disabled={!canGoNewer}
-                  onClick={handleNextPeriod}
-                  size="sm"
                   type="button"
                   variant="outline"
+                  size="sm"
+                  disabled={!canGoNewer}
+                  onClick={handleNextPeriod}
+                  aria-label="Go to later reporting period"
+                  className="border-border/30 text-primary font-bold"
                 >
                   <span className="hidden sm:inline">Next</span>
-                  <ChevronRight aria-hidden className="size-4" />
+                  <ChevronRight className="size-4" aria-hidden />
                 </Button>
               </div>
             </div>
 
             <div
-              aria-label="Recommendation distribution chart"
-              className="border-border/80 bg-muted/20 rounded-lg border p-2 outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
-              onKeyDown={handleChartKeyDown}
               role="group"
               tabIndex={0}
+              aria-label="Recommendation distribution chart. Use left and right arrow keys to change period."
+              onKeyDown={handleChartKeyDown}
+              className="rounded-lg border border-border/20 bg-muted/50 p-2 outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
             >
               {total > 0 ? (
                 <ChartContainer
-                  className="aspect-auto h-[min(200px,28vh)] w-full"
                   config={RECOMMENDATION_CHART_CONFIG}
+                  className="aspect-auto h-[min(200px,28vh)] w-full [&_.recharts-surface]:outline-none"
                 >
                   <BarChart
                     accessibilityLayer
-                    data={chartData}
                     layout="vertical"
-                    margin={{ bottom: 4, left: 4, right: 12, top: 8 }}
+                    data={chartData}
+                    margin={{ left: 4, right: 12, top: 8, bottom: 4 }}
                   >
-                    <CartesianGrid horizontal={false} strokeDasharray="3 3" />
-                    <XAxis axisLine={false} tickLine={false} type="number" />
-                    <YAxis dataKey="periodLabel" hide type="category" width={0} />
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                    <XAxis type="number" tickLine={false} axisLine={false} />
+                    <YAxis type="category" dataKey="periodLabel" hide width={0} />
                     <ChartTooltip
+                      cursor={{ fill: "var(--border)", fillOpacity: 0.1 }}
                       content={
                         <ChartTooltipContent
                           formatter={(value, _name, item) => {
                             const name =
                               typeof item?.name === "string"
                                 ? item.name
-                                : String(item?.dataKey ?? "");
+                                : String(item?.dataKey ?? "")
                             const n =
-                              typeof value === "number" ? value : Number(value);
+                              typeof value === "number" ? value : Number(value)
                             return (
-                              <span className="tabular-nums">
+                              <span className="tabular-nums font-bold text-foreground">
                                 {Number.isFinite(n)
                                   ? `${name}: ${n.toLocaleString()}`
-                                  : "-"}
+                                  : "—"}
                               </span>
-                            );
+                            )
                           }}
                         />
                       }
-                      cursor={{ fill: "var(--muted)" }}
                     />
-                    {RECOMMENDATION_STACK_KEYS.map(
-                      (key: RecommendationStackKey) => (
-                        <Bar
-                          dataKey={key}
-                          fill={`var(--color-${key})`}
-                          isAnimationActive={false}
-                          key={key}
-                          radius={[0, 0, 0, 0]}
-                          stackId="rec"
-                        />
-                      ),
-                    )}
+                    {RECOMMENDATION_STACK_KEYS.map((key: RecommendationStackKey) => (
+                      <Bar
+                        key={key}
+                        dataKey={key}
+                        stackId="rec"
+                        fill={`var(--color-${key})`}
+                        radius={[0, 0, 0, 0]}
+                        isAnimationActive={false}
+                      />
+                    ))}
                     <ChartLegend content={<ChartLegendContent />} />
                   </BarChart>
                 </ChartContainer>
@@ -243,27 +262,30 @@ export const RecommendationWidget = ({
               )}
             </div>
 
-            <div className="max-h-[min(280px,40vh)] overflow-auto rounded-md border">
+            <div className="max-h-[min(280px,40vh)] overflow-auto rounded-md border border-border/20">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Period</TableHead>
-                    <TableHead className="text-right">Strong buy</TableHead>
-                    <TableHead className="text-right">Buy</TableHead>
-                    <TableHead className="text-right">Hold</TableHead>
-                    <TableHead className="text-right">Sell</TableHead>
-                    <TableHead className="text-right">Strong sell</TableHead>
+                <TableHeader className="bg-muted/50">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="font-bold text-primary">Period</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Strong buy</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Buy</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Hold</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Sell</TableHead>
+                    <TableHead className="text-right font-bold text-primary">Strong sell</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sorted.map((row, index) => (
+                  {sorted.map((row, idx) => (
                     <TableRow
-                      className={cn(index === safeIndex && "bg-muted/50")}
-                      data-state={index === safeIndex ? "selected" : undefined}
-                      key={row.period ?? index}
+                      key={row.period ?? idx}
+                      className={cn(
+                        "cursor-pointer transition-all",
+                        idx === safeIndex ? "bg-muted border-l-2 border-l-[var(--primary)]" : "hover:bg-muted/30"
+                      )}
+                      onClick={() => setSelectedIndex(idx)}
                     >
                       <TableCell className="font-medium">
-                        {row.period ?? "-"}
+                        {row.period ?? "—"}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
                         {num(row.strongBuy)}
@@ -289,11 +311,12 @@ export const RecommendationWidget = ({
         ) : null}
 
         {!isLoading && !error && sorted.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No recommendation data.
-          </p>
+          <div className="rounded-lg border border-border/10 bg-background p-6 text-center">
+            <p className="text-sm font-bold text-muted-foreground">No coverage</p>
+            <p className="text-xs text-muted-foreground mt-1">There are no analyst recommendations currently available for this symbol.</p>
+          </div>
         ) : null}
       </CardContent>
     </Card>
-  );
-};
+  )
+}

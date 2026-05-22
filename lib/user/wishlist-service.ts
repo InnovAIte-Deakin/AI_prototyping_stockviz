@@ -18,7 +18,9 @@ export type WishlistItem = WishlistRow & {
   stock: StockRow;
 };
 
-export type WishlistItemSummary = Pick<WishlistRow, "id" | "notes"> & {
+export type WishlistItemSummary = Pick<WishlistRow, "created_at" | "id" | "notes"> & {
+  name: string | null;
+  stockId: string;
   symbol: string;
 };
 
@@ -57,8 +59,11 @@ const mapWishlistRow = (row: RawWishlistRow): WishlistItem => {
 export const toWishlistItemSummary = (
   item: WishlistItem,
 ): WishlistItemSummary => ({
+  created_at: item.created_at,
   id: item.id,
+  name: item.stock.name,
   notes: item.notes,
+  stockId: item.stock.id,
   symbol: item.stock.symbol,
 });
 

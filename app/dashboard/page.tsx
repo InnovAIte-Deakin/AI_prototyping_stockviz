@@ -1,172 +1,143 @@
-import {
-  ArrowRight,
-  ChartNoAxesCombined,
-  SearchCode,
-  ShieldCheck,
-} from "lucide-react";
-import Link from "next/link";
-import { signOut } from "@/app/auth/actions";
-import { DashboardSpotlightChart } from "@/components/dashboard/dashboard-spotlight-chart";
-import { MoversCarousel } from "@/components/dashboard/movers-carousel";
-import { StagingFeatureMap } from "@/components/dashboard/staging-feature-map";
-import { SymbolSearch } from "@/components/search/symbol-search";
-import { Button } from "@/components/ui/button";
-import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers";
+import { Suspense } from "react"
+import { DashboardSpotlightChart } from "@/components/dashboard/dashboard-spotlight-chart"
+import { MoversCarousel } from "@/components/dashboard/movers-carousel"
+import { PortfolioSummaryRow, PortfolioSummarySkeleton } from "@/components/dashboard/portfolio-summary-row"
+import { PortfolioPerformanceChart } from "@/components/dashboard/portfolio-performance-chart"
+import { MarketStatusCard } from "@/components/dashboard/market-status-card"
+import { StagingFeatureMap } from "@/components/dashboard/staging-feature-map"
+import { WishlistCard } from "@/components/dashboard/wishlist-card"
+import { fetchBiggestMovers } from "@/lib/fmp/biggest-movers"
+import { createClient } from "@/lib/supabase/server"
+import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/data"
+import { ensurePortfolioHistory } from "@/lib/portfolio/history"
+import { fetchMarkPricesBySymbol } from "@/lib/portfolio/mark-prices"
+import { checkAndExecuteTriggers } from "@/lib/triggers/execution"
+import type { User } from "@supabase/supabase-js"
 
-const launchCards = [
-  {
-    title: "Live search",
-    description:
-      "Search symbols from the active market service and jump straight into analysis.",
-    icon: SearchCode,
-  },
-  {
-    title: "Analysis workspace",
-    description:
-      "Review score, recommendation, sentiment, and chart output in the product workspace.",
-    icon: ChartNoAxesCombined,
-  },
-  {
-    title: "Protected flow",
-    description:
-      "The analysis flow runs inside the authenticated Next.js product surface.",
-    icon: ShieldCheck,
-  },
-];
+const resolveFirstName = (
+  user: User | null,
+  profileFullName: string | null | undefined
+): string => {
+  const fromProfile = profileFullName?.trim().split(/\s+/)[0]
+  if (fromProfile) {
+    return fromProfile
+  }
+  const meta = user?.user_metadata
+  const rawName =
+    meta && typeof meta.full_name === "string" ? meta.full_name.trim() : ""
+  if (rawName) {
+    return rawName.split(/\s+/)[0] ?? "there"
+  }
+  return "there"
+}
 
-export default async function DashboardPage() {
-  const movers = await fetchBiggestMovers();
-  const spotlight = movers.gainers[0] ?? null;
+const DashboardPage = async () => {
+  await checkAndExecuteTriggers()
+  const { gainers, losers, error } = await fetchBiggestMovers()
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let profileFullName: string | null | undefined
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .maybeSingle()
+    profileFullName = profile?.full_name
+  }
+
+  const snapshot = user ? await loadPaperPortfolioSnapshot(user.id) : null
+
+  let currentBalance = 1_000_000
+  let portfolioHistory: Awaited<ReturnType<typeof ensurePortfolioHistory>> = []
+
+  if (snapshot && user) {
+    const marks = await fetchMarkPricesBySymbol(snapshot.holdings.map((h) => h.symbol))
+    const currentHoldingsValue = snapshot.holdings.reduce((acc, h) => {
+      const mark = marks.get(h.symbol.toUpperCase())
+      return acc + (mark ?? h.avg_price) * h.shares
+    }, 0)
+    currentBalance = snapshot.paperCashUsd + currentHoldingsValue
+    portfolioHistory = await ensurePortfolioHistory(user.id, snapshot, currentBalance)
+  }
+
+  const firstName = resolveFirstName(user, profileFullName)
+  const greetingName =
+    firstName === "there" ? "there" : `${firstName.charAt(0).toUpperCase()}${firstName.slice(1)}`
+
+  const spotlightGainer = gainers.at(0) ?? null
 
   return (
-    <div className="min-h-screen bg-surface px-6 py-10 text-on-background md:px-10">
-      <div className="mx-auto max-w-6xl space-y-8">
-        <div className="flex flex-col gap-4 rounded-[28px] border border-border bg-white p-8 shadow-[0_20px_60px_rgba(55,49,45,0.06)]">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-3xl space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                Research Workspace
-              </p>
-              <h1 className="text-4xl font-semibold tracking-tight text-surface-tint md:text-5xl">
-                Search a symbol and open a full analysis workspace.
-              </h1>
-              <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-                Search for a stock, open its analysis page, and review the
-                latest market-data-backed signal.
-              </p>
-            </div>
-
-            <form action={signOut}>
-              <Button
-                type="submit"
-                variant="outline"
-                className="h-11 rounded-xl border-border bg-surface px-5 text-surface-tint hover:bg-muted"
-              >
-                Sign Out
-              </Button>
-            </form>
+    <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
+      {/* Top Section: Market Movers */}
+      <section className="bg-card/50 border-b border-border/20 py-1">
+        {error ? (
+          <div className="mx-auto max-w-7xl px-4 py-2 text-xs text-rose-600" role="alert">
+            {error}
           </div>
+        ) : (
+          <MoversCarousel gainers={gainers} losers={losers} />
+        )}
+      </section>
 
-          <div className="rounded-[24px] border border-border bg-card p-5">
-            <p className="mb-3 text-sm font-medium text-muted-foreground">
-              Open analysis
+      <main className="mx-auto w-full max-w-7xl space-y-12 px-6 py-10">
+        {/* Header Section */}
+        <header className="space-y-8">
+          <div className="space-y-2">
+            <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Hi {greetingName}, welcome back
+            </h1>
+            <p className="text-base font-medium text-muted-foreground max-w-2xl">
+              Everything you need to track your investment strategy in one place.
             </p>
-            <SymbolSearch submitLabel="Analyze symbol" />
           </div>
-        </div>
+
+          <Suspense fallback={<PortfolioSummarySkeleton />}>
+            {user ? (
+              <div className="pt-2">
+                <PortfolioSummaryRow userId={user.id} />
+              </div>
+            ) : null}
+          </Suspense>
+        </header>
 
         <StagingFeatureMap />
 
-        <section
-          className="space-y-4 rounded-[24px] border border-border bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]"
-          id="market-movers"
-        >
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase text-muted-foreground">
-                Market movers
-              </p>
-              <h2 className="mt-1 text-2xl font-semibold text-on-surface">
-                Biggest gainers and losers
-              </h2>
-            </div>
-            {movers.error ? (
-              <p className="max-w-xl text-sm text-muted-foreground">
-                {movers.error}
-              </p>
-            ) : null}
+        {/* Main Section: Row 1 - Performance & Status */}
+        <div className="grid gap-10 lg:grid-cols-3 lg:items-stretch">
+          {/* Performance Column - 2/3 Width */}
+          <div className="lg:col-span-2">
+            <PortfolioPerformanceChart
+              currentBalance={currentBalance}
+              history={portfolioHistory}
+              className="h-full"
+            />
           </div>
 
-          {movers.error ? (
-            <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4">
-              <p className="text-sm font-medium text-on-surface">
-                Market movers are mapped here.
-              </p>
-              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Add `FMP_API_KEY` to `.env.local` to load live gainers, losers,
-                move explanations, and the spotlight chart. The rest of the new
-                feature links above are still available.
-              </p>
-            </div>
-          ) : (
-            <MoversCarousel gainers={movers.gainers} losers={movers.losers} />
+          {/* Sidebar - 1/3 Width Stacked & Aligned */}
+          <div className="flex flex-col gap-8 lg:col-span-1">
+            <MarketStatusCard />
+            <WishlistCard className="flex-1" />
+          </div>
+        </div>
+
+        {/* Main Section: Row 2 - Spotlight (Wider) */}
+        <section className="pt-6">
+          {spotlightGainer && (
+            <DashboardSpotlightChart
+              symbol={spotlightGainer.symbol}
+              companyName={spotlightGainer.name}
+              changePct={spotlightGainer.changePct}
+              className="border-dashed"
+            />
           )}
         </section>
-
-        {spotlight ? (
-          <DashboardSpotlightChart
-            changePct={spotlight.changePct}
-            companyName={spotlight.name}
-            symbol={spotlight.symbol}
-          />
-        ) : null}
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {launchCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.title}
-                className="rounded-[22px] border border-border bg-white p-5 shadow-[0_12px_32px_rgba(55,49,45,0.04)]"
-              >
-                <div className="mb-4 inline-flex rounded-2xl bg-muted p-3 text-surface-tint">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h2 className="text-lg font-semibold text-on-surface">
-                  {card.title}
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {card.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="rounded-[24px] border border-dashed border-border bg-white/70 p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-medium text-on-surface">
-                Need a quick example?
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Open the analysis route with a well-known ticker and review the
-                chart plus blended score output.
-              </p>
-            </div>
-            <Button
-              asChild
-              className="h-11 rounded-xl bg-primary px-5 text-white hover:bg-primary/90"
-            >
-              <Link href="/analysis/AAPL">
-                Open AAPL
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
+      </main>
     </div>
-  );
+  )
 }
 
+export default DashboardPage

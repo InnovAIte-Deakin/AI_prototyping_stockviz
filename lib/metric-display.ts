@@ -51,7 +51,7 @@ export const formatMetricValue = (
     if (Math.abs(value) >= 1e12) {
       return value.toExponential(2);
     }
-    return new Intl.NumberFormat(undefined, {
+    return new Intl.NumberFormat("en-US", {
       maximumFractionDigits: 4,
     }).format(value);
   }

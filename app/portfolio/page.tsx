@@ -1,72 +1,42 @@
-import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-
-import { PaperPortfolioPanel } from "@/components/portfolio/paper-portfolio-panel";
-import { PortfolioView } from "@/components/portfolio/portfolio-view";
-import {
-  PortfolioAuthError,
-  getPortfolioSnapshotForCurrentUser,
-} from "@/lib/portfolio/holdings-service";
-import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/paper-trading-service";
-import { createClient } from "@/lib/supabase/server";
-import { UserFeatureAuthError } from "@/lib/user/session";
-import { getUserFeatureSnapshotForCurrentUser } from "@/lib/user/user-feature-service";
-
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description:
-    "Manage your persisted StockViz holdings with authenticated Supabase-backed portfolio storage.",
-};
-
-async function getCurrentUserId() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    redirect("/login");
-  }
-
-  return user.id;
-}
-
-async function loadPortfolioSnapshot() {
-  const userId = await getCurrentUserId();
-
-  try {
-    const [portfolio, userFeatures, paperPortfolio] = await Promise.all([
-      getPortfolioSnapshotForCurrentUser(),
-      getUserFeatureSnapshotForCurrentUser(),
-      loadPaperPortfolioSnapshot(userId),
-    ]);
-
-    return { paperPortfolio, portfolio, userFeatures };
-  } catch (error) {
-    if (
-      error instanceof PortfolioAuthError ||
-      error instanceof UserFeatureAuthError
-    ) {
-      redirect("/login");
-    }
-
-    throw error;
-  }
-}
+import { redirect } from "next/navigation"
+import { PortfolioClientView } from "@/components/portfolio/portfolio-client-view"
+import { fetchMarkPricesBySymbol } from "@/lib/portfolio/mark-prices"
+import { loadPaperPortfolioSnapshot } from "@/lib/portfolio/data"
+import { ensurePortfolioHistory } from "@/lib/portfolio/history"
+import { createClient } from "@/lib/supabase/server"
 
 export default async function PortfolioPage() {
-  const { paperPortfolio, portfolio, userFeatures } =
-    await loadPortfolioSnapshot();
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect("/login")
+  }
+
+  const snapshot = await loadPaperPortfolioSnapshot(user.id)
+
+  const marks = await fetchMarkPricesBySymbol(snapshot.holdings.map((h) => h.symbol))
+
+  const totalValue =
+    snapshot.paperCashUsd +
+    snapshot.holdings.reduce((acc, h) => {
+      const mark = marks.get(h.symbol.toUpperCase())
+      return acc + (mark ?? h.avg_price) * h.shares
+    }, 0)
+
+  const history = await ensurePortfolioHistory(user.id, snapshot, totalValue)
+
+  // Convert marks Map to a plain Record<string, number> for the client component
+  const marksRecord: Record<string, number> = {}
+  marks.forEach((val, key) => {
+    marksRecord[key] = val
+  })
 
   return (
-    <>
-      <PortfolioView
-        holdings={portfolio.holdings}
-        personalization={userFeatures}
-        summary={portfolio.summary}
-      />
-      <PaperPortfolioPanel snapshot={paperPortfolio} />
-    </>
-  );
+    <div className="min-h-screen bg-background text-foreground selection:bg-accent selection:text-accent-foreground">
+      <PortfolioClientView snapshot={{ ...snapshot, history }} marks={marksRecord} />
+    </div>
+  )
 }
