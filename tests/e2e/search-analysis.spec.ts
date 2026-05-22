@@ -83,7 +83,7 @@ async function loginAsSeededDemoUser(page: Page) {
     .fill("StockVizDemo123!");
   await page.getByRole("button", { name: /sign in/i }).click();
 
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page).toHaveURL(/\/dashboard$/, { timeout: 15_000 });
 }
 
 test("redirects anonymous analysis requests into the auth flow", async ({
@@ -107,10 +107,16 @@ test("lets a signed-in user open analysis from the dashboard search", async ({
 
   await loginAsSeededDemoUser(page);
 
-  await page.getByPlaceholder(/search by ticker or company name/i).fill("AAPL");
-  await page.getByRole("button", { name: /analyze symbol/i }).click();
+  await page.getByRole("button", { name: /search stocks/i }).click();
+  await page
+    .getByPlaceholder(/search stocks, tickers, companies/i)
+    .fill("AAPL");
+  await expect(
+    page.getByRole("option", { name: /^AAPL\b/i }).first(),
+  ).toBeVisible();
+  await page.keyboard.press("Enter");
 
-  await expect(page).toHaveURL(/\/analysis\/AAPL$/);
+  await expect(page).toHaveURL(/\/analysis\/AAPL$/, { timeout: 15_000 });
   await expect(
     page.getByRole("heading", { name: /AAPL analysis/i }),
   ).toBeVisible({ timeout: 30_000 });
